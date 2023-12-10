@@ -20,11 +20,12 @@ from Aplicaciones.bbdd.views import *
 from Aplicaciones.bbdd import views 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name="admin"),
     path("", home,name="home"),
     path("registro/",registro, name="registro"),
     path("feed/",feed, name="feed"),
     path("logout/",logOut, name="logout"),
     path("perfil/",perfil, name="perfil"),
     path("eliminarCuenta/",eliminarCuenta, name="eliminarCuenta"),
+    path("modificarDatos/",modificarDatos, name="modificarDatos"),
 ]

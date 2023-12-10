@@ -23,13 +23,13 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(mail, password, **extra_fields)
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    identificador = models.AutoField(primary_key=True)
     nombreUsuario = models.CharField(max_length=40, unique=True)
-    mail = models.EmailField(unique=True)
+    mail = models.EmailField(unique=True,primary_key=True)
     nombreReal = models.CharField(max_length=50)
     fecha = models.DateField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     # Agregar related_name a los campos groups y user_permissions
     groups = models.ManyToManyField(
@@ -58,10 +58,10 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         db_table = "usuario"
 
     def __str__(self):
-        return f'{self.mail} {self.identificador}'
+        return f'{self.mail}'
 
 class UsuarioAdmin(admin.ModelAdmin):
-    fields = ['identificador', 'nombreUsuario', 'password', 'mail', 'nombreReal', 'fecha', 'last_login', 'is_staff', 'is_superuser']
+    fields = [ 'nombreUsuario', 'password', 'mail', 'nombreReal','is_active', 'is_staff']
    # exclude = ("fecha", "last_login", "is_staff", "is_superuser")
 # Desregistrar el modelo si ya está registrado
     try:
@@ -71,6 +71,17 @@ class UsuarioAdmin(admin.ModelAdmin):
 
 # Registrar el modelo
     
+class RegistroInicioSession(models.Model):
+    mail = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    login_exitoso = models.BooleanField(default=False)
+    sistema = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        db_table = "registroLogin"
+
+    def __str__(self):
+        return f'{self.mail} {self.timestamp} {self.login_exitoso} {self.sistema}'
 
 """ def autentificador(mail, password):
     try:
@@ -80,6 +91,6 @@ class UsuarioAdmin(admin.ModelAdmin):
         else:
             return None
     except Usuario.DoesNotExist:
-        return None """
+        return None"""
     
  
