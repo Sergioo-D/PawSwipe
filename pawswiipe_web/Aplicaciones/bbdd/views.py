@@ -32,15 +32,15 @@ def home(request):
             except Usuario.DoesNotExist:
                 print("Usuario no encontrado en la base de datos")
             print("Usuario autenticado:", request.user.is_authenticated)
-            if user.is_superuser:  # Check if the user is a superuser
-                return redirect('/admin/')  # Redirect to the admin page
+            if user.is_superuser:  # comprobar si el usuario es un administrador
+                return redirect('/admin/')  # si es administrador, redirigir a la página de administración
             else:
-                return redirect('feed')  # Redirect to the feed page for regular users
+                return redirect('feed')  # los usuarios normales son redirigidos a la página de inicio
         else:
             failed_attempts = request.session.get('failed_login_attempts', 0) + 1
             request.session['failed_login_attempts'] = failed_attempts
             if failed_attempts >= 3:
-                try:
+                try: # bloquear la cuenta si el usuario ha intentado iniciar sesión 3 veces sin éxito
                     usuario = Usuario.objects.get(mail=mail)
                     usuario.is_active = False
                     usuario.save()

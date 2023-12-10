@@ -31,7 +31,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    # Agregar related_name a los campos groups y user_permissions
+    
     groups = models.ManyToManyField(
         'auth.Group',
         blank=True,
@@ -83,14 +83,6 @@ class RegistroInicioSession(models.Model):
     def __str__(self):
         return f'{self.mail} {self.timestamp} {self.login_exitoso} {self.sistema}'
 
-""" def autentificador(mail, password):
-    try:
-        user = get_object_or_404(Usuario, mail=mail)
-        if check_password(password, user.password):
-            return user
-        else:
-            return None
-    except Usuario.DoesNotExist:
-        return None"""
+
     
  
