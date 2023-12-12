@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from requests import Response
 from Aplicaciones.bbdd.models import Usuario, RegistroInicioSession
 from Aplicaciones.forms.formulario import UsuarioForm
 from Aplicaciones.forms.formularioLogin import LoginForm
@@ -9,7 +10,10 @@ from django.contrib.auth import  login, logout, authenticate
 from .decorators import redirigirUsuarios , validar_contrasena
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
-
+from rest_framework import status
+from rest_framework.decorators import api_view
+from .serializers import UsuarioSerializer
+from rest_framework.response import Response
 
 @login_required(login_url='home')
 def feed(request):
@@ -126,4 +130,13 @@ def modificarDatos(request):
         return redirect('perfil')
     else:
         formulario = UsuarioForm(instance=user)
-        return render(request, 'perfilUsuario.html', {'form': formulario})  
+        return render(request, 'perfilUsuario.html', {'form': formulario})
+    
+@api_view(['POST'])
+def registrar_usuario(request):
+    if request.method == 'POST':
+        serializer = UsuarioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

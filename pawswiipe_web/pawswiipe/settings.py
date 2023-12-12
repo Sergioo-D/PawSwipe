@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
+ALLOWED_HOSTS = ['10.1.105.45']  # Reemplaza esto con tu dirección IP
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
     'Aplicaciones.bbdd',
     'Aplicaciones.forms',
     'Aplicaciones.templates',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [

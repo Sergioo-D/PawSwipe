@@ -28,4 +28,6 @@ urlpatterns = [
     path("perfil/",perfil, name="perfil"),
     path("eliminarCuenta/",eliminarCuenta, name="eliminarCuenta"),
     path("modificarDatos/",modificarDatos, name="modificarDatos"),
+    #path('api/login/', api_login, name='api_login'),
+    path('registrar/', registrar_usuario, name='registrar_usuario'),
 ]
