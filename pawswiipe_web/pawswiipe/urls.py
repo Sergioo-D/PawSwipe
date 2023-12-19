@@ -30,4 +30,6 @@ urlpatterns = [
     path("modificarDatos/",modificarDatos, name="modificarDatos"),
     #path('api/login/', api_login, name='api_login'),
     path('registrar/', registrar_usuario, name='registrar_usuario'),
+    path('logear/', login_usuario, name='login_usuario'),
+    path('cerrar_sesion/', cerrarSesion, name='cerrar_sesion'),
 ]

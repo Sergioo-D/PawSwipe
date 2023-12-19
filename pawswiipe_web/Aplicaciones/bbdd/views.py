@@ -12,8 +12,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .serializers import UsuarioSerializer
+from .serializers import UsuarioSerializer , LoginSerializer
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
 @login_required(login_url='home')
 def feed(request):
@@ -41,6 +42,8 @@ def home(request):
             else:
                 return redirect('feed')  # los usuarios normales son redirigidos a la página de inicio
         else:
+            usuario = Usuario.objects.get(mail=mail)
+            RegistroInicioSession.objects.create(mail=usuario, login_exitoso=False, sistema=sistema)
             failed_attempts = request.session.get('failed_login_attempts', 0) + 1
             request.session['failed_login_attempts'] = failed_attempts
             if failed_attempts >= 3:
@@ -134,9 +137,44 @@ def modificarDatos(request):
     
 @api_view(['POST'])
 def registrar_usuario(request):
+    print(request.data)
     if request.method == 'POST':
         serializer = UsuarioSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            password = serializer.validated_data.get('password')
+            """ if not validar_contrasena(password=password):
+                return Response({"error": 'La contraseña debe contener al menos una letra mayúscula, una minúscula, un número y un carácter especial'}, status=status.HTTP_400_BAD_REQUEST) """
+            encriptar = make_password(password)
+            serializer.validated_data['password'] = encriptar
+            user = serializer.save()
+            respuesta_data = serializer.data
+            respuesta_data["message"] = 1
+            return Response(respuesta_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def login_usuario(request):
+   
+    if request.method == 'POST':
+        serializer = LoginSerializer(data=request.data)
+        print("Datos de la solicitud:", request.data)
+        if serializer.is_valid():
+            mail = serializer.validated_data.get('mail')
+            password = serializer.validated_data.get('password')
+            user = authenticate(request, username=mail, password=password)
+
+            if user is not None:
+                token, created = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key, 'message': '1'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Usuario o contraseña incorrectos','message': '0'})
+        else:
+            print("Datos de la solicitud no válidos:", serializer.errors)
+            return Response({'error': 'Datos de la solicitud no válidos', 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def cerrarSesion(request):
+    if request.method == 'POST':
+        request.user.auth_token.delete()
+        return Response({'message': '1'}, status=status.HTTP_200_OK)
+    return Response({'message': '0'}, status=status.HTTP_400_BAD_REQUEST)    
