@@ -85,4 +85,15 @@ class RegistroInicioSession(models.Model):
 
 
     
- 
+class MensajeDirecto(models.Model):
+    emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="emisor")
+    receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="receptor")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    mensaje = models.TextField()
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "mensajeDirecto"
+
+    def __str__(self):
+        return f'{self.emisor} {self.receptor} {self.timestamp} {self.mensaje}'

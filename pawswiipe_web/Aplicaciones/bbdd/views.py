@@ -177,4 +177,8 @@ def cerrarSesion(request):
     if request.method == 'POST':
         request.user.auth_token.delete()
         return Response({'message': '1'}, status=status.HTTP_200_OK)
-    return Response({'message': '0'}, status=status.HTTP_400_BAD_REQUEST)    
+    return Response({'message': '0'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def enviarMensajes(request):
+    
