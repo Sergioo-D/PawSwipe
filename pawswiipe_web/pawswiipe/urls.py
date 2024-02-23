@@ -32,4 +32,17 @@ urlpatterns = [
     path('registrar/', registrar_usuario, name='registrar_usuario'),
     path('logear/', login_usuario, name='login_usuario'),
     path('cerrar_sesion/', cerrarSesion, name='cerrar_sesion'),
+    path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
+    path('chat/<str:slug>/', chat, name='chat'),
+    path('enviar_mensaje/<str:slug>/', enviar_mensaje, name='enviar_mensaje'),
+    path('inbox/', inbox, name='inbox'),
+    path('obtener_datos/',obtener_datos_usuario, name='obtener_datos'),
+    path('borrar_usuario/',borrar_usuario, name='borrar_usuario'),
+    path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
+    path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
+    path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
 ]
+
+"""  ,
+    path('search-users/', search_users, name='search_users'),
+    path('send_direct/', send_direct, name='send_direct'), """

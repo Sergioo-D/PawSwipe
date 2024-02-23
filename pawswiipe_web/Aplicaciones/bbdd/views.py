@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from requests import Response
-from Aplicaciones.bbdd.models import Usuario, RegistroInicioSession
+from Aplicaciones.bbdd.models import *
 from Aplicaciones.forms.formulario import UsuarioForm
 from Aplicaciones.forms.formularioLogin import LoginForm
 from django.contrib import messages
@@ -15,6 +15,8 @@ from rest_framework.decorators import api_view
 from .serializers import UsuarioSerializer , LoginSerializer
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 @login_required(login_url='home')
 def feed(request):
@@ -180,5 +182,151 @@ def cerrarSesion(request):
     return Response({'message': '0'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def enviarMensajes(request):
+@api_view(['POST'])
+def obtener_datos_usuario(request):
+    mail = request.data.get('email')
+    print(mail)
+    try:
+        user = Usuario.objects.get(mail=mail)
+        return Response({
+            'username': user.nombreUsuario,
+            'fullname': user.nombreReal,
+            'email': user.mail,
+            'message': '1'
+        })
+    except ObjectDoesNotExist:
+        return Response({'message': 'Usuario no encontrado'}, status=404)
     
+@api_view(['POST'])
+def borrar_usuario(request):
+    email = request.data.get('email')
+    try:
+        user = Usuario.objects.get(mail=email)
+        user.delete()
+        return Response({'message': '1'})
+    except ObjectDoesNotExist:
+        return Response({'message': 'Usuario no encontrado'}, status=404)    
+
+@api_view(['POST'])
+def modificar_usuario(request):
+    email = request.data.get('email')
+    username = request.data.get('username')
+    fullname = request.data.get('fullname')
+    print(email, username, fullname)
+    try:
+        user = Usuario.objects.get(mail=email)
+        user.nombreUsuario = username
+        user.nombreReal = fullname
+        user.save()
+        return Response({'message': '1'})
+    except ObjectDoesNotExist:
+        return Response({'message': 'Usuario no encontrado'}, status=404)
+
+
+@api_view(['POST'])
+def bloquear_cuenta(request):
+    email = request.data.get('email')
+    print(email)
+    try:
+        user = Usuario.objects.get(mail=email)
+        user.is_active = False
+        user.save()
+        return Response({'message': '1'})
+    except ObjectDoesNotExist:
+        return Response({'message': 'Usuario no encontrado'}, status=404)
+
+
+
+@login_required
+def inbox(request):
+    user = request.user
+    msgs = MensajeDirecto.getMessages(user = user)
+    active_direct = None
+    direct = None
+    salas = Sala.objects.all()  # Obtiene todas las salas
+
+    if msgs:
+        msg = msgs[0]
+        active_direct = msg['user'].mail
+        direct = MensajeDirecto.objects.filter(user=user, receptor = msg['user'])
+        direct.update(is_read=True)
+
+        for msg in msgs:
+            if msg['user'].mail == active_direct:
+                msg['unread'] = 0
+        context = {
+            'directs': direct,
+            'active_direct': active_direct,
+            'msgs': msgs,
+            'salas': salas,  # Añade las salas al contexto
+        }
+    else:
+        context = {
+            'directs': None,
+            'active_direct': None,
+            'msgs': [],
+            'salas': salas,  # Añade las salas al contexto
+        }
+
+    return render(request, 'inbox.html', context)     
+
+def search_users(request):
+    query = request.GET.get('q')
+    object_list = Usuario.objects.filter(
+        Q(mail__icontains=query)
+    )
+    context = {
+        'users': object_list
+    }
+    return render(request, 'buscarUsuario.html', context)
+
+def send_direct(request):
+    emisor = request.user
+    print(emisor)
+    receptor_username = request.POST.get('receptor')
+    print(receptor_username)
+    mensaje = request.POST.get('mensaje')
+
+    if request.method == 'POST':
+        receptor = Usuario.objects.get(mail=receptor_username)
+        print(receptor)
+        print(emisor)
+        print(mensaje)
+        MensajeDirecto.sendMessage(emisor=request.user, receptor=receptor, mensaje=mensaje)
+        return render(request, 'inbox.html')
+    print(request.POST)
+
+
+
+def iniciar_chat(request, receptor):
+    emisor = request.user
+    #receptor = Usuario.objects.get(mail=receptor)
+
+    sala, created = Sala.objects.get_or_create(
+         Q(emisor=emisor), #receptor=receptor),  #Q(emisor=receptor, receptor=emisor),
+        defaults={'emisor': emisor, 'receptor': receptor, 'slug': uuid.uuid4()}
+    )
+    salas = Sala.objects.filter(Q(emisor=emisor) | Q(receptor=emisor))
+    print(salas,"hola")
+    return render(request, 'inbox.html','chat.html' ,{'salas': salas})
+
+def chat(request,slug):
+    sala = Sala.objects.get(slug=slug)
+    if request.user not in [sala.emisor, sala.receptor]:
+        return redirect('inbox')
+    mensajes = MensajeDirecto.objects.filter(Q(emisor=sala.emisor, receptor=sala.receptor) | Q(emisor=sala.receptor, receptor=sala.emisor))
+    salas = Sala.objects.filter(Q(emisor=sala.emisor) | Q(receptor=sala.emisor))
+    return render(request, 'chat.html', {'sala': sala, 'mensajes': mensajes,'salas': salas})
+
+def enviar_mensaje(request,slug):
+    sala = get_object_or_404(Sala, slug=slug)
+    mensaje = request.POST.get('mensaje')
+
+    if request.method == 'POST':
+        MensajeDirecto.objects.create(
+            user=request.user,
+            emisor=request.user,
+            receptor=sala.receptor if request.user == sala.emisor else sala.emisor,
+            mensaje=mensaje
+        )
+        return redirect('chat', slug=sala.slug)

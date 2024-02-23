@@ -81,6 +81,12 @@
                 <button type="submit">Eliminar Cuenta</button>
             </form>
         </div>
+        <form method="post" action="{% url 'iniciar_chat' Sala.receptor}">
+            {% csrf_token %}
+            <button type="submit">Mensaje</button>
+        </form>
+
+
     </div>
 
     <script>
