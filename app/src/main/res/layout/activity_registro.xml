@@ -117,24 +117,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTextTextPassword2"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/editTextTextEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLogo"
-        app:layout_constraintVertical_bias="1.0"
-        app:passwordToggleEnabled="true">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etpass"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:hint="@string/contrase_a"
-            android:background="@color/white"/>
-    </com.google.android.material.textfield.TextInputLayout>
+<!--  m-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

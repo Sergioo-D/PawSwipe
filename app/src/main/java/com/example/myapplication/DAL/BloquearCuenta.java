@@ -16,8 +16,8 @@ import com.example.myapplication.Modelo.Usuario;
 import java.util.HashMap;
 import java.util.Map;
 
-public class showDataUser {
-    public void datosUser(String url, Context contexto, Usuario user, Response.Listener<String> listener) {
+public class BloquearCuenta {
+    public void bloquearCuenta(String url, Context contexto, Usuario user, Response.Listener<String> listener) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 url,
                 response -> {

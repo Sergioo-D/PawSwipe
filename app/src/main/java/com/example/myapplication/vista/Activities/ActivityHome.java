@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -76,24 +77,36 @@ public class ActivityHome extends AppCompatActivity {
                 String email = getIntent().getStringExtra("EMAIL");
                 Usuario user = new Usuario(email);
                 DeleteUser delete = new DeleteUser();
-                delete.borrarUsuario("https://uselessutilities.net/ProyetoDAM/deleteUser.php", ActivityHome.this, user, new Response.Listener<String>() {
+                delete.borrarUsuario("http://10.1.105.37:8000/borrar_usuario/", ActivityHome.this, user, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if (response.equalsIgnoreCase("1")){
-                            Log.d("RESPONSE_TAG", "Response from server: " + response);
-                            Toast.makeText(ActivityHome.this, "Cuenta eliminada", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(ActivityHome.this, ActivityLogin.class);
-                            startActivity(intent);
-                            finish();
-                        }else{Log.d("RESPONSE_TAG", "Response from server: " + response);}
+                        try {
+                            Log.d("Response", response);
+                            JSONObject jsonObject = new JSONObject(response);
+                            String message = jsonObject.getString("message");
+                                if (message.equals("1")){
+                                Log.d("RESPONSE_TAG", "Response from server: " + response);
+                                Toast.makeText(ActivityHome.this, "Cuenta eliminada", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(ActivityHome.this, ActivityLogin.class);
+                                startActivity(intent);
+                                finish();
+                                }else{Log.d("RESPONSE_TAG", "Response from server: " + response);}
+                        } catch (JSONException e) {
+                        Log.e("JSONException", "Error parsing JSON: " + e.getMessage());
                     }
+                }
                 });
                 return true;
-            case R.id.modificar:
-                String correo = getIntent().getStringExtra("EMAIL");
-                Intent intent_update = new Intent(ActivityHome.this, ActivityModificar.class);
-                intent_update.putExtra("EMAIL", correo);
-                startActivity(intent_update);
+//            case R.id.modificar:
+//                String correo = getIntent().getStringExtra("EMAIL");
+//                Intent intent_update = new Intent(ActivityHome.this, ActivityModificar.class);
+//                intent_update.putExtra("EMAIL", correo);
+//                startActivity(intent_update);
+//                finish();
+//                return true;
+            case R.id.md:
+                Intent intent_md = new Intent(ActivityHome.this, ActivityMD.class);
+                startActivity(intent_md);
                 finish();
                 return true;
             default:
@@ -117,7 +130,7 @@ public class ActivityHome extends AppCompatActivity {
         if (email != null) {
             Usuario user = new Usuario(email);
             showDataUser data = new showDataUser();
-            data.datosUser("https://uselessutilities.net/ProyetoDAM/getDataUser.php",
+            data.datosUser("http://10.1.105.37:8000/obtener_datos/",
                     ActivityHome.this, user, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {

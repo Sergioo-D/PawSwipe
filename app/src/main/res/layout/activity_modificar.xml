@@ -45,4 +45,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNfullname"
         app:layout_constraintVertical_bias="0.144" />
+
+    <ImageView
+        android:id="@+id/foto_perfil"
+        android:layout_width="177dp"
+        android:layout_height="133dp"
+        app:layout_constraintBottom_toTopOf="@+id/etNusername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.456"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.846"
+        app:srcCompat="@drawable/logoapk1"
+        android:clickable="true"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

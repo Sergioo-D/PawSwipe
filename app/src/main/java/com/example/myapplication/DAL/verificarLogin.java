@@ -10,31 +10,42 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.Modelo.Usuario;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class verificarLogin {
 
-    public void login (String url, Context contexto, Usuario usuario, Response.Listener<String> callback){
+    public void login (String url, Context contexto, Usuario usuario, Response.Listener<String> callback, Response.ErrorListener errorListener){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 response -> {
                         callback.onResponse(response);
 
                     },
                 error -> {
-                    callback.onResponse(error.getMessage());
+                    errorListener.onErrorResponse(error);
 
                 }
                 ){
-            @Nullable
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> datosUsuario = new HashMap<>();
-                datosUsuario.put("email", usuario.getEmail());
-                datosUsuario.put("password", usuario.getPassword());
-                return datosUsuario;
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
-
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    JSONObject jsonBody = new JSONObject();
+                    jsonBody.put("mail", usuario.getEmail());
+                    jsonBody.put("password", usuario.getPassword());
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (JSONException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
         };
         RequestQueue requestQueue = Volley.newRequestQueue(contexto);
         requestQueue.add(stringRequest);

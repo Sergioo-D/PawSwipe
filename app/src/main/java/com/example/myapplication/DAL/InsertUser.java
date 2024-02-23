@@ -13,34 +13,45 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.Modelo.Usuario;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class InsertUser {
 
-    public void insertarUsuario(String url, Context contexto, Usuario user, Response.Listener<String> callback) {
+    public void insertarUsuario(String url, Context contexto, Usuario user, Response.Listener<String> callback, Response.ErrorListener errorListener) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                 url,
                 response -> {
                         callback.onResponse(response);
                 },
                 error -> {
-                    callback.onResponse(error.getMessage());
-                    Log.d("Hola", error.getMessage().toString());
+                    errorListener.onErrorResponse(error);
 
                 }
         ){
-            @Nullable
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> datosUsuario = new HashMap<>();
-                datosUsuario.put("username", user.getUserName());
-                datosUsuario.put("password", user.getPassword());
-                datosUsuario.put("fullname", user.getFullName());
-                datosUsuario.put("email", user.getEmail());
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
 
-                return datosUsuario;
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    JSONObject jsonBody = new JSONObject();
+                    jsonBody.put("nombreUsuario", user.getUserName());
+                    jsonBody.put("mail", user.getEmail());
+                    jsonBody.put("nombreReal", user.getFullName());
+                    jsonBody.put("password", user.getPassword());
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (JSONException | UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
         };
 

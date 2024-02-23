@@ -12,6 +12,7 @@
     <string name="registrarse" translatable="false">Registrarse</string>
     <string name="terminos_condiciones" translatable="false">He leido y acepto los terminos y condiciones</string>
     <string name="fecha_de_nacimiento" translatable="false">Fecha de nacimiento</string>
+    <string name="buscar" translatable="true">Buscar</string>
 
     <string-array name="meses">
         <item>mes</item>
@@ -91,6 +92,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="guardar_cambios">Guardar cambios</string>
+    <string name="mensajes">Mensajes</string>
 
 
 </resources>
