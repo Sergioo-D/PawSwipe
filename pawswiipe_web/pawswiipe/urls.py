@@ -41,6 +41,7 @@ urlpatterns = [
     path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
     path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
     path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
+    path('chattt/', chattt, name='chattt'),
 ]
 
 """  ,

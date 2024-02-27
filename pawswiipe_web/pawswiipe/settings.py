@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-%fr2gm5q^3nyr2ur50f1xxgfh#9*)vj-9w$ku*^2er(^jf^do9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.1.105.56', 'localhost', '127.0.0.1','10.1.105.37']
+ALLOWED_HOSTS = ['10.1.105.56', 'localhost', '127.0.0.1','10.1.105.37','10.1.105.14']
 
 
 # Application definition
@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'Aplicaciones.templates',
     'rest_framework',
     'rest_framework.authtoken',
+    'channels',
+    'Aplicaciones.chat',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +85,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pawswiipe.wsgi.application'
+ASGI_APPLICATION = 'pawswiipe.asgi.application'
 
+Chanel_LAYERS = {
+    "default":{
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

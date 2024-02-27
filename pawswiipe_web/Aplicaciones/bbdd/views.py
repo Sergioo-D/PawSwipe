@@ -330,3 +330,6 @@ def enviar_mensaje(request,slug):
             mensaje=mensaje
         )
         return redirect('chat', slug=sala.slug)
+    
+def chattt(request):
+    return render(request, 'chatprueba3.html')    
