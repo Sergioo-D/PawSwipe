@@ -175,22 +175,8 @@ class Post(models.Model):
         return reverse('post-detail', args=[str(self.id)])  
 
 
-class Perfil(models.Model):
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE,related_name="perfil")
-    firs_name = models.CharField(max_length=50,null=True, blank=True)
-    lasT_name = models.CharField(max_length=50,null=True, blank=True)
-    location = models.CharField(max_length=50,null=True, blank=True)
-    url = models.URLField(null=True, blank=True,max_length=1000)
-    bio = models.TextField(null=True, blank=True,max_length=150)
-    created = models.DateTimeField(auto_now_add=True)
-    foto = models.ImageField(upload_to='fotos', blank=True, null=True,verbose_name="Foto de perfil")
-    favorite = models.ManyToManyField(Post)
 
-    class Meta:
-        db_table = "perfil"
-
-    def __str__(self):
-        return f'{self.usuario} {self.foto}'
-    
-   
+class perfil(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+    fotoPerfil = models.ImageField(upload_to = user_directory_path, verbose_name="Foto de perfil")   
       
