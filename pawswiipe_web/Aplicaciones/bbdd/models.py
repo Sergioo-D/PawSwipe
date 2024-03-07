@@ -143,7 +143,7 @@ class Sala(models.Model):
     def _str_(self):
         return self.nombre    
 
-class Tag(models.Model):
+""" class Tag(models.Model):
     title = models.CharField(max_length=75, verbose_name="Título")
     slug = models.SlugField(null = False , unique = True, default = uuid.uuid4)
 
@@ -172,11 +172,15 @@ class Post(models.Model):
     likes = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-        return reverse('post-detail', args=[str(self.id)])  
+        return reverse('post-detail', args=[str(self.id)])  """ 
 
 
 
 class perfil(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-    fotoPerfil = models.ImageField(upload_to = user_directory_path, verbose_name="Foto de perfil")   
+    fotoPerfil = models.ImageField(upload_to = user_directory_path, verbose_name="Foto de perfil")
+
+    def __str__(self):
+        return self.usuario.mail
+
       

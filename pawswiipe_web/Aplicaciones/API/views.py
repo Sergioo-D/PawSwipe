@@ -1,3 +1,4 @@
+from django.forms import ImageField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from requests import Response
@@ -96,12 +97,25 @@ def modificar_usuario(request):
     email = request.data.get('email')
     username = request.data.get('username')
     fullname = request.data.get('fullname')
+    fotoPerfil = request.FILES.get('fotoPerfil')  # Obtén la imagen de perfil del request
     print(email, username, fullname)
+    print("foto de perfil:", fotoPerfil)
     try:
         user = Usuario.objects.get(mail=email)
-        user.nombreUsuario = username
-        user.nombreReal = fullname
+        
+        # Solo actualiza los campos si se proporcionan
+        if username:
+            user.nombreUsuario = username
+        if fullname:
+            user.nombreReal = fullname
         user.save()
+
+        """ # Actualiza la imagen de perfil
+        perfil_usuario = perfil.objects.get(usuario=user)
+        if fotoPerfil is not None:
+            perfil_usuario.fotoPerfil = ImageField(fotoPerfil)
+            perfil_usuario.save() """
+
         return Response({'message': '1'})
     except ObjectDoesNotExist:
         return Response({'message': 'Usuario no encontrado'}, status=404)

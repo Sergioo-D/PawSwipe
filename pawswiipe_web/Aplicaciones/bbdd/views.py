@@ -37,6 +37,7 @@ def home(request):
                 usuario = Usuario.objects.get(mail=mail)
                 RegistroInicioSession.objects.create(mail=usuario, login_exitoso=True, sistema=sistema)
             except Usuario.DoesNotExist:
+                messages.error(request, 'Usuario o contraseña incorrectos')
                 print("Usuario no encontrado en la base de datos")
             print("Usuario autenticado:", request.user.is_authenticated)
             if user.is_superuser:  # comprobar si el usuario es un administrador
@@ -44,18 +45,18 @@ def home(request):
             else:
                 return redirect('feed')  # los usuarios normales son redirigidos a la página de inicio
         else:
-            usuario = Usuario.objects.get(mail=mail)
-            RegistroInicioSession.objects.create(mail=usuario, login_exitoso=False, sistema=sistema)
-            failed_attempts = request.session.get('failed_login_attempts', 0) + 1
-            request.session['failed_login_attempts'] = failed_attempts
-            if failed_attempts >= 3:
-                try: # bloquear la cuenta si el usuario ha intentado iniciar sesión 3 veces sin éxito
-                    usuario = Usuario.objects.get(mail=mail)
+            try:
+                usuario = Usuario.objects.get(mail=mail)
+                RegistroInicioSession.objects.create(mail=usuario, login_exitoso=False, sistema=sistema)
+                failed_attempts = request.session.get('failed_login_attempts', 0) + 1
+                request.session['failed_login_attempts'] = failed_attempts
+                if failed_attempts >= 3:
                     usuario.is_active = False
                     usuario.save()
                     messages.error(request, 'Se ha bloqueado su cuenta por intentar iniciar sesión 3 veces sin éxito')
-                except Usuario.DoesNotExist:
-                    print("Usuario no encontrado en la base de datos")    
+            except Usuario.DoesNotExist:
+                messages.error(request, 'Usuario o contraseña incorrectos')
+                print("Usuario no encontrado en la base de datos")    
     return render(request, 'login.html')
 
 
@@ -98,7 +99,7 @@ def logOut(request):
     return redirect(home)
 
 @login_required(login_url='home')
-def perfil(request):
+def perfiil(request):
     mail = request.user.mail
     print("Usuario autenticado:" ,request.user.is_authenticated)
     return render(request, 'perfilUsuario.html', {'mail': mail})
