@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="es">
+    {%load static%}    
+{% block content %}    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pawswipe</title>
+    <style>
+        body {
+            background-color: #ffe6b3; /* Fondo naranja claro */
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .toolbar {
+            background-color: #ff9900; /* Barra de herramientas naranja oscuro */
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-button {
+            background-color: white;
+            color: #ff9900; /* Color del texto naranja oscuro */
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #ffcc80; /* Cambio de color al pasar el ratón */
+        }
+
+        .content {
+            padding: 20px;
+        }
+        .profile-button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffcc80;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.profile-button:hover {
+    background-color: #ffcc80; /* Cambio de color al pasar el ratón */
+}
+.centrarBotones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <img src="{% static "imagenes/logo_golpepata.jpeg" %}"  style="float: left;width:30px;height:30px;">
+        <span></span> <!-- Espacio en blanco para ajustar la posición -->
+        <div class="center-buttons">
+            <a href="{% url 'perfil' %}" class="profile-button">Perfil</a>
+            <a href="{% url 'feed' %}" class="profile-button">Feed</a>
+        </div>
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+
+        <a href = "/inbox">
+            <img src="{% static "imagenes/Sobreinbox.png" %}"  style="float: right;width:30px;height:30px;">
+        </a>
+    </div>
+    
+        {% block contenido %}
+        {% endblock %}
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuario</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in usuarios%}
+            <tr>
+                <td>
+                    {% c.nombreUsuario %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

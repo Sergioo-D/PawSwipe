@@ -1,0 +1,29 @@
+{% extends 'inbox.html' %}
+
+{% block contenido %}
+<div class="container">
+    {% block chatrooms %}
+    <div class="chatrooms">
+        <!-- Aquí heredamos la columna izquierda con los chatrooms -->
+        {{ block.super }}
+    </div>
+    {% endblock %}
+    <div class="chat">
+        <!-- Aquí colocamos el contenido específico del chat -->
+        {% for mensaje in mensajes %}
+        <div>
+            {% if mensaje.emisor == request.user %}
+                <div style="text-align: right;">{{ mensaje.mensaje }}</div>
+            {% else %}
+                <div style="text-align: left;">{{ mensaje.mensaje }}</div> 
+            {% endif %}
+        </div>
+        {% endfor %}
+        <form method="post" action="{% url 'enviar_mensaje' sala.slug %}">
+            {% csrf_token %}
+            <input type="text" name="mensaje" placeholder="Escribe un mensaje...">
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+</div>
+{% endblock %}

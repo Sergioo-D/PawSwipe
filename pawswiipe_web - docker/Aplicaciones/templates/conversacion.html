@@ -1,0 +1,16 @@
+<h1>{{ conversacion.usuario1.nombreUsuario }} y {{ conversacion.usuario2.nombreUsuario }}</h1>
+
+<div class="message-container">
+    {% for mensaje in mensajes %}
+        <p>{{ mensaje.emisor.nombreUsuario }}: {{ mensaje.mensaje }}</p>
+    {% endfor %}
+</div>
+
+<div class="message-input">
+    <form action="{% url 'enviarMensajes' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="conversacion_id" value="{{ conversacion.id }}">
+        <input type="text" name="mensaje" placeholder="Escribe un mensaje...">
+        <button type="submit">Enviar</button>
+    </form>
+</div>
