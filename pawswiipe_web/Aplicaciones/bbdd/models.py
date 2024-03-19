@@ -178,7 +178,7 @@ class Post(models.Model):
 
 class perfil(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-    fotoPerfil = models.ImageField(upload_to = user_directory_path, verbose_name="Foto de perfil")
+    fotoPerfil = models.CharField(max_length=255, verbose_name="Foto de perfil")
 
     def __str__(self):
         return self.usuario.mail

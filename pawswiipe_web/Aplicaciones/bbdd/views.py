@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from requests import Response
@@ -59,8 +61,13 @@ def home(request):
                 print("Usuario no encontrado en la base de datos")    
     return render(request, 'login.html')
 
-
-
+def crear_perfil_default(user):
+    try:
+        imgd = os.path.join(settings.MEDIA_ROOT,'perfil_images/default.jpg')
+        perfil_default = perfil.objects.create(usuario=user, fotoPerfil=imgd)
+        perfil_default.save()
+    except Exception as e:
+        print(f"No se pudo crear el perfil predeterminado para {user.mail}: {e}")
 
 @redirigirUsuarios
 def registro(request):
@@ -84,8 +91,8 @@ def registro(request):
                     mail=formulario.cleaned_data.get('mail'),
                     fecha=formulario.cleaned_data.get('fecha')
                 )
-                
                 usuario.save()
+                crear_perfil_default(usuario)
                 return redirect(home)
         else:
             return render(request, "formRegistro.html", {"form": formulario})  # Devuelve una respuesta si el formulario no es válido

@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from Aplicaciones.bbdd.views import *
 from Aplicaciones.API.views import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 
 urlpatterns = [
@@ -43,7 +45,7 @@ urlpatterns = [
     path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
     path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
     path('chattt/', chattt, name='chattt'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 """  ,
     path('search-users/', search_users, name='search_users'),
