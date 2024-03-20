@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: proyectoDAM
+      MYSQL_USER: bogdanadmin
+      MYSQL_PASSWORD: n!H7Pm9~]w2CCy8?<|yB1apDc4[>BrdkC.#|zG5EQ
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1 # Asegúrate de cambiar esto y otras variables de entorno para producción
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:

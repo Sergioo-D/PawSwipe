@@ -1,36 +1,37 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from django.contrib.auth.models import User
+from Aplicaciones.bbdd.models import Sala
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
-    # Funcion para conectarse a la sala del chat
     async def connect(self):
-        # Obtener los identificadores de los usuarios
-        user1 = self.scope['url_route']['kwargs']['user1_id']
-        user2 = self.scope['url_route']['kwargs']['user2_id']
-        #Obterner la sala
-        self.room_name = f'chat_{user1}_{user2}'
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.slug = self.scope['url_route']['kwargs']['slug']
+        self.room_group_name = 'chat_%s' % self.slug
 
-        await self.channel_layer.group_add(
-            self.room_name,
-            self.room_group_name
-        )
+        # Obtener la sala por el slug
+        room = await self.get_room(self.slug)
 
-        await self.accept()
-    
-    # Funcion para desconectarse de la sala del chat
+        # Verificar si el usuario es parte de la sala
+        user = self.scope["user"]
+        if user == room.emisor or user == room.receptor:
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
+            await self.accept()
+        else:
+            await self.close()
+
     async def disconnect(self, close_code):
-        await self.channel_layer.discard(
-            self.room_name,
-            self.room_group_name
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
         )
-
-    # Funcion para recibir mensajes de la sala
 
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data) #Convertir de Json a python(diccionario)
+        text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
         await self.channel_layer.group_send(
@@ -40,10 +41,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': message
             }
         )
-    # Funcion para enviar mensajes a la sala
+
     async def chat_message(self, event):
         message = event['message']
 
-        await self.send(text_data=json.dumps({ #Convertir de python(diccionario) a Json
+        await self.send(text_data=json.dumps({
             'message': message
-        }))     
+        }))
+
+    @sync_to_async
+    def get_room(self, slug):
+        return Sala.objects.get(slug=slug)

@@ -15,9 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from Aplicaciones.bbdd.views import *
 from Aplicaciones.API.views import *
+from Aplicaciones.chat.views import *
 
 
 urlpatterns = [
@@ -42,7 +43,7 @@ urlpatterns = [
     path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
     path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
     path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
-    path('chattt/', chattt, name='chattt'),
+    path('chatt/',include('Aplicaciones.chat.urls')),
 ]
 
 """  ,

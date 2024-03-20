@@ -85,7 +85,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pawswiipe.wsgi.application'
-ASGI_APPLICATION = 'pawswiipe.asgi.application'
+ASGI_APPLICATION = "asgi.application"
 
 Chanel_LAYERS = {
     "default":{
