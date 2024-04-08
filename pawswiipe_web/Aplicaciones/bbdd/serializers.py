@@ -10,3 +10,8 @@ class RegistroInicioSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistroInicioSession
         fields = '__all__'
+
+
+class LoginSerializer(serializers.Serializer):
+        mail = serializers.CharField()
+        password = serializers.CharField()

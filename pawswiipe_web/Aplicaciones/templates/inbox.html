@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block styles %}
+    <style>
+        a{
+            text-decoration: none;
+            color: black;}
+        .container {
+            display: flex;
+        }
+        .chatrooms {
+            width: 30%;
+            height: 100vh;
+            border-right: 1px solid black;
+            overflow-y: auto;
+        }
+        .chatroom {
+            padding: 10px;
+            border-bottom: 1px solid black;
+            cursor: pointer;
+        }
+        .chatroom:hover {
+            background-color: #ddd;
+        }
+        .chat {
+            width: 70%;
+            height: 100vh;
+            overflow-y: auto;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    {% block contenido %}
+    <div class="chatrooms">
+        {% block chatrooms %}
+        {% for sala in salas %}
+        <a href="/chat/{{ sala.slug }}" class="chatroom">  {{ sala.receptor.nombreUsuario }}</a>
+        {% empty %}
+            <div>No hay salas disponibles.</div>
+        {% endfor %}
+        {% endblock %}
+    </div>
+    {% endblock %}
+  
+</body>
+</html>

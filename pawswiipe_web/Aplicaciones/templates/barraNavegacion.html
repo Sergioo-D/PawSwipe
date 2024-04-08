@@ -75,6 +75,10 @@
             {% csrf_token %}
             <button type="submit" class="logout-button">Logout</button>
         </form>
+
+        <a href = "/inbox">
+            <img src="{% static "imagenes/Sobreinbox.png" %}"  style="float: right;width:30px;height:30px;">
+        </a>
     </div>
     
         {% block contenido %}

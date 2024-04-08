@@ -17,7 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from Aplicaciones.bbdd.views import *
-from Aplicaciones.bbdd import views 
+from Aplicaciones.API.views import *
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls, name="admin"),
@@ -25,9 +28,25 @@ urlpatterns = [
     path("registro/",registro, name="registro"),
     path("feed/",feed, name="feed"),
     path("logout/",logOut, name="logout"),
-    path("perfil/",perfil, name="perfil"),
+    path("perfil/",perfiil, name="perfil"),
     path("eliminarCuenta/",eliminarCuenta, name="eliminarCuenta"),
     path("modificarDatos/",modificarDatos, name="modificarDatos"),
     #path('api/login/', api_login, name='api_login'),
     path('registrar/', registrar_usuario, name='registrar_usuario'),
-]
+    path('logear/', login_usuario, name='login_usuario'),
+    path('cerrar_sesion/', cerrarSesion, name='cerrar_sesion'),
+    path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
+    path('chat/<str:slug>/', chat, name='chat'),
+    path('enviar_mensaje/<str:slug>/', enviar_mensaje, name='enviar_mensaje'),
+    path('inbox/', inbox, name='inbox'),
+    path('obtener_datos/',obtener_datos_usuario, name='obtener_datos'),
+    path('borrar_usuario/',borrar_usuario, name='borrar_usuario'),
+    path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
+    path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
+    path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
+    path('chattt/', chattt, name='chattt'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+"""  ,
+    path('search-users/', search_users, name='search_users'),
+    path('send_direct/', send_direct, name='send_direct'), """

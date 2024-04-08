@@ -1,7 +1,9 @@
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from requests import Response
-from Aplicaciones.bbdd.models import Usuario, RegistroInicioSession
+from Aplicaciones.bbdd.models import *
 from Aplicaciones.forms.formulario import UsuarioForm
 from Aplicaciones.forms.formularioLogin import LoginForm
 from django.contrib import messages
@@ -12,8 +14,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .serializers import UsuarioSerializer
+from .serializers import UsuarioSerializer , LoginSerializer
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 @login_required(login_url='home')
 def feed(request):
@@ -34,6 +39,7 @@ def home(request):
                 usuario = Usuario.objects.get(mail=mail)
                 RegistroInicioSession.objects.create(mail=usuario, login_exitoso=True, sistema=sistema)
             except Usuario.DoesNotExist:
+                messages.error(request, 'Usuario o contraseña incorrectos')
                 print("Usuario no encontrado en la base de datos")
             print("Usuario autenticado:", request.user.is_authenticated)
             if user.is_superuser:  # comprobar si el usuario es un administrador
@@ -41,20 +47,27 @@ def home(request):
             else:
                 return redirect('feed')  # los usuarios normales son redirigidos a la página de inicio
         else:
-            failed_attempts = request.session.get('failed_login_attempts', 0) + 1
-            request.session['failed_login_attempts'] = failed_attempts
-            if failed_attempts >= 3:
-                try: # bloquear la cuenta si el usuario ha intentado iniciar sesión 3 veces sin éxito
-                    usuario = Usuario.objects.get(mail=mail)
+            try:
+                usuario = Usuario.objects.get(mail=mail)
+                RegistroInicioSession.objects.create(mail=usuario, login_exitoso=False, sistema=sistema)
+                failed_attempts = request.session.get('failed_login_attempts', 0) + 1
+                request.session['failed_login_attempts'] = failed_attempts
+                if failed_attempts >= 3:
                     usuario.is_active = False
                     usuario.save()
                     messages.error(request, 'Se ha bloqueado su cuenta por intentar iniciar sesión 3 veces sin éxito')
-                except Usuario.DoesNotExist:
-                    print("Usuario no encontrado en la base de datos")    
+            except Usuario.DoesNotExist:
+                messages.error(request, 'Usuario o contraseña incorrectos')
+                print("Usuario no encontrado en la base de datos")    
     return render(request, 'login.html')
 
-
-
+def crear_perfil_default(user):
+    try:
+        imgd = os.path.join(settings.MEDIA_ROOT,'perfil_images/default.jpg')
+        perfil_default = perfil.objects.create(usuario=user, fotoPerfil=imgd)
+        perfil_default.save()
+    except Exception as e:
+        print(f"No se pudo crear el perfil predeterminado para {user.mail}: {e}")
 
 @redirigirUsuarios
 def registro(request):
@@ -78,8 +91,8 @@ def registro(request):
                     mail=formulario.cleaned_data.get('mail'),
                     fecha=formulario.cleaned_data.get('fecha')
                 )
-                
                 usuario.save()
+                crear_perfil_default(usuario)
                 return redirect(home)
         else:
             return render(request, "formRegistro.html", {"form": formulario})  # Devuelve una respuesta si el formulario no es válido
@@ -93,10 +106,11 @@ def logOut(request):
     return redirect(home)
 
 @login_required(login_url='home')
-def perfil(request):
+def perfiil(request):
     mail = request.user.mail
+    perfil_usuario = perfil.objects.get(usuario=request.user)
     print("Usuario autenticado:" ,request.user.is_authenticated)
-    return render(request, 'perfilUsuario.html', {'mail': mail})
+    return render(request, 'perfilUsuario.html', {'mail': mail, 'perfil': perfil_usuario})
 
 
 def eliminarCuenta(request):
@@ -132,11 +146,100 @@ def modificarDatos(request):
         formulario = UsuarioForm(instance=user)
         return render(request, 'perfilUsuario.html', {'form': formulario})
     
-@api_view(['POST'])
-def registrar_usuario(request):
+
+@login_required
+def inbox(request):
+    user = request.user
+    msgs = MensajeDirecto.getMessages(user = user)
+    active_direct = None
+    direct = None
+    salas = Sala.objects.all()  # Obtiene todas las salas
+
+    if msgs:
+        msg = msgs[0]
+        active_direct = msg['user'].mail
+        direct = MensajeDirecto.objects.filter(user=user, receptor = msg['user'])
+        direct.update(is_read=True)
+
+        for msg in msgs:
+            if msg['user'].mail == active_direct:
+                msg['unread'] = 0
+        context = {
+            'directs': direct,
+            'active_direct': active_direct,
+            'msgs': msgs,
+            'salas': salas,  # Añade las salas al contexto
+        }
+    else:
+        context = {
+            'directs': None,
+            'active_direct': None,
+            'msgs': [],
+            'salas': salas,  # Añade las salas al contexto
+        }
+
+    return render(request, 'inbox.html', context)     
+
+def search_users(request):
+    query = request.GET.get('q')
+    object_list = Usuario.objects.filter(
+        Q(mail__icontains=query)
+    )
+    context = {
+        'users': object_list
+    }
+    return render(request, 'buscarUsuario.html', context)
+
+def send_direct(request):
+    emisor = request.user
+    print(emisor)
+    receptor_username = request.POST.get('receptor')
+    print(receptor_username)
+    mensaje = request.POST.get('mensaje')
+
     if request.method == 'POST':
-        serializer = UsuarioSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        receptor = Usuario.objects.get(mail=receptor_username)
+        print(receptor)
+        print(emisor)
+        print(mensaje)
+        MensajeDirecto.sendMessage(emisor=request.user, receptor=receptor, mensaje=mensaje)
+        return render(request, 'inbox.html')
+    print(request.POST)
+
+
+
+def iniciar_chat(request, receptor):
+    emisor = request.user
+    #receptor = Usuario.objects.get(mail=receptor)
+
+    sala, created = Sala.objects.get_or_create(
+         Q(emisor=emisor), #receptor=receptor),  #Q(emisor=receptor, receptor=emisor),
+        defaults={'emisor': emisor, 'receptor': receptor, 'slug': uuid.uuid4()}
+    )
+    salas = Sala.objects.filter(Q(emisor=emisor) | Q(receptor=emisor))
+    print(salas,"hola")
+    return render(request, 'inbox.html','chat.html' ,{'salas': salas})
+
+def chat(request,slug):
+    sala = Sala.objects.get(slug=slug)
+    if request.user not in [sala.emisor, sala.receptor]:
+        return redirect('inbox')
+    mensajes = MensajeDirecto.objects.filter(Q(emisor=sala.emisor, receptor=sala.receptor) | Q(emisor=sala.receptor, receptor=sala.emisor))
+    salas = Sala.objects.filter(Q(emisor=sala.emisor) | Q(receptor=sala.emisor))
+    return render(request, 'chat.html', {'sala': sala, 'mensajes': mensajes,'salas': salas})
+
+def enviar_mensaje(request,slug):
+    sala = get_object_or_404(Sala, slug=slug)
+    mensaje = request.POST.get('mensaje')
+
+    if request.method == 'POST':
+        MensajeDirecto.objects.create(
+            user=request.user,
+            emisor=request.user,
+            receptor=sala.receptor if request.user == sala.emisor else sala.emisor,
+            mensaje=mensaje
+        )
+        return redirect('chat', slug=sala.slug)
+    
+def chattt(request):
+    return render(request, 'chatprueba3.html')    
