@@ -121,8 +121,10 @@
 <body>
 <div class="contenedor">
     <h1>
-        <div class="fotoPerfil"></div>
-        Perfil de Usuario
+        <div class="fotoPerfil">
+            <img src="{{ perfil.fotoPerfil }}">
+            {{ perfil.fotoPerfil }}
+        </div>
     </h1>
     <div class="textoPerfil">
         <p>Nombre de usuario: {{ user.nombreUsuario }}</p>
@@ -132,8 +134,11 @@
     <button id="botonModificar" class="botonModificar">Modificar perfil</button>
     <div id="ventanaModificacion" class="ventanaModificacion">
         <span class="botonCerrar">&times;</span>
-        <form method="post" action="{% url 'modificarDatos' %}">
+        <form method="post" action="{% url 'modificarDatos' %}" enctype="multipart/form-data">
             {% csrf_token %}
+            <div class="fotoPerfil">
+                <input type="file" id="imagenPerfil" name="imagenPerfil">
+            </div>
             <label for="username">Nombre de usuario:</label>
             <input type="text" id="username" name="nombreUsuario" required>
             <label for="password">Contraseña:</label>

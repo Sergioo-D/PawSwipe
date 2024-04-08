@@ -108,8 +108,9 @@ def logOut(request):
 @login_required(login_url='home')
 def perfiil(request):
     mail = request.user.mail
+    perfil_usuario = perfil.objects.get(usuario=request.user)
     print("Usuario autenticado:" ,request.user.is_authenticated)
-    return render(request, 'perfilUsuario.html', {'mail': mail})
+    return render(request, 'perfilUsuario.html', {'mail': mail, 'perfil': perfil_usuario})
 
 
 def eliminarCuenta(request):
