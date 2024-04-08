@@ -1,0 +1,39 @@
+version: '3.7' # o la versión específica de Compose que estés utilizando
+
+services:
+  web:
+    build: .
+    command: /bin/bash -c "/app/wait-for-db.sh db 3306 && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+    environment:
+      DB_USER: bogdanadmin
+      DB_PASS: n!H7Pm9~]w2CCy8?<|yB1apDc4[>BrdkC.#|zG5EQ
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=caching_sha2_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: proyectoDAM
+      MYSQL_USER: bogdanadmin
+      MYSQL_PASSWORD: n!H7Pm9~]w2CCy8?<|yB1apDc4[>BrdkC.#|zG5EQ
+      MYSQL_ROOT_PASSWORD: tuContraseñaRoot
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
