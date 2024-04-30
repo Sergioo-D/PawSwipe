@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from requests import Response
 from Aplicaciones.bbdd.models import *
-from Aplicaciones.forms.formulario import UsuarioForm
+from Aplicaciones.forms.formulario import MascotaForm, UsuarioForm
 from Aplicaciones.forms.formularioLogin import LoginForm
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
@@ -61,13 +61,13 @@ def home(request):
                 print("Usuario no encontrado en la base de datos")    
     return render(request, 'login.html')
 
-def crear_perfil_default(user):
+def crear_perfil_default(mascota):
     try:
         imgd = os.path.join(settings.MEDIA_ROOT,'perfil_images/default.jpg')
-        perfil_default = perfil.objects.create(usuario=user, fotoPerfil=imgd)
+        perfil_default = Perfil.objects.create(mascota=mascota, fotoPerfil=imgd, numSeguidores=0, numSeguidos=0, totalPublicaciones=0)
         perfil_default.save()
     except Exception as e:
-        print(f"No se pudo crear el perfil predeterminado para {user.mail}: {e}")
+        print(f"No se pudo crear el perfil predeterminado para {mascota.nombre}: {e}")
 
 @redirigirUsuarios
 def registro(request):
@@ -92,14 +92,33 @@ def registro(request):
                     fecha=formulario.cleaned_data.get('fecha')
                 )
                 usuario.save()
-                crear_perfil_default(usuario)
-                return redirect(home)
+                return redirect(reverse('registro_mascota', args=[usuario.mail]))
         else:
             return render(request, "formRegistro.html", {"form": formulario})  # Devuelve una respuesta si el formulario no es válido
     else:
         formulario = UsuarioForm()
         return render(request, "formRegistro.html", {"form": formulario})
     
+def registro_mascota(request, mail):
+    usuario = Usuario.objects.get(mail=mail)
+    if request.method == 'POST':
+        form = MascotaForm(request.POST)
+        if form.is_valid():
+            nombre = form.cleaned_data.get('nombre')
+            if Mascota.objects.filter(nombre=nombre).exists():
+                messages.error(request, 'Este nombre de perfil ya existe')
+                return redirect('registro_mascota')
+            else:
+                mascota= Mascota(
+                    usuario=usuario,
+                    nombre=nombre,
+                    descripcion=form.cleaned_data.get('descripcion'),
+                )
+                mascota.save()
+            return redirect(home) 
+    else:
+        form = MascotaForm()
+    return render(request, 'formRegistroMascota.html', {'form': form, 'usuario': usuario})  
 
 def logOut(request):
     logout(request)
@@ -107,8 +126,8 @@ def logOut(request):
 
 @login_required(login_url='home')
 def perfiil(request):
-    mail = request.user
-    perfil_usuario = perfil.objects.get(usuario=request.user)
+    mail = request.user.mail
+    perfil_usuario = Perfil.objects.get(usuario=request.user)
     print("Usuario autenticado:" ,request.user.is_authenticated)
     return render(request, 'perfilUsuario.html', {'mail': mail, 'perfil': perfil_usuario})
 

@@ -174,13 +174,44 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', args=[str(self.id)])  """ 
 
-
-
-class perfil(models.Model):
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-    fotoPerfil = models.CharField(max_length=255, verbose_name="Foto de perfil")
+class Mascota(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mascotas')
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField()
 
     def __str__(self):
-        return self.usuario.mail
+        return self.nombre
+    
+class Perfil(models.Model):
+    mascota = models.OneToOneField(Mascota, on_delete=models.CASCADE, related_name='perfil')
+    fotoPerfil = models.CharField(max_length=255)
+    numSeguidores = models.IntegerField(default=0)
+    numSeguidos = models.IntegerField(default=0)
+    totalPublicaciones = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f'Perfil de {self.mascota.nombre}'
+
+# class perfil(models.Model):
+#     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+#     fotoPerfil = models.CharField(max_length=255, verbose_name="Foto de perfil")
+
+#     def __str__(self):
+#         return self.usuario.mail
+
+class Publicacion(models.Model):
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='publicaciones')
+    descripcion = models.TextField(blank=True)
+    fechaPublicacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Publicación de {self.perfil.mascota.nombre} el {self.fechaPublicacion}'
+
+class Imagen(models.Model):
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='imagenes')
+    urlImagen = models.URLField()
+    descripcionImagen = models.TextField(blank=True)
+
+    def __str__(self):
+        return f'Imagen de {self.publicacion.perfil.mascota.nombre}'
       

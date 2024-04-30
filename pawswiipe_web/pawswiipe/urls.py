@@ -33,6 +33,7 @@ urlpatterns = [
     path("modificarDatos/",modificarDatos, name="modificarDatos"),
     #path('api/login/', api_login, name='api_login'),
     path('registrar/', registrar_usuario, name='registrar_usuario'),
+    path('registro_mascota/<str:mail>/', registro_mascota, name='registro_mascota'),
     path('logear/', login_usuario, name='login_usuario'),
     path('cerrar_sesion/', cerrarSesion, name='cerrar_sesion'),
     path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
