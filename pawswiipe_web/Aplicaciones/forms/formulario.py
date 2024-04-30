@@ -1,6 +1,6 @@
 from django import forms
 
-from Aplicaciones.bbdd.models import Usuario
+from Aplicaciones.bbdd.models import Mascota, Usuario
 
 
 class UsuarioForm(forms.ModelForm):
@@ -26,3 +26,9 @@ class UsuarioForm(forms.ModelForm):
             'password': 'Máximo 255 caracteres',
             'nombreReal': 'Máximo 50 caracteres',
             'mail': 'Formato:'}
+        
+
+class MascotaForm(forms.ModelForm):
+    class Meta:
+        model = Mascota
+        fields = ['nombre', 'descripcion']

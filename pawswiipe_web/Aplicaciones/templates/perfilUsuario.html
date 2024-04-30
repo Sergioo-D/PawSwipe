@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     {% extends 'barraNavegacion.html' %}
     {% block contenido %}
@@ -29,14 +30,26 @@
 
         .fotoPerfil {
             width: 130px;
-            height: 120px;
+            /* Ajusta el ancho como necesites */
+            height: 130px;
+            /* Ajusta la altura como necesites */
             border-radius: 50%;
-            background-color: #ddd; /* Color de fondo temporal */
-            margin-right: 20px; /* Espacio entre la foto y el texto */
-            /* Si tienes una URL para la foto, puedes usar background-image */
-            /* background-image: url('ruta/a/tu/foto'); */
-            /* background-size: cover; */
-            /* background-position: center; */
+            /* Esto creará el efecto de círculo */
+            overflow: hidden;
+            /* Esto evitará que la imagen se desborde del círculo */
+            display: flex;
+            /* Esto centrará la imagen en el div */
+            align-items: center;
+            /* Alineación vertical */
+            justify-content: center;
+            /* Alineación horizontal */
+        }
+
+        .fotoPerfil img {
+            width: 100%;
+            /* Asegúrate de que la imagen llene el contenedor */
+            height: auto;
+            /* Esto mantendrá la relación de aspecto de la imagen */
         }
 
         .textoPerfil {
@@ -47,7 +60,8 @@
         }
 
         .textoPerfil p {
-            margin: 5px 20px; /* Espacio entre los textos */
+            margin: 5px 20px;
+            /* Espacio entre los textos */
         }
 
         form {
@@ -92,11 +106,14 @@
             display: none;
             position: fixed;
             z-index: 1;
-            left: 0; /* Ajuste al margen izquierdo */
+            left: 0;
+            /* Ajuste al margen izquierdo */
             top: 50%;
-            transform: translate(0, -50%); /* Ajuste para centrar verticalmente */
+            transform: translate(0, -50%);
+            /* Ajuste para centrar verticalmente */
             width: 80%;
-            max-width: 300px; /* Ancho máximo de la ventana */
+            max-width: 300px;
+            /* Ancho máximo de la ventana */
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
@@ -115,69 +132,71 @@
         .botonCerrar:hover {
             color: #333;
         }
-
     </style>
 </head>
+
 <body>
-<div class="contenedor">
-    <h1>
-        <div class="fotoPerfil">
-            <img src="{{ perfil.fotoPerfil }}">
-            {{ perfil.fotoPerfil }}
-        </div>
-    </h1>
-    <div class="textoPerfil">
-        <p>Nombre de usuario: {{ user.nombreUsuario }}</p>
-        <p>Publicaciones: XX</p>
-        <p>Seguidores: XX</p>
-    </div>
-    <button id="botonModificar" class="botonModificar">Modificar perfil</button>
-    <div id="ventanaModificacion" class="ventanaModificacion">
-        <span class="botonCerrar">&times;</span>
-        <form method="post" action="{% url 'modificarDatos' %}" enctype="multipart/form-data">
-            {% csrf_token %}
+    {% load static %}
+    <div class="contenedor">
+        <h1>
             <div class="fotoPerfil">
-                <input type="file" id="imagenPerfil" name="imagenPerfil">
+                <img src="{% static perfil.fotoPerfil %}" alt="Imagen de perfil">
             </div>
-            <label for="username">Nombre de usuario:</label>
-            <input type="text" id="username" name="nombreUsuario" required>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
-            <label for="repeatPassword">Repetir contraseña:</label>
-            <input type="password" id="repeatPassword" name="repeatPassword" required>
-            <button type="submit">Guardar cambios</button>
-        </form>
-        <form method="post" action="{% url 'eliminarCuenta' %}">
-            {% csrf_token %}
-            <input type="hidden" name="identificador" value="{{identificador}}">
-            <button type="submit">Eliminar Cuenta</button>
-        </form>
-        <form method="post" action="{% url 'iniciar_chat' Sala.receptor}">
-            {% csrf_token %}
-            <button type="submit">Aceptar</button>
-        </form>
+        </h1>
+        <div class="textoPerfil">
+            <p>Nombre de usuario: {{ mascota.nombre }}</p>
+            <p>Publicaciones: {{ mascota.numPublicaciones }}</p>
+            <p>Seguidores: {{ mascota.numSeguidores }}</p>
+            <p>Seguidos: {{ mascota.numSeguidos }}</p>
+        </div>
+        <button id="botonModificar" class="botonModificar">Modificar perfil</button>
+        <div id="ventanaModificacion" class="ventanaModificacion">
+            <span class="botonCerrar">&times;</span>
+            <form method="post" action="{% url 'modificarDatos' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="fotoPerfil">
+                    <input type="file" id="imagenPerfil" name="imagenPerfil">
+                </div>
+                <label for="username">Nombre de usuario:</label>
+                <input type="text" id="username" name="nombreUsuario" required>
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+                <label for="repeatPassword">Repetir contraseña:</label>
+                <input type="password" id="repeatPassword" name="repeatPassword" required>
+                <button type="submit">Guardar cambios</button>
+            </form>
+            <form method="post" action="{% url 'eliminarCuenta' %}">
+                {% csrf_token %}
+                <input type="hidden" name="identificador" value="{{identificador}}">
+                <button type="submit">Eliminar Cuenta</button>
+            </form>
+            <form method="post" action="{% url 'iniciar_chat' Sala.receptor}">
+                {% csrf_token %}
+                <button type="submit">Aceptar</button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    var ventanaModificacion = document.getElementById("ventanaModificacion");
-    var botonModificar = document.getElementById("botonModificar");
-    var botonCerrar = document.querySelector(".botonCerrar");
+    <script>
+        var ventanaModificacion = document.getElementById("ventanaModificacion");
+        var botonModificar = document.getElementById("botonModificar");
+        var botonCerrar = document.querySelector(".botonCerrar");
 
-    botonModificar.onclick = function () {
-        ventanaModificacion.style.display = "block";
-    };
+        botonModificar.onclick = function () {
+            ventanaModificacion.style.display = "block";
+        };
 
-    botonCerrar.onclick = function () {
-        ventanaModificacion.style.display = "none";
-    };
-
-    window.onclick = function (event) {
-        if (event.target == ventanaModificacion) {
+        botonCerrar.onclick = function () {
             ventanaModificacion.style.display = "none";
-        }
-    };
-</script>
-{% endblock %}
+        };
+
+        window.onclick = function (event) {
+            if (event.target == ventanaModificacion) {
+                ventanaModificacion.style.display = "none";
+            }
+        };
+    </script>
+    {% endblock %}
 </body>
+
 </html>

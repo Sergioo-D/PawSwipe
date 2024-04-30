@@ -71,21 +71,13 @@
     <main>
         <form method="post">
             {% csrf_token %}
-            <label for="id_nombreUsuario">Nombre de Usuario:</label>
-            {{ form.nombreUsuario }}
+            <label for="id_nombre">Nombre de perfil mascota:</label>
+            {{ form.nombre }}
             
-            <label for="id_password">Contraseña:</label>
-            {{ form.password }}
-            
-            <label for="id_nombreReal">Nombre Real:</label>
-            {{ form.nombreReal }}
-            
-            <label for="id_mail">Correo Electrónico:</label>
-            {{ form.mail }}
-            
-   
-            
-            <button type="submit">Registrar</button>
+            <label for="id_descripcion">Descripción:</label>
+            {{ form.descripcion }}
+
+            <button type="submit">Registrar Mascota</button>
         </form>
     </main>
 
