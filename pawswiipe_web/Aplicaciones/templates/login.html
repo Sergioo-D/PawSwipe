@@ -7,7 +7,7 @@
     {% load static %}
     <style>
         body {
-            background-image: url("{% static 'imagenes/fondoLogin.jpeg' %}");
+            background-image: url("{% static 'imagenes/fondo7.png' %}");
             background-size: cover;
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -19,10 +19,12 @@
         }
 
         div {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: white;
+            /* border: 3px solid #ff9900; */
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* width: 20%; */
         }
 
         h2 {
@@ -58,7 +60,7 @@
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #fe6803;
         }
         .boton-registro {
             margin-top: 5px;
@@ -66,7 +68,7 @@
             display: block;
 }
         .boton-registro:hover {
-            background-color: #45a049;
+            background-color: #fe6803;
         }
     </style>
 </head>
@@ -82,7 +84,7 @@
     <form method="post" action="{% url 'home' %}">
         {% csrf_token %}
 
-        <img src="{% static 'imagenes/logo_golpepata.jpeg' %}" alt="Logo" width="200" height="200" 
+        <img src="{% static 'imagenes/logo_golpepata.jpeg' %}" alt="Logo" width="220" height="220" 
         style="display: block; margin-left: auto; margin-right: auto;">
 
         <label for="mail">Correo:</label>

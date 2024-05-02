@@ -1,10 +1,10 @@
-
 from django.db import models
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin, Group
 from django.shortcuts import get_object_or_404
 from django.contrib import admin
 from django.db.models import Max
+from PIL import Image
 import uuid
 from django.utils.text import slugify
 
@@ -183,8 +183,8 @@ class Mascota(models.Model):
         return self.nombre
     
 class Perfil(models.Model):
-    mascota = models.OneToOneField(Mascota, on_delete=models.CASCADE, related_name='perfil')
-    fotoPerfil = models.CharField(max_length=255)
+    mascota = models.OneToOneField('Mascota', on_delete=models.CASCADE, related_name='perfil')
+    fotoPerfil = models.ImageField(upload_to='perfil_images/', default='', blank=True)
     numSeguidores = models.IntegerField(default=0)
     numSeguidos = models.IntegerField(default=0)
     totalPublicaciones = models.IntegerField(default=0)
@@ -203,15 +203,20 @@ class Publicacion(models.Model):
     perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='publicaciones')
     descripcion = models.TextField(blank=True)
     fechaPublicacion = models.DateTimeField(auto_now_add=True)
+    likes = models.IntegerField(default=0)
 
     def __str__(self):
         return f'Publicación de {self.perfil.mascota.nombre} el {self.fechaPublicacion}'
 
 class Imagen(models.Model):
     publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='imagenes')
-    urlImagen = models.URLField()
+    urlImagen = models.ImageField(upload_to='publicaciones/')
     descripcionImagen = models.TextField(blank=True)
 
-    def __str__(self):
-        return f'Imagen de {self.publicacion.perfil.mascota.nombre}'
-      
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.urlImagen.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.urlImagen.path)

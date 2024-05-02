@@ -4,52 +4,115 @@
 <head>
     {% extends 'barraNavegacion.html' %}
     {% block contenido %}
+    {% load static %}
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f0f0;
+            /* background-image: url("{% static 'imagenes/fondo4.png' %}"); 
+            background-size: cover;  */
         }
 
         .contenedor {
-            max-width: 600px;
-            margin: 50px auto;
+            max-width: 900px;
+            margin: 20px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
         }
 
         h1 {
             text-align: left;
             color: #333;
             display: flex;
+            align-items: flex-end;
+            flex-direction: column;
+        }
+
+        .perfil-miniaturas {
+            display: flex;
             align-items: center;
+            margin-top: 20px;
+            justify-content: flex-start;
+            margin-left: 50px;
+
+        }
+
+        .mascota-miniatura {
+            margin-top: 5px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 5px;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+            border: 2px solid #ccc;
+        }
+
+        .mascota-miniatura-container {
+            display: flex;
+            flex-direction: column;
+            /* Apila los elementos verticalmente */
+            align-items: center;
+            /* Centra los elementos horizontalmente */
+            margin: 5px;
+        }
+
+        .nombre-mascota {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #000000;
+            text-align: center;
+        }
+
+        .agregar-mascota {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            /* border: 1px solid #ccc; */
+            background-color: #ff9900;
+            font-size: 60px;
+            line-height: 50px;
+            text-align: center;
+            margin: 5px;
+            cursor: pointer;
+            color: #fefefe;
+            align-content: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .prev,
+        .next {
+            display: none
         }
 
         .fotoPerfil {
             width: 130px;
-            /* Ajusta el ancho como necesites */
             height: 130px;
-            /* Ajusta la altura como necesites */
             border-radius: 50%;
-            /* Esto creará el efecto de círculo */
             overflow: hidden;
-            /* Esto evitará que la imagen se desborde del círculo */
             display: flex;
-            /* Esto centrará la imagen en el div */
             align-items: center;
-            /* Alineación vertical */
             justify-content: center;
-            /* Alineación horizontal */
+            margin-right: 20px;
+            border: 2px solid #ccc;
+
         }
 
         .fotoPerfil img {
             width: 100%;
-            /* Asegúrate de que la imagen llene el contenedor */
             height: auto;
-            /* Esto mantendrá la relación de aspecto de la imagen */
         }
 
         .textoPerfil {
@@ -84,9 +147,8 @@
             box-sizing: border-box;
         }
 
-        button[type="submit"],
         .botonModificar {
-            width: 100%;
+            width: 160px;
             padding: 10px;
             border: none;
             border-radius: 5px;
@@ -95,6 +157,7 @@
             cursor: pointer;
             text-decoration: none;
             transition: background-color 0.3s ease;
+            margin-top: 10px;
         }
 
         button[type="submit"]:hover,
@@ -102,26 +165,104 @@
             background-color: #ffcc80;
         }
 
+        .infoPerfil {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .infoBasica {
+            margin-bottom: 20px;
+            margin-top: 30px;
+            margin-left: 70px;
+        }
+
+        .detallesPerfil {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            font-weight: bold;
+
+            p {
+                padding: 5px;
+                margin: 0;
+            }
+        }
+
         .ventanaModificacion {
             display: none;
+            /* Oculta la modal por defecto */
             position: fixed;
             z-index: 1;
             left: 0;
-            /* Ajuste al margen izquierdo */
-            top: 50%;
-            transform: translate(0, -50%);
-            /* Ajuste para centrar verticalmente */
-            width: 80%;
-            max-width: 300px;
-            /* Ancho máximo de la ventana */
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            /* Habilita el scroll si es necesario */
+            background-color: rgb(0, 0, 0, 0.4);
+            /* Color de fondo con opacidad */
+        }
+
+        .ventana-content {
+            background-color: #fefefe;
+            margin: auto;
             padding: 20px;
-            background-color: #fff;
+            border: 1px solid #888;
+            width: 30%;
+            /* Ajusta al tamaño deseado */
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: -webkit-center;
+        }
+
+        .ventana-content form {
+            width: 60%;
+            margin-bottom: 5px;
+            margin-top: 5px
+        }
+
+        .uploadLabel {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .publicar {
+            width: 80%;
+            background-color: #ff9900;
         }
 
         .botonCerrar {
+            cursor: pointer;
             position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #fffefe;
+        }
+
+
+        .publicar:hover {
+            background-color: #ff7402;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+        textarea {
+            height: 100px;
+        }
+
+        .botonCerrar {
             top: 10px;
             right: 10px;
             font-size: 24px;
@@ -132,69 +273,372 @@
         .botonCerrar:hover {
             color: #333;
         }
+
+        .titlePost {
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .icon-space {
+            margin-right: 10px;
+        }
+
+        .publicaciones-contenedor {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .publicacion {
+            width: 30%;
+            /* Ajusta esto según la cantidad de columnas deseadas */
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            /* border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+        }
+
+        .publicacion img {
+            width: 100%;
+            height: auto;
+            transition: transform .3s ease-in-out;
+        }
+
+
+        .more-images-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 50%;
+            display: none;
+            /* Oculto por defecto */
+        }
+
+        .publicacion .more-images-indicator {
+            display: block;
+            /* Solo mostrar al pasar el ratón por encima si hay más de una imagen */
+        }
+
+        .publicacion:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 22%;
+            max-height: 80%;
+            overflow-y: auto;
+            text-align: -webkit-center;
+        }
+
+        .modal-content .prev,
+        .modal-content .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -50px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.6s ease;
+            border-radius: 50%;
+            user-select: none;
+            -webkit-user-select: none;
+            border: none;
+            width: 52px;
+            height: 55px;
+            background-color: rgba(46, 45, 45, 0.471);
+        }
+
+        .modal-content .next {
+            right: 38%;
+            zoom: 50%
+        }
+
+        .modal-content .prev {
+            left: 38%;
+            zoom: 50%
+        }
+
+        .modal-content img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 500px;
+            display: block;
+            margin: auto;
+            margin-bottom: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
-    {% load static %}
     <div class="contenedor">
         <h1>
             <div class="fotoPerfil">
-                <img src="{% static perfil.fotoPerfil %}" alt="Imagen de perfil">
+                {% if perfil.fotoPerfil %}
+                <img src="{{ perfil.fotoPerfil.url }}" alt="Imagen de perfil">
+                {% else %}
+                <icon class="fas fa-paw" style="zoom: 3"></icon>
+                {% endif %}
+            </div>
+            <div>
+                <button id="botonModificar" onclick="abrirModal()" class="botonModificar">Editar perfil</button>
             </div>
         </h1>
-        <div class="textoPerfil">
-            <p>Nombre de usuario: {{ mascota.nombre }}</p>
-            <p>Publicaciones: {{ mascota.numPublicaciones }}</p>
-            <p>Seguidores: {{ mascota.numSeguidores }}</p>
-            <p>Seguidos: {{ mascota.numSeguidos }}</p>
+        <div class="infoPerfil">
+            <div class="infoBasica">
+                <h3>{{ mascota_actual.nombre }}</h3>
+                <p>{{mascota_actual.descripcion }}</p>
+            </div>
+            <div class="detallesPerfil">
+                <div>
+                    <p>{{ perfil.totalPublicaciones }}</p>
+                    <p>Publicaciones</p>
+                </div>
+                <div>
+                    <p>{{ perfil.numSeguidores }}</p>
+                    <p>Seguidores</p>
+                </div>
+                <div>
+                    <p>{{ perfil.numSeguidos }}</p>
+                    <p>Seguidos</p>
+                </div>
+            </div>
+            <div class="perfil-miniaturas">
+                {% for mascota in todas_las_mascotas %}
+                {% if mascota != mascota_actual %}
+                <div class="mascota-miniatura-container">
+                    <div class="mascota-miniatura" onclick="cambiarPerfil({{ mascota.id }})">
+                        {% if mascota.perfil.fotoPerfil %}
+                        <img src="{{ mascota.perfil.fotoPerfil.url }}" alt="Foto de perfil">
+                        {% else %}
+                        <icon class="fas fa-paw" style="zoom: 4"></icon>
+                        {% endif %}
+                    </div>
+                    <p class="nombre-mascota">{{ mascota.nombre }}</p>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <div class="mascota-miniatura-container">
+                    <a href="{% url 'registro_mascota' request.user.mail %}" class="agregar-mascota">
+                        +
+                    </a>
+                    <p class="nombre-mascota">Añadir mascota</p>
+                </div>
+            </div>
         </div>
-        <button id="botonModificar" class="botonModificar">Modificar perfil</button>
-        <div id="ventanaModificacion" class="ventanaModificacion">
-            <span class="botonCerrar">&times;</span>
+    </div>
+    <div id="ventanaModificacion" class="ventanaModificacion">
+        <div class="ventana-content">
+            <span class="botonCerrar" onclick="closeModal('ventanaModificacion')">&times;</span>
             <form method="post" action="{% url 'modificarDatos' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="fotoPerfil">
-                    <input type="file" id="imagenPerfil" name="imagenPerfil">
+                <div class="fotoPerfil" id="imagePreview">
+                    <label for="images">
+                        <input type="file" id="img" style="display: none;" name="img" onchange="vistaImages();">
+                        {% if mascota_actual.perfil.fotoPerfil %}
+                        <img id="profileImage" src="{{ mascota_actual.perfil.fotoPerfil.url }}">
+                        {% else %}
+                        <icon id="profileIcon" class="fas fa-paw" style="zoom: 3"></icon>
+                        {% endif %}
+                    </label>
                 </div>
-                <label for="username">Nombre de usuario:</label>
-                <input type="text" id="username" name="nombreUsuario" required>
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
-                <label for="repeatPassword">Repetir contraseña:</label>
-                <input type="password" id="repeatPassword" name="repeatPassword" required>
-                <button type="submit">Guardar cambios</button>
+                <label for="nombre">Nombre mascota:</label>
+                <input type="text" id="nombre" name="nombre" value="{{ mascota_actual.nombre }}">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion">{{ mascota_actual.descripcion }}</textarea>
+                <button type="submit" class="publicar">Guardar cambios</button>
             </form>
             <form method="post" action="{% url 'eliminarCuenta' %}">
                 {% csrf_token %}
                 <input type="hidden" name="identificador" value="{{identificador}}">
-                <button type="submit">Eliminar Cuenta</button>
-            </form>
-            <form method="post" action="{% url 'iniciar_chat' Sala.receptor}">
-                {% csrf_token %}
-                <button type="submit">Aceptar</button>
+                <button type="submit" class="publicar">Eliminar mascota</button>
             </form>
         </div>
     </div>
+    <div class="titlePost">
+        <i class="fas fa-th icon-space"></i>PUBLICACIONES
+    </div>
+    <div class="publicaciones-contenedor">
+        {% for publicacion in publicaciones %}
+        <div class="publicacion" onclick="openModal(this)">
+            <img src="{{ publicacion.imagenes.first.urlImagen.url }}" alt="Imagen principal de publicación">
+            {% if publicacion.imagenes.count > 1 %}
+            <div class="more-images-indicator">
+                <i class="fas fa-clone"></i>
+            </div>
+            {% endif %}
+            <span hidden
+                data-images="{% for imagen in publicacion.imagenes.all %}{{ imagen.urlImagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                data-description="{{ publicacion.descripcion }}" data-likes="{{ publicacion.likes }}">
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('imageModal')">&times;</span>
+            <!-- <button><i class="fas fa-trash"></i></button>             -->
+            <img id="modalImage" src="" alt="Imagen ampliada">
+            <button class="prev" onclick="changeImage(-1)">&#10094;</button>
+            <button class="next" onclick="changeImage(1)">&#10095;</button>
+            <i class="fas fa-heart" style="text-align: center;"></i>
+            <p id="imageLikes" style="display: contents; text-align: center;"></p>
+            <div>
+                <p id="imageDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div id="deleteModal" class="deleteModal">
+        <form method="post">
+            {{publicacion.id}}
+            <button type="submit">Eliminar publicacion</button>
+        </form>
+    </div> -->
+
 
     <script>
-        var ventanaModificacion = document.getElementById("ventanaModificacion");
-        var botonModificar = document.getElementById("botonModificar");
-        var botonCerrar = document.querySelector(".botonCerrar");
 
-        botonModificar.onclick = function () {
-            ventanaModificacion.style.display = "block";
-        };
+        let currentImageIndex = 0;
+        let images = [];
+        // Para abrir el modal
+        // function openModalDelete() {
+        //     document.getElementById('deleteModal').style.display = 'flex';
+        // }
 
-        botonCerrar.onclick = function () {
-            ventanaModificacion.style.display = "none";
-        };
+        function abrirModal() {
+            document.getElementById('ventanaModificacion').style.display = 'flex';
+        }
 
-        window.onclick = function (event) {
-            if (event.target == ventanaModificacion) {
-                ventanaModificacion.style.display = "none";
+        function cambiarPerfil(mascotaId) {
+            var urlGuardarMascota = `{% url 'guardar_mascota' 9999 %}`.replace('9999', mascotaId);
+
+            fetch(urlGuardarMascota, {
+                method: 'GET', // O POST si configuras CSRF y métodos adecuados en Django
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `/perfil/${mascotaId}/`;
+                    } else {
+                        alert(`/perfil/${mascotaId}/`);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function vistaImages() {
+            var file = input.files[0]; // Asume que solo hay un archivo
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var previewArea = document.getElementById('imagePreview');
+                    var existingImage = document.getElementById('profileImage');
+                    var icon = document.getElementById('profileIcon');
+
+                    if (existingImage) {
+                        existingImage.src = this.result;
+                    } else {
+                        if (icon) {
+                            previewArea.removeChild(icon);
+                        }
+                        var newImage = new Image();
+                        newImage.id = 'profileImage';
+                        newImage.src = this.result;
+                        previewArea.appendChild(newImage);
+                    }
+                };
+                reader.readAsDataURL(file);
             }
-        };
+        }
+
+        document.getElementById('img').addEventListener('change', vistaImages);
+
+        function openModal(element) {
+            var dataElement = element.querySelector('span[data-images]');
+            var images = dataElement.getAttribute('data-images').split(',');
+            var description = dataElement.getAttribute('data-description');
+            var likes = dataElement.getAttribute('data-likes');
+
+            currentImageIndex = 0; // Resetear el índice al abrir
+            document.getElementById('modalImage').src = images[currentImageIndex];
+            document.getElementById('imageDescription').textContent = description;
+            document.getElementById('imageLikes').textContent = `${likes} Likes`;
+
+            // Guardar las imágenes en una variable global si necesitas cambiar entre ellas
+            window.currentImages = images;
+            var prevButton = document.querySelector('.prev');
+            var nextButton = document.querySelector('.next');
+            if (images.length > 1) {
+                prevButton.style.display = 'block';
+                nextButton.style.display = 'block';
+            } else {
+                prevButton.style.display = 'none';
+                nextButton.style.display = 'none';
+            }
+
+
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+
+        function changeImage(direction) {
+            if (window.currentImages) {
+                currentImageIndex += direction;
+                if (currentImageIndex >= window.currentImages.length) {
+                    currentImageIndex = 0; // Volver al inicio si supera el número total
+                } else if (currentImageIndex < 0) {
+                    currentImageIndex = window.currentImages.length - 1; // Volver al final si es menor que 0
+                }
+                document.getElementById('modalImage').src = window.currentImages[currentImageIndex];
+            }
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
     </script>
     {% endblock %}
 </body>

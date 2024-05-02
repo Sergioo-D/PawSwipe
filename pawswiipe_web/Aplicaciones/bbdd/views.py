@@ -1,10 +1,11 @@
+from django.utils import timezone
 import os
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from requests import Response
 from Aplicaciones.bbdd.models import *
-from Aplicaciones.forms.formulario import MascotaForm, UsuarioForm
+from Aplicaciones.forms.formulario import ImagenForm, MascotaForm, PublicacionForm, UsuarioForm
 from Aplicaciones.forms.formularioLogin import LoginForm
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
@@ -63,11 +64,17 @@ def home(request):
 
 def crear_perfil_default(mascota):
     try:
-        imgd = os.path.join(settings.MEDIA_ROOT,'perfil_images/default.jpg')
-        perfil_default = Perfil.objects.create(mascota=mascota, fotoPerfil=imgd, numSeguidores=0, numSeguidos=0, totalPublicaciones=0)
+        perfil_default = Perfil.objects.create(
+            mascota=mascota, 
+            fotoPerfil="",
+            numSeguidores=0, 
+            numSeguidos=0, 
+            totalPublicaciones=0
+        )
         perfil_default.save()
     except Exception as e:
         print(f"No se pudo crear el perfil predeterminado para {mascota.nombre}: {e}")
+
 
 @redirigirUsuarios
 def registro(request):
@@ -115,6 +122,7 @@ def registro_mascota(request, mail):
                     descripcion=form.cleaned_data.get('descripcion'),
                 )
                 mascota.save()
+                crear_perfil_default(mascota)
             return redirect(home) 
     else:
         form = MascotaForm()
@@ -125,12 +133,26 @@ def logOut(request):
     return redirect(home)
 
 @login_required(login_url='home')
-def perfiil(request):
-    mail = request.user.mail
-    perfil_usuario = Perfil.objects.get(usuario=request.user)
-    print("Usuario autenticado:" ,request.user.is_authenticated)
-    return render(request, 'perfilUsuario.html', {'mail': mail, 'perfil': perfil_usuario})
+def perfil(request, mascota_id=None):
+    usuario = request.user
+    if mascota_id:
+        mascota_actual = get_object_or_404(Mascota, pk=mascota_id, usuario=usuario)
+    else:
+        mascota_actual = usuario.mascotas.first()
 
+    todas_las_mascotas = usuario.mascotas.all()
+    perfil = mascota_actual.perfil
+    publicaciones = perfil.publicaciones.all()
+    for publicacion in publicaciones:
+        publicacion.image_urls = [imagen.urlImagen.url for imagen in publicacion.imagenes.all()]
+
+    context = {
+        'mascota_actual': mascota_actual,
+        'todas_las_mascotas': todas_las_mascotas,
+        'perfil': perfil,
+        'publicaciones': publicaciones
+    }
+    return render(request, 'perfilUsuario.html', context)
 
 def eliminarCuenta(request):
     from django.core.exceptions import ObjectDoesNotExist
@@ -165,6 +187,32 @@ def modificarDatos(request):
         formulario = UsuarioForm(instance=user)
         return render(request, 'perfilUsuario.html', {'form': formulario})
     
+def create_post_view(request):
+    mascota = get_object_or_404(Mascota, pk=request.session['mascota_actual_id'])  # Asegura que la mascota existe
+    if request.method == 'POST':
+        descripcion = request.POST.get('descripcion', '')
+        images = request.FILES.getlist('images')
+        if images:
+            publicacion = Publicacion(perfil=mascota.perfil, descripcion=descripcion, fechaPublicacion=timezone.now(), likes=0)
+            publicacion.save()
+            perfil = Perfil.objects.get(mascota_id=mascota.id)
+            perfil.totalPublicaciones += 1
+            perfil.save()
+            for image in images:
+                Imagen.objects.create(publicacion=publicacion, urlImagen=image)
+            return redirect('feed')  # Redirige a la página de inicio o feed
+    return redirect('perfil') 
+
+def guardar_mascota_actual(request, mascota_id):
+    request.session['mascota_actual_id'] = mascota_id
+    return redirect('perfil_mascota', mascota_id=mascota_id)
+    
+def delete_post(publicacion_id):
+    try:
+        post = Publicacion.objects.get(id=publicacion_id)
+        post.delete()
+    except ObjectDoesNotExist:
+        print("Usuario no existe")
 
 @login_required
 def inbox(request):
