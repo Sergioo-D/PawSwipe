@@ -1,88 +1,205 @@
-
 <!DOCTYPE html>
 <html lang="es">
-    {%load static%}    
-{% block content %}    
+{% load static %}
+{% block content %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pawswipe</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #ffe6b3; /* Fondo naranja claro */
+            background-color: #f0f0f0;
+            /* Fondo gris claro */
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        textArea {
+            display: grid;
+            width: 73%;
+            height: 60px;
+            font-family: arial;
+            border-radius: 4px;
+        }
+
+        .publicar {
+            width: 160px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff9900;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
         }
 
         .toolbar {
-            background-color: #ff9900; /* Barra de herramientas naranja oscuro */
-            padding: 10px;
-            text-align: center;
-            color: white;
-            font-weight: bold;
+            background: #ffffff;
+            /* Fondo blanco */
+            padding: 10px 30px;
+            /* Espaciado amplio para respirabilidad */
+            color: #333;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #ddd;
         }
 
-        .logout-button {
-            background-color: white;
-            color: #ff9900; /* Color del texto naranja oscuro */
-            padding: 5px 10px;
-            border: none;
+        .toolbar img {
+            height: 45px;
+        }
+
+        .toolbar a,
+        .toolbar button {
+            color: #666;
+            font-size: 16px;
+            padding: 8px 12px;
             border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        .toolbar a:hover,
+        .toolbar button:hover {
+            background-color: #ff9900;
+            color: white;
+        }
+
+        .cerrarModal {
+            float: right;
+            background: none;
+            border: none;
+            zoom: 115%;
+            margin-right: 10px;
+            color: #666
+        }
+
+        .modalImagen {
+            display: none;
+            /* Oculta la modal por defecto */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            /* Habilita el scroll si es necesario */
+            background-color: rgb(0, 0, 0, 0.4);
+            /* Color de fondo con opacidad */
+            padding-top: 50px;
+        }
+
+        .modalImagen form {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            /* Ajusta al tamaño deseado */
+            border-radius: 10px;
+            text-align: -webkit-center;
+        }
+
+
+        .icon-button {
+            background: none;
+            border: none;
             cursor: pointer;
         }
 
-        .logout-button:hover {
-            background-color: #ffcc80; /* Cambio de color al pasar el ratón */
+        .icon-text {
+            margin-left: 5px;
+            /* Espacio entre icono y texto */
         }
 
         .content {
             padding: 20px;
         }
-        .profile-button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #ffcc80;
-    color: #fff;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.profile-button:hover {
-    background-color: #ffcc80; /* Cambio de color al pasar el ratón */
-}
-.centrarBotones {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
     </style>
 </head>
+
 <body>
     <div class="toolbar">
-        <img src="{% static "imagenes/logo_golpepata.jpeg" %}"  style="float: left;width:30px;height:30px;">
-        <span></span> <!-- Espacio en blanco para ajustar la posición -->
-        <div class="center-buttons">
-            <a href="{% url 'perfil' %}" class="profile-button">Perfil</a>
-            <a href="{% url 'feed' %}" class="profile-button">Feed</a>
+        <img src="{% static 'imagenes/logoh2.png' %}" alt="PawSwipe Logo">
+        <div>
+            <a href="{% url 'perfil' %}"><i class="fas fa-user-circle"></i><span class="icon-text">Perfil</span></a>
+            <a href="{% url 'feed' %}"><i class="fas fa-newspaper"></i><span class="icon-text">Inicio</span></a>
+            <a href="#" onclick="document.getElementById('uploadModal').style.display='block'"><i
+                    class="fas fa-plus-square"></i><span class="icon-text">Añadir Publicación</span></a>
+            <a href="/inbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
         </div>
-        <form method="POST" action="{% url 'logout' %}">
+        <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
             {% csrf_token %}
-            <button type="submit" class="logout-button">Logout</button>
+            <button type="submit" class="icon-button"><i class="fas fa-power-off"></i><span
+                    class="icon-text">Salir</span></button>
         </form>
-
-        <a href = "/inbox">
-            <img src="{% static "imagenes/Sobreinbox.png" %}"  style="float: right;width:30px;height:30px;">
-        </a>
     </div>
-    
-        {% block contenido %}
-        {% endblock %}
+    <div id="uploadModal" class="modalImagen" style="display:none;">
+        <button class="cerrarModal" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+        <br></br>
+        <form method="post" enctype="multipart/form-data" action="{% url 'create_post' %}">
+            {% csrf_token %}
+            <label for="images">Arrastra las fotos y los videos aquí o <span
+                    style="color: #ff9900; cursor: pointer;">seleccionar del ordenador</span></label>
+            <input type="file" id="images" style="display: none;" name="images" multiple onchange="previewImages();">
+            <div id="imageVista"></div>
+            <textarea name="descripcion" placeholder="Descripción..."></textarea>
+            <button class="publicar" type="submit">Publicar</button>
+        </form>
+    </div>
+
+    {% block contenido %}
+    {% endblock %}
+    <script>
+
+        function cerrarModal(id) {
+            var preview = document.getElementById("imageVista");
+            preview.innerHTML = ''; 
+            document.getElementById("uploadModal").style.display = 'none';
+        }
+        function previewImages() {
+            var preview = document.getElementById('imageVista');
+            preview.innerHTML = '';  // Limpia el contenedor de la vista previa
+            if (this.files) {
+                [].forEach.call(this.files, readAndPreview);
+            }
+
+            function readAndPreview(file) {
+
+                // Asegúrate de que `file.name` coincida con nuestro filtro de extensiones
+                if (!/\.(jpe?g|png|gif)$/i.test(file.name)) {
+                    return alert(file.name + " is not an image");
+                } // Si no es una imagen, salimos de la función
+
+                var reader = new FileReader();
+
+                reader.addEventListener("load", function () {
+                    var image = new Image();
+                    image.height = 300; // Establece la altura deseada para las imágenes de vista previa
+                    image.width = 300
+                    image.title = file.name;
+                    image.src = this.result;
+                    preview.appendChild(image);
+                });
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Añade el evento 'change' manualmente
+        document.getElementById('images').onchange = previewImages;
+    </script>
 </body>
 {% endblock %}
+
 </html>

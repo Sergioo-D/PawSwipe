@@ -1,6 +1,6 @@
 from django import forms
 
-from Aplicaciones.bbdd.models import Mascota, Usuario
+from Aplicaciones.bbdd.models import Imagen, Mascota, Publicacion, Usuario
 
 
 class UsuarioForm(forms.ModelForm):
@@ -32,3 +32,15 @@ class MascotaForm(forms.ModelForm):
     class Meta:
         model = Mascota
         fields = ['nombre', 'descripcion']
+
+
+
+class PublicacionForm(forms.ModelForm):
+    class Meta:
+        model = Publicacion
+        fields = ['descripcion']
+
+class ImagenForm(forms.ModelForm):
+    class Meta:
+        model = Imagen
+        fields = ['urlImagen', 'descripcionImagen']
