@@ -36,6 +36,7 @@ urlpatterns = [
     path("create_post/", create_post_view, name="create_post"),
     path("delete_post/<int:publicacion_id>", delete_post, name="delete_post"),
     path("guardar_mascota/<int:mascota_id>/", guardar_mascota_actual, name="guardar_mascota"),
+    path("editar_datos_mascota/<int:mascota_id>", modificarDatosMascota, name="editar_datos_mascota"),
     #path('api/login/', api_login, name='api_login'),
     path('registrar/', registrar_usuario, name='registrar_usuario'),
     path('registro_mascota/<str:mail>/', registro_mascota, name='registro_mascota'),

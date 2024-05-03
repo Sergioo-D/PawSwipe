@@ -1,0 +1,68 @@
+body {
+    background-image: url("{% static 'imagenes/fondo7.png' %}");
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+div {
+    background-color: white;
+    /* border: 3px solid #ff9900; */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 20%;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+input:focus {
+    border-color: #fe6803;
+    outline:none;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+button:hover {
+    background-color: #fe6803;
+    
+
+}
+.boton-registro {
+    margin-top: 5px;
+    width: 100%;
+    display: block;
+}

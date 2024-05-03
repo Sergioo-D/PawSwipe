@@ -201,6 +201,33 @@ def modificarDatos(request):
         formulario = UsuarioForm(instance=user)
         return render(request, 'perfilUsuario.html', {'form': formulario})
     
+def modificarDatosMascota(request, mascota_id):
+    if request.method == 'POST':
+        mascota = get_object_or_404(Mascota, id=mascota_id, usuario=request.user)
+        fotoPerfil = request.FILES.get('img')
+        nombre = request.POST.get('nombreUsuario')
+        despcripcion = request.POST.get('descripcion')
+        perfil = get_object_or_404(Perfil, mascota_id=mascota_id)
+        
+        if fotoPerfil:
+            perfil.fotoPerfil = fotoPerfil
+            perfil.save()
+
+        if nombre:
+            mascota.nombre = nombre
+
+        if despcripcion:
+            mascota.descripcion = despcripcion
+
+        mascota.save()
+
+        # Actualizar la sesión del usuario para que no se cierre la sesión después de cambiar la contraseña
+        return redirect('perfil')
+    else:
+        formulario = MascotaForm(instance=mascota)
+        return render(request, 'perfilUsuario.html', {'form': formulario})
+    
+    
 def create_post_view(request):
     mascota = get_object_or_404(Mascota, pk=request.session['mascota_actual_id'])  # Asegura que la mascota existe
     if request.method == 'POST':
