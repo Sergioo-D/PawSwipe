@@ -1,61 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> -->
     {% load static %}
     <style>
-          body {
-            background-color: #f5f5f5; /* Fondo más neutro */
+        body {
+            background-color: #f5f5f5;
+            /* Fondo más neutro */
             margin: 0;
             padding: 0;
-            font-family: 'Roboto', sans-serif; /* Fuente más moderna */
-            background-image: url("{% static 'imagenes/fondo7.png' %}"); 
+            font-family: 'Roboto', sans-serif;
+            /* Fuente más moderna */
+            background-image: url("{% static 'imagenes/fondo7.png' %}");
             background-size: cover;
         }
 
         header {
             height: 30px;
-            background-color: #ffffff; /* Un naranja más sofisticado */
-            color:  #ff9900;
-            padding: 20px 10px; /* Más espacio vertical */
+            background-color: #ffffff;
+            /* Un naranja más sofisticado */
+            color: #ff9900;
+            padding: 20px 10px;
+            /* Más espacio vertical */
             text-align: center;
-            box-shadow: 0 2px 4px  rgba(0, 0, 0, 0.1); /* Sombra ligera para dar profundidad */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Sombra ligera para dar profundidad */
             align-content: center;
         }
 
         main {
             max-width: 400px;
-            margin: 40px auto; /* Más espacio alrededor */
+            margin: 40px auto;
+            /* Más espacio alrededor */
             background-color: white;
-            padding: 30px; /* Más espacio interior */
-            border-radius: 8px; /* Bordes más redondeados */
+            padding: 30px;
+            /* Más espacio interior */
+            border-radius: 8px;
+            /* Bordes más redondeados */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 3px solid  #ff9900
+            /* border: 3px solid #ff9900 */
         }
 
         form {
             display: grid;
-            gap: 20px; /* Más espacio entre campos */
+            gap: 20px;
+            /* Más espacio entre campos */
         }
 
         label {
             font-weight: bold;
-            color: #333; /* Texto más oscuro para mejor contraste */
+            color: #333;
+            /* Texto más oscuro para mejor contraste */
         }
 
         input {
             width: 100%;
-            padding: 12px; /* Más alto para mejor accesibilidad */
+            padding: 12px;
+            /* Más alto para mejor accesibilidad */
             box-sizing: border-box;
-            border: 2px solid #ccc; /* Borde más destacado */
-            border-radius: 6px; /* Bordes más redondeados */
+            border: 2px solid #ccc;
+            /* Borde más destacado */
+            border-radius: 6px;
+            /* Bordes más redondeados */
         }
 
         input:focus {
-            border-color: #f56a00; /* Resaltar en foco */
+            border-color: #f56a00;
+            /* Resaltar en foco */
             outline: none;
         }
 
@@ -66,14 +81,17 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s; /* Transición suave */
+            transition: background-color 0.3s;
+            /* Transición suave */
         }
 
         button:hover {
-            background-color: #ff7c39; /* Cambio de color al pasar el ratón */
+            background-color: #ff7c39;
+            /* Cambio de color al pasar el ratón */
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -81,11 +99,18 @@
     </header>
 
     <main>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <p {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
         <form method="post">
             {% csrf_token %}
             <label for="id_nombre">Nombre de perfil mascota:</label>
             {{ form.nombre }}
-            
+
             <label for="id_descripcion">Descripción:</label>
             {{ form.descripcion }}
 
@@ -94,4 +119,5 @@
     </main>
 
 </body>
+
 </html>

@@ -357,10 +357,11 @@
             background: white;
             border-radius: 10px;
             padding: 20px;
-            width: 22%;
-            max-height: 80%;
-            overflow-y: auto;
-            text-align: -webkit-center;
+            width: 60%;
+            height: 70%;
+            display: flex;
+            align-items: flex-end;
+            position: relative;
         }
 
         .modal-content .prev,
@@ -385,31 +386,102 @@
         }
 
         .modal-content .next {
-            right: 38%;
-            zoom: 50%
+            right: 50%;
+            zoom: 56%;
+            font-size: 30px;
         }
 
         .modal-content .prev {
-            left: 38%;
-            zoom: 50%
+            left: 2%;
+            zoom: 56%;
+            font-size: 30px;
         }
 
         .modal-content img {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 500px;
-            display: block;
-            margin: auto;
-            margin-bottom: 10px;
+            width: 50%;
+            height:100%;
+            margin-right: 20px;
+            /* Espacio entre la imagen y la información */
+        }
+
+        .menu-post {
+            position: absolute;
+            top: 60px;
+            right: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .likes-container {
+            display: flex;
+            align-items: center;
+            margin-top: 40%;
+        }
+
+        .likes-container i {
+            margin-right: 10px;
         }
 
         .close-modal {
             position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 24px;
+            top: 0px;
+            right: 15px;
+            font-size: 42px;
             cursor: pointer;
+        }
+
+        .delete-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 150px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align-last: center;
+        }
+
+        /* .delete-modal-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        } */
+
+        /* .delete-modal-menu li {
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .delete-modal-menu li:last-child {
+            border-bottom: none;
+        } */
+
+        .delete-modal-content button {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .delete-modal-content button:hover {
+            background-color: #f5f5f5;
         }
     </style>
 </head>
@@ -492,9 +564,8 @@
                 <textarea id="descripcion" name="descripcion">{{ mascota_actual.descripcion }}</textarea>
                 <button type="submit" class="publicar">Guardar cambios</button>
             </form>
-            <form method="post" action="{% url 'eliminarCuenta' %}">
+            <form method="post" action="{% url 'eliminar_mascota' mascota_actual.id %}">
                 {% csrf_token %}
-                <input type="hidden" name="identificador" value="{{identificador}}">
                 <button type="submit" class="publicar">Eliminar mascota</button>
             </form>
         </div>
@@ -504,7 +575,7 @@
     </div>
     <div class="publicaciones-contenedor">
         {% for publicacion in publicaciones %}
-        <div class="publicacion" onclick="openModal(this)">
+        <div class="publicacion" onclick="openModal(this)" data-id="{{ publicacion.id }}">
             <img src="{{ publicacion.imagenes.first.urlImagen.url }}" alt="Imagen principal de publicación">
             {% if publicacion.imagenes.count > 1 %}
             <div class="more-images-indicator">
@@ -513,134 +584,175 @@
             {% endif %}
             <span hidden
                 data-images="{% for imagen in publicacion.imagenes.all %}{{ imagen.urlImagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                data-description="{{ publicacion.descripcion }}" data-likes="{{ publicacion.likes }}">
+                data-description="{{ publicacion.descripcion }}" data-likes="{{ publicacion.likes }} "
+                data-id="{{ publicacion.id }}">
             </span>
         </div>
         {% endfor %}
     </div>
 
     <div id="imageModal" class="modal">
+
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('imageModal')">&times;</span>
-            <!-- <button><i class="fas fa-trash"></i></button>             -->
             <img id="modalImage" src="" alt="Imagen ampliada">
+            <div class="info-container">
+                <button class="menu-post"
+                    onclick="openDeleteModal(document.getElementById('idPublicacion').textContent)">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <p id="imageDescription"></p>
+                <div class="likes-container">
+                    <i class="fas fa-heart"></i>
+                    <p id="imageLikes"></p>
+                </div>
+            </div>
+            <p id="idPublicacion" style="display: none;"></p>
             <button class="prev" onclick="changeImage(-1)">&#10094;</button>
             <button class="next" onclick="changeImage(1)">&#10095;</button>
-            <i class="fas fa-heart" style="text-align: center;"></i>
-            <p id="imageLikes" style="display: contents; text-align: center;"></p>
-            <div>
-                <p id="imageDescription"></p>
-            </div>
         </div>
     </div>
 
-    <!-- <div id="deleteModal" class="deleteModal">
-        <form method="post">
-            {{publicacion.id}}
-            <button type="submit">Eliminar publicacion</button>
+
+    <div id="deleteModal" class="delete-modal" style="display: none;">
+        <div class="delete-modal-content">
+            <form id="deleteForm" method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" id="publicacionId" name="publicacion_id" value="">
+                <button type="submit">Eliminar</button>
+            </form>
+            <hr>
+            <button onclick="closeModal('deleteModal')">Cerrar</button>
+
+        </div>
+        <!-- <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <ul class="modal-menu">
+                <li><button onclick="confirmDelete(); closeModal('deleteModal');">Eliminar</button></li>
+                <li><button onclick="editPost();">Editar</button></li>
+                <li><button onclick="toggleLikesVisibility();">Ocultar número de Me gusta a los demás</button></li>
+                <li><button onclick="toggleComments();">Desactivar comentarios</button></li>
+                <li><button onclick="goToPost();">Ir a la publicación</button></li>
+                <li><button onclick="closeModal('deleteModal');">Cancelar</button></li>
+            </ul>
+        </div>
+        <form id="deleteForm" method="post" action="" style="display:none;">
+            {% csrf_token %}
+            <input type="hidden" id="publicacionId" name="publicacion_id" value="">
         </form>
     </div> -->
 
 
-    <script>
+        <script>
 
-        let currentImageIndex = 0;
-        let images = [];
-        // Para abrir el modal
-        // function openModalDelete() {
-        //     document.getElementById('deleteModal').style.display = 'flex';
-        // }
+            let currentImageIndex = 0;
+            let images = [];
+            // Para abrir el modal
+            // function openModalDelete() {
+            //     document.getElementById('deleteModal').style.display = 'flex';
+            // }
 
-        function abrirModal() {
-            document.getElementById('ventanaModificacion').style.display = 'flex';
-        }
+            function abrirModal() {
+                document.getElementById('ventanaModificacion').style.display = 'flex';
+            }
 
-        function cambiarPerfil(mascotaId) {
-            var urlGuardarMascota = `{% url 'guardar_mascota' 9999 %}`.replace('9999', mascotaId);
+            function openDeleteModal(publicacion_id) {
+                var modal = document.getElementById('deleteModal');
+                var form = modal.querySelector('#deleteForm');
+                form.action = `/delete_post/${publicacion_id}`;
+                var publicacionIdInput = modal.querySelector('#publicacionId');
+                publicacionIdInput.value = publicacion_id;
+                modal.style.display = "flex";
+            }
 
-            fetch(urlGuardarMascota, {
-                method: 'GET', // O POST si configuras CSRF y métodos adecuados en Django
-            })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = `/perfil/${mascotaId}/`;
-                    } else {
-                        alert(`/perfil/${mascotaId}/`);
-                    }
+            function cambiarPerfil(mascotaId) {
+                var urlGuardarMascota = `{% url 'guardar_mascota' 9999 %}`.replace('9999', mascotaId);
+
+                fetch(urlGuardarMascota, {
+                    method: 'GET', // O POST si configuras CSRF y métodos adecuados en Django
                 })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function vistaImages() {
-            var file = input.files[0]; // Asume que solo hay un archivo
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var previewArea = document.getElementById('imagePreview');
-                    var existingImage = document.getElementById('profileImage');
-                    var icon = document.getElementById('profileIcon');
-
-                    if (existingImage) {
-                        existingImage.src = this.result;
-                    } else {
-                        if (icon) {
-                            previewArea.removeChild(icon);
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = `/perfil/${mascotaId}/`;
+                        } else {
+                            alert(`/perfil/${mascotaId}/`);
                         }
-                        var newImage = new Image();
-                        newImage.id = 'profileImage';
-                        newImage.src = this.result;
-                        previewArea.appendChild(newImage);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        document.getElementById('img').addEventListener('change', vistaImages);
-
-        function openModal(element) {
-            var dataElement = element.querySelector('span[data-images]');
-            var images = dataElement.getAttribute('data-images').split(',');
-            var description = dataElement.getAttribute('data-description');
-            var likes = dataElement.getAttribute('data-likes');
-
-            currentImageIndex = 0; // Resetear el índice al abrir
-            document.getElementById('modalImage').src = images[currentImageIndex];
-            document.getElementById('imageDescription').textContent = description;
-            document.getElementById('imageLikes').textContent = `${likes} Likes`;
-
-            // Guardar las imágenes en una variable global si necesitas cambiar entre ellas
-            window.currentImages = images;
-            var prevButton = document.querySelector('.prev');
-            var nextButton = document.querySelector('.next');
-            if (images.length > 1) {
-                prevButton.style.display = 'block';
-                nextButton.style.display = 'block';
-            } else {
-                prevButton.style.display = 'none';
-                nextButton.style.display = 'none';
+                    })
+                    .catch(error => console.error('Error:', error));
             }
 
+            function vistaImages() {
+                var file = input.files[0]; // Asume que solo hay un archivo
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var previewArea = document.getElementById('imagePreview');
+                        var existingImage = document.getElementById('profileImage');
+                        var icon = document.getElementById('profileIcon');
 
-            document.getElementById('imageModal').style.display = 'flex';
-        }
-
-        function changeImage(direction) {
-            if (window.currentImages) {
-                currentImageIndex += direction;
-                if (currentImageIndex >= window.currentImages.length) {
-                    currentImageIndex = 0; // Volver al inicio si supera el número total
-                } else if (currentImageIndex < 0) {
-                    currentImageIndex = window.currentImages.length - 1; // Volver al final si es menor que 0
+                        if (existingImage) {
+                            existingImage.src = this.result;
+                        } else {
+                            if (icon) {
+                                previewArea.removeChild(icon);
+                            }
+                            var newImage = new Image();
+                            newImage.id = 'profileImage';
+                            newImage.src = this.result;
+                            previewArea.appendChild(newImage);
+                        }
+                    };
+                    reader.readAsDataURL(file);
                 }
-                document.getElementById('modalImage').src = window.currentImages[currentImageIndex];
             }
-        }
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-    </script>
-    {% endblock %}
+
+            document.getElementById('img').addEventListener('change', vistaImages);
+
+            function openModal(element) {
+                const publicacionId = element.getAttribute('data-id');
+                const modal = document.getElementById('imageModal');
+                var dataElement = element.querySelector('span[data-images]');
+                var images = dataElement.getAttribute('data-images').split(',');
+                var description = dataElement.getAttribute('data-description');
+                var likes = dataElement.getAttribute('data-likes');
+
+                currentImageIndex = 0; // Resetear el índice al abrir
+                document.getElementById('modalImage').src = images[currentImageIndex];
+                document.getElementById('imageDescription').textContent = description;
+                document.getElementById('imageLikes').textContent = `${likes} Likes`;
+                document.getElementById('idPublicacion').textContent = publicacionId;
+                // Guardar las imágenes en una variable global si necesitas cambiar entre ellas
+                window.currentImages = images;
+                var prevButton = document.querySelector('.prev');
+                var nextButton = document.querySelector('.next');
+                if (images.length > 1) {
+                    prevButton.style.display = 'block';
+                    nextButton.style.display = 'block';
+                } else {
+                    prevButton.style.display = 'none';
+                    nextButton.style.display = 'none';
+                }
+
+
+                modal.style.display = 'flex';
+            }
+
+            function changeImage(direction) {
+                if (window.currentImages) {
+                    currentImageIndex += direction;
+                    if (currentImageIndex >= window.currentImages.length) {
+                        currentImageIndex = 0; // Volver al inicio si supera el número total
+                    } else if (currentImageIndex < 0) {
+                        currentImageIndex = window.currentImages.length - 1; // Volver al final si es menor que 0
+                    }
+                    document.getElementById('modalImage').src = window.currentImages[currentImageIndex];
+                }
+            }
+            function closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+        </script>
+        {% endblock %}
 </body>
 
 </html>

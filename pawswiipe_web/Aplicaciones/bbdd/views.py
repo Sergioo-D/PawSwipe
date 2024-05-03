@@ -46,7 +46,10 @@ def home(request):
             if user.is_superuser:  # comprobar si el usuario es un administrador
                 return redirect('/admin/')  # si es administrador, redirigir a la página de administración
             else:
-                return redirect('feed')  # los usuarios normales son redirigidos a la página de inicio
+                if user.mascotas.exists():  # para verificar si hay mascotas
+                    return redirect('feed')  # Redirigir al feed si hay mascotas
+                else:
+                    return redirect('registro_mascota_initial', mail=user.mail, initial=1)  # Redirigir a registro de mascota si no hay mascotas
         else:
             try:
                 usuario = Usuario.objects.get(mail=mail)
@@ -99,21 +102,21 @@ def registro(request):
                     fecha=formulario.cleaned_data.get('fecha')
                 )
                 usuario.save()
-                return redirect(reverse('registro_mascota', args=[usuario.mail]))
+                return redirect(reverse('registro_mascota_initial', args=[usuario.mail, 1]))
         else:
             return render(request, "formRegistro.html", {"form": formulario})  # Devuelve una respuesta si el formulario no es válido
     else:
         formulario = UsuarioForm()
         return render(request, "formRegistro.html", {"form": formulario})
     
-def registro_mascota(request, mail):
+def registro_mascota(request, mail, initial=None):
     usuario = Usuario.objects.get(mail=mail)
     if request.method == 'POST':
         form = MascotaForm(request.POST)
         if form.is_valid():
             nombre = form.cleaned_data.get('nombre')
             if Mascota.objects.filter(nombre=nombre).exists():
-                messages.error(request, 'Este nombre de perfil ya existe')
+                messages.error(request, 'El nombre de perfil ya existe')
                 return redirect('registro_mascota')
             else:
                 mascota= Mascota(
@@ -123,10 +126,15 @@ def registro_mascota(request, mail):
                 )
                 mascota.save()
                 crear_perfil_default(mascota)
-            return redirect(home) 
+                if initial:
+                    return redirect('home')
+                else:
+                    return redirect('perfil')
+                    
     else:
         form = MascotaForm()
-    return render(request, 'formRegistroMascota.html', {'form': form, 'usuario': usuario})  
+    context = {'form': form, 'usuario': usuario, 'initial': initial}
+    return render(request, 'formRegistroMascota.html', context)
 
 def logOut(request):
     logout(request)
@@ -139,6 +147,7 @@ def perfil(request, mascota_id=None):
         mascota_actual = get_object_or_404(Mascota, pk=mascota_id, usuario=usuario)
     else:
         mascota_actual = usuario.mascotas.first()
+        guardar_mascota_actual(request, mascota_actual.id)
 
     todas_las_mascotas = usuario.mascotas.all()
     perfil = mascota_actual.perfil
@@ -153,6 +162,11 @@ def perfil(request, mascota_id=None):
         'publicaciones': publicaciones
     }
     return render(request, 'perfilUsuario.html', context)
+
+def eliminar_mascota(request, mascota_id):
+    mascota = get_object_or_404(Mascota, id=mascota_id, usuario=request.user)  # Asegúrate de que solo el dueño pueda eliminar la mascota
+    mascota.delete()
+    return redirect('perfil') 
 
 def eliminarCuenta(request):
     from django.core.exceptions import ObjectDoesNotExist
@@ -206,13 +220,21 @@ def create_post_view(request):
 def guardar_mascota_actual(request, mascota_id):
     request.session['mascota_actual_id'] = mascota_id
     return redirect('perfil_mascota', mascota_id=mascota_id)
-    
-def delete_post(publicacion_id):
+ 
+# @require_http_methods(["POST"])   
+# @csrf_protect 
+def delete_post(request, publicacion_id):
     try:
         post = Publicacion.objects.get(id=publicacion_id)
+        id_mascota = post.perfil.mascota_id
+        perfil = Perfil.objects.get(mascota_id=id_mascota)
+        perfil.totalPublicaciones -= 1
+        perfil.save()
         post.delete()
-    except ObjectDoesNotExist:
-        print("Usuario no existe")
+        return redirect('perfil_mascota', mascota_id=id_mascota)
+    except Publicacion.DoesNotExist:
+         return HttpResponse("Publicación no existe", status=404)
+        
 
 @login_required
 def inbox(request):
