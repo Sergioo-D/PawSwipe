@@ -412,6 +412,7 @@ def get_comments(request, publicacion_id):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Authentication required'}, status=401)
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    es_propietario = request.user == publicacion.perfil.mascota.usuario
     comentarios = Comentario.objects.filter(publicacion=publicacion).select_related('perfil')
     comentarios_list = [{
         'id': comentario.id,
@@ -420,6 +421,8 @@ def get_comments(request, publicacion_id):
         'texto': comentario.texto, 
         'fecha': formatear_datetime(comentario.fecha_creacion),
         'fotoPerfil': comentario.perfil.fotoPerfil.url if comentario.perfil.fotoPerfil else None,
+        'esPropiertario': es_propietario
+        
         } for comentario in comentarios]
     return JsonResponse({'comentarios': comentarios_list})
 
