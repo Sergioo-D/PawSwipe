@@ -1,5 +1,5 @@
 body {
-    background-image: url("{% static 'imagenes/fondo7.png' %}");
+    background-image: url('imagenes/fondo7.png');
     background-size: cover;
     font-family: 'Arial', sans-serif;
     margin: 0;

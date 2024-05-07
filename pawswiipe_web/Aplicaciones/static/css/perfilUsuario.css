@@ -29,11 +29,9 @@ h1 {
 
 .perfil-miniaturas {
     display: flex;
-    align-items: center;
     margin-top: 20px;
-    justify-content: flex-start;
     margin-left: 50px;
-
+    flex-direction: row;
 }
 
 .mascota-miniatura {
@@ -48,6 +46,9 @@ h1 {
     border: 2px solid #ccc;
 }
 
+.mascota-miniatura img {
+    width: 100%;
+}
 .mascota-miniatura-container {
     display: flex;
     flex-direction: column;
@@ -55,13 +56,15 @@ h1 {
     align-items: center;
     /* Centra los elementos horizontalmente */
     margin: 5px;
+    justify-content: flex-end;
+    align-content: stretch;
 }
 
 .nombre-mascota {
     margin-top: 5px;
     font-size: 14px;
     color: #000000;
-    text-align: center;
+    /* text-align: center; */
 }
 
 .agregar-mascota {
@@ -82,6 +85,8 @@ h1 {
 
 a {
     text-decoration: none;
+    color: black;
+    vertical-align: middle;
 }
 
 .prev,
@@ -150,6 +155,34 @@ input[type="password"] {
     text-decoration: none;
     transition: background-color 0.3s ease;
     margin-top: 10px;
+}
+
+.boton-mensaje {
+    width: 160px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.boton-seguir{
+    width: 160px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    float: right;
+    margin-right: 72px;
 }
 
 button[type="submit"]:hover,
@@ -251,7 +284,9 @@ textarea {
 
 
 textarea {
-    height: 100px;
+    height: 20px;
+    width: 100%;
+    resize: none;
 }
 
 .botonCerrar {
@@ -340,20 +375,23 @@ textarea {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
-    justify-content: center;
-    align-items: center;
     display: none;
+    overflow-y: auto;
 }
 
 .modal-content {
     background: white;
     border-radius: 10px;
     padding: 20px;
-    width: 60%;
-    height: 70%;
+    width: 100%;
+    height: 80%;
     display: flex;
-    align-items: flex-end;
-    position: relative;
+    flex-direction: row;
+    overflow-y: auto;
+    margin-top: 50px;
+    margin-left: 220px;
+    margin-right: 220px;
+    margin-bottom: 50px;
 }
 
 .modal-content .prev,
@@ -372,8 +410,8 @@ textarea {
     user-select: none;
     -webkit-user-select: none;
     border: none;
-    width: 52px;
-    height: 55px;
+    width: 60px;
+    height: 67px;
     background-color: rgba(46, 45, 45, 0.471);
 }
 
@@ -384,16 +422,63 @@ textarea {
 }
 
 .modal-content .prev {
-    left: 2%;
+    left: 6%;
     zoom: 56%;
     font-size: 30px;
 }
 
-.modal-content img {
+#modalImage {
     width: 50%;
     height:100%;
     margin-right: 20px;
     /* Espacio entre la imagen y la información */
+}
+
+.interaction-bar {
+    position: fixed; /* Cambia a fixed para evitar que se mueva con el scroll */
+    bottom: 130px;
+    /* left: 0; */
+    width: 30%; /* Asegura que ocupe todo el ancho */
+    background: white; /* Fondo blanco para sobresalir sobre el contenido */
+    padding: 10px 20px; /* Añade padding para espaciar el contenido */
+    /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */ /* Sombra para distinguir la barra del resto */
+}
+
+.añadir-comentario {
+    position: fixed; /* Similar a interaction-bar para mantenerlo visible */
+    bottom: 82px;
+    /* right: 0; */
+    width: 33%; /* Asegura que ocupe el ancho completo */
+    background: white; /* Fondo blanco */
+    padding: 10px 10px; /* Padding similar al de interaction-bar */
+    /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */ /* Sombra similar */
+}
+
+
+.comment-form {
+    display: flex; /* Alinea el textarea y el botón en una fila */
+    width: 100%; /* Usa todo el ancho disponible */
+}
+
+.comment-form textarea {
+    flex-grow: 1; /* Permite que el textarea ocupe todo el espacio disponible */
+    margin-right: 10px; /* Espacio entre el textarea y el botón */
+}
+
+.comment-form button {
+    white-space: nowrap; /* Evita que el texto del botón se envuelva */
+    padding: 8px 16px;
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    height: 40px;
+    align-self: self-end;
+}
+
+¡.añadir-comentario {
+    border-top: 1px solid #ccc; /* Línea divisoria para mejor visualización */
 }
 
 .menu-post {
@@ -404,16 +489,88 @@ textarea {
     background: none;
     cursor: pointer;
     font-size: 24px;
+    color: white;
 }
 
 .likes-container {
-    display: flex;
-    align-items: center;
-    margin-top: 40%;
+    display: flex; /* Usa flexbox para alinear los elementos horizontalmente */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+    justify-content: start; /* Alinea los elementos horizontalmente al inicio */
+    /* padding: 10px; */ /* Añade algo de padding para espaciar los elementos dentro del contenedor */
+    width: 100%; /* Asegúrate de que el contenedor ocupe todo el ancho disponible */
 }
 
 .likes-container i {
     margin-right: 10px;
+}
+
+#imageLikes {
+    cursor: pointer;
+}
+
+.comentarios-container {
+    position: fixed;
+    overflow-y: auto;
+}
+
+#listaComentarios {
+    height: 480px;
+    overflow-y: auto;
+    width: 570px;
+    padding: 0;
+}
+
+.comentario-item {
+    display: flex;
+    /* align-items: center; */
+    padding: 5px 10px;
+    /* flex-direction: row; */
+    max-width: 560px;
+}
+
+.comentario-eliminar {
+    display: block;
+    color: #888;
+    font-size: 13px;
+    /* margin-top: 2px; */
+    border: none;
+    background-color: white;
+    align-self: flex-start;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.comentario-imagen {
+    width: 30px; /* o el tamaño que prefieras */
+    height: 30px;
+    border-radius: 50%; /* Hace la imagen circular */
+    margin-right: 10px;
+    /* margin-bottom: 10px; */
+    border: 2px solid #888;
+    font-size: 30px;
+}
+
+.comentario-nombre {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.comentario-texto {
+    flex-grow: 1;
+    max-width: 289px;
+    flex-grow: 1;
+    word-wrap: break-word;
+    margin-right: 20px;
+    /* align-self: center; */
+}
+
+
+.comentario-fecha {
+    display: block;
+    color: #888;
+    font-size: 12px;
+    margin-top: 2px;
+    /* margin-left: 110px; */
 }
 
 .close-modal {
@@ -422,7 +579,11 @@ textarea {
     right: 15px;
     font-size: 42px;
     cursor: pointer;
+    color: white;
 }
+
+/* CSS DELETE POST MODAL */
+
 
 .delete-modal {
     display: none;
@@ -441,10 +602,11 @@ textarea {
 .delete-modal-content {
     background: white;
     border-radius: 8px;
-    width: 150px;
-    padding: 20px;
+    width: 230px;
+    /* padding: 20px; */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align-last: center;
+    height: 128px;
 }
 
 /* .delete-modal-menu {
@@ -474,4 +636,58 @@ textarea {
 
 .delete-modal-content button:hover {
     background-color: #f5f5f5;
+}
+
+.fas.fa-heart {
+    color: #ffa602;
+}
+
+.likes-container i {
+    font-size: 25px;
+    cursor:pointer;
+}
+
+#modalLikes {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    padding-top: 5px;
+    z-index: 1000;
+    padding-right: 15px;
+    width: 25%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    height: auto;
+    overflow-y: auto;
+}
+
+#modalLikes h3 {
+    margin-top: 0;
+}
+
+#modalLikes ul {
+    list-style: none;
+    padding: 0;
+}
+
+#modalLikes li {
+    margin: 10px 0;
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+#modalLikes span {
+    /* text-align: right; */
+    font-size:25px;
+    color: #333;
+    cursor: pointer;
+}
+
+.closeLike {
+    text-align: right;
 }

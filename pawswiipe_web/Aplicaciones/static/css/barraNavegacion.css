@@ -66,9 +66,9 @@ textArea {
     float: right;
     background: none;
     border: none;
-    zoom: 115%;
-    margin-right: 10px;
-    color: #666
+    color: #666;
+    font-size: 23px;
+    cursor: pointer;
 }
 
 .modalImagen {
@@ -115,3 +115,84 @@ textArea {
 .content {
     padding: 20px;
 }
+
+.modal-search {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Fijo en la posición */
+    z-index: 1; /* Situado encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%; /* Anchura completa */
+    height: 100%; /* Altura completa */
+    overflow: auto; /* Habilita el desplazamiento si es necesario */
+    background-color: rgba(0,0,0,0.4); /* Negro con opacidad */
+}
+
+.modal-search-content {
+    background-color: #fefefe;
+     /* 15% desde arriba y centrado */
+    padding: 20px;
+    border: 1px solid #8886;
+    width: 20%; /* Puede ajustar esto según sus necesidades */
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-search-content input:hover{
+    outline: none;
+    border-color: #ff9900;
+}
+
+.modal-search-content input:focus-within{
+    outline: none;
+}
+
+.modal-search input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#resultados-busqueda div {
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#resultados-busqueda img {
+    margin-right: 7px;
+    vertical-align: middle;
+    border: 1px solid #666;
+}
+
+#resultados-busqueda i{
+    border: 2px solid #666;
+    border-radius: 50%;
+    font-size: 30px;
+    zoom: 170%;
+    vertical-align: middle;
+    color: black !important;
+}
+
+#resultados-busqueda a {
+    color: black;
+}
+
+#resultados-busqueda a:hover {
+    color:#ff9900;
+}
+
+
+/* #resultados-busqueda i:hover{
+    color:black !important;
+} */

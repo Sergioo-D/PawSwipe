@@ -185,12 +185,19 @@ class Mascota(models.Model):
 class Perfil(models.Model):
     mascota = models.OneToOneField('Mascota', on_delete=models.CASCADE, related_name='perfil')
     fotoPerfil = models.ImageField(upload_to='perfil_images/', default='', blank=True)
-    numSeguidores = models.IntegerField(default=0)
-    numSeguidos = models.IntegerField(default=0)
     totalPublicaciones = models.IntegerField(default=0)
+    siguiendo = models.ManyToManyField('self', symmetrical=False, related_name='seguidores', blank=True)
 
     def __str__(self):
         return f'Perfil de {self.mascota.nombre}'
+
+    @property
+    def total_seguidores(self):
+        return self.seguidores.count()
+
+    @property
+    def total_siguiendo(self):
+        return self.siguiendo.count()
 
 # class perfil(models.Model):
 #     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
@@ -220,3 +227,23 @@ class Imagen(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.urlImagen.path)
+            
+class Like(models.Model):
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE)
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('perfil', 'publicacion')  # Asegura que un perfil solo pueda dar like una vez por publicación
+
+    def __str__(self):
+        return f'{self.perfil.mascota.nombre} ha dado like a la publicación {self.publicacion.id}'
+
+class Comentario(models.Model):
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='comentarios')
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE, related_name='comentarios')
+    texto = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comentario por {self.perfil.mascota.nombre} en {self.fecha_creacion}"
