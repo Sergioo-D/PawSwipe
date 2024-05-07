@@ -1,0 +1,693 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    /* background-image: url("{% static 'imagenes/fondo4.png' %}"); 
+    background-size: cover;  */
+}
+
+.contenedor {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+h1 {
+    text-align: left;
+    color: #333;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.perfil-miniaturas {
+    display: flex;
+    margin-top: 20px;
+    margin-left: 50px;
+    flex-direction: row;
+}
+
+.mascota-miniatura {
+    margin-top: 5px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin: 5px;
+    overflow: hidden;
+    display: inline-block;
+    cursor: pointer;
+    border: 2px solid #ccc;
+}
+
+.mascota-miniatura img {
+    width: 100%;
+}
+.mascota-miniatura-container {
+    display: flex;
+    flex-direction: column;
+    /* Apila los elementos verticalmente */
+    align-items: center;
+    /* Centra los elementos horizontalmente */
+    margin: 5px;
+    justify-content: flex-end;
+    align-content: stretch;
+}
+
+.nombre-mascota {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #000000;
+    /* text-align: center; */
+}
+
+.agregar-mascota {
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    /* border: 1px solid #ccc; */
+    background-color: #ff9900;
+    font-size: 60px;
+    line-height: 50px;
+    text-align: center;
+    margin: 5px;
+    cursor: pointer;
+    color: #fefefe;
+    align-content: center;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    vertical-align: middle;
+}
+
+.prev,
+.next {
+    display: none
+}
+
+.fotoPerfil {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    border: 2px solid #ccc;
+
+}
+
+.fotoPerfil img {
+    width: 100%;
+    height: auto;
+}
+
+.textoPerfil {
+    text-align: left;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.textoPerfil p {
+    margin: 5px 20px;
+    /* Espacio entre los textos */
+}
+
+form {
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.botonModificar {
+    width: 160px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.boton-mensaje {
+    width: 160px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.boton-seguir{
+    width: 160px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    float: right;
+    margin-right: 72px;
+}
+
+button[type="submit"]:hover,
+.botonModificar:hover {
+    background-color: #ffcc80;
+}
+
+.infoPerfil {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.infoBasica {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    margin-left: 70px;
+}
+
+.detallesPerfil {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
+    font-weight: bold;
+
+    p {
+        padding: 5px;
+        margin: 0;
+    }
+}
+
+.ventanaModificacion {
+    display: none;
+    /* Oculta la modal por defecto */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* Habilita el scroll si es necesario */
+    background-color: rgb(0, 0, 0, 0.4);
+    /* Color de fondo con opacidad */
+}
+
+.ventana-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    /* Ajusta al tamaño deseado */
+    border-radius: 10px;
+    text-align: -webkit-center;
+}
+
+.ventana-content form {
+    width: 60%;
+    margin-bottom: 5px;
+    margin-top: 5px
+}
+
+.uploadLabel {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.publicar {
+    width: 80%;
+    background-color: #ff9900;
+}
+
+.botonCerrar {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #fffefe;
+}
+
+
+.publicar:hover {
+    background-color: #ff7402;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+textarea {
+    height: 20px;
+    width: 100%;
+    resize: none;
+}
+
+.botonCerrar {
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+}
+
+.botonCerrar:hover {
+    color: #333;
+}
+
+.titlePost {
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.icon-space {
+    margin-right: 10px;
+}
+
+.publicaciones-contenedor {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.publicacion {
+    width: 30%;
+    /* Ajusta esto según la cantidad de columnas deseadas */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    /* border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
+
+.publicacion img {
+    width: 100%;
+    height: auto;
+    transition: transform .3s ease-in-out;
+}
+
+
+.more-images-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    display: none;
+    /* Oculto por defecto */
+}
+
+.publicacion .more-images-indicator {
+    display: block;
+    /* Solo mostrar al pasar el ratón por encima si hay más de una imagen */
+}
+
+.publicacion:hover img {
+    transform: scale(1.1);
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    display: none;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+    margin-top: 50px;
+    margin-left: 220px;
+    margin-right: 220px;
+    margin-bottom: 50px;
+}
+
+.modal-content .prev,
+.modal-content .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.6s ease;
+    border-radius: 50%;
+    user-select: none;
+    -webkit-user-select: none;
+    border: none;
+    width: 60px;
+    height: 67px;
+    background-color: rgba(46, 45, 45, 0.471);
+}
+
+.modal-content .next {
+    right: 50%;
+    zoom: 56%;
+    font-size: 30px;
+}
+
+.modal-content .prev {
+    left: 6%;
+    zoom: 56%;
+    font-size: 30px;
+}
+
+#modalImage {
+    width: 50%;
+    height:100%;
+    margin-right: 20px;
+    /* Espacio entre la imagen y la información */
+}
+
+.interaction-bar {
+    position: fixed; /* Cambia a fixed para evitar que se mueva con el scroll */
+    bottom: 130px;
+    /* left: 0; */
+    width: 30%; /* Asegura que ocupe todo el ancho */
+    background: white; /* Fondo blanco para sobresalir sobre el contenido */
+    padding: 10px 20px; /* Añade padding para espaciar el contenido */
+    /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */ /* Sombra para distinguir la barra del resto */
+}
+
+.añadir-comentario {
+    position: fixed; /* Similar a interaction-bar para mantenerlo visible */
+    bottom: 82px;
+    /* right: 0; */
+    width: 33%; /* Asegura que ocupe el ancho completo */
+    background: white; /* Fondo blanco */
+    padding: 10px 10px; /* Padding similar al de interaction-bar */
+    /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */ /* Sombra similar */
+}
+
+
+.comment-form {
+    display: flex; /* Alinea el textarea y el botón en una fila */
+    width: 100%; /* Usa todo el ancho disponible */
+}
+
+.comment-form textarea {
+    flex-grow: 1; /* Permite que el textarea ocupe todo el espacio disponible */
+    margin-right: 10px; /* Espacio entre el textarea y el botón */
+}
+
+.comment-form button {
+    white-space: nowrap; /* Evita que el texto del botón se envuelva */
+    padding: 8px 16px;
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    height: 40px;
+    align-self: self-end;
+}
+
+¡.añadir-comentario {
+    border-top: 1px solid #ccc; /* Línea divisoria para mejor visualización */
+}
+
+.menu-post {
+    position: absolute;
+    top: 60px;
+    right: 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+}
+
+.likes-container {
+    display: flex; /* Usa flexbox para alinear los elementos horizontalmente */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+    justify-content: start; /* Alinea los elementos horizontalmente al inicio */
+    /* padding: 10px; */ /* Añade algo de padding para espaciar los elementos dentro del contenedor */
+    width: 100%; /* Asegúrate de que el contenedor ocupe todo el ancho disponible */
+}
+
+.likes-container i {
+    margin-right: 10px;
+}
+
+#imageLikes {
+    cursor: pointer;
+}
+
+.comentarios-container {
+    position: fixed;
+    overflow-y: auto;
+}
+
+#listaComentarios {
+    height: 480px;
+    overflow-y: auto;
+    width: 570px;
+    padding: 0;
+}
+
+.comentario-item {
+    display: flex;
+    /* align-items: center; */
+    padding: 5px 10px;
+    /* flex-direction: row; */
+    max-width: 560px;
+}
+
+.comentario-eliminar {
+    display: block;
+    color: #888;
+    font-size: 13px;
+    /* margin-top: 2px; */
+    border: none;
+    background-color: white;
+    align-self: flex-start;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.comentario-imagen {
+    width: 30px; /* o el tamaño que prefieras */
+    height: 30px;
+    border-radius: 50%; /* Hace la imagen circular */
+    margin-right: 10px;
+    /* margin-bottom: 10px; */
+    border: 2px solid #888;
+    font-size: 30px;
+}
+
+.comentario-nombre {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.comentario-texto {
+    flex-grow: 1;
+    max-width: 289px;
+    flex-grow: 1;
+    word-wrap: break-word;
+    margin-right: 20px;
+    /* align-self: center; */
+}
+
+
+.comentario-fecha {
+    display: block;
+    color: #888;
+    font-size: 12px;
+    margin-top: 2px;
+    /* margin-left: 110px; */
+}
+
+.close-modal {
+    position: absolute;
+    top: 0px;
+    right: 15px;
+    font-size: 42px;
+    cursor: pointer;
+    color: white;
+}
+
+/* CSS DELETE POST MODAL */
+
+
+.delete-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 230px;
+    /* padding: 20px; */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align-last: center;
+    height: 128px;
+}
+
+/* .delete-modal-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+} */
+
+/* .delete-modal-menu li {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.delete-modal-menu li:last-child {
+    border-bottom: none;
+} */
+
+.delete-modal-content button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px 0;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.delete-modal-content button:hover {
+    background-color: #f5f5f5;
+}
+
+.fas.fa-heart {
+    color: #ffa602;
+}
+
+.likes-container i {
+    font-size: 25px;
+    cursor:pointer;
+}
+
+#modalLikes {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    padding-top: 5px;
+    z-index: 1000;
+    padding-right: 15px;
+    width: 25%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    height: auto;
+    overflow-y: auto;
+}
+
+#modalLikes h3 {
+    margin-top: 0;
+}
+
+#modalLikes ul {
+    list-style: none;
+    padding: 0;
+}
+
+#modalLikes li {
+    margin: 10px 0;
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+#modalLikes span {
+    /* text-align: right; */
+    font-size:25px;
+    color: #333;
+    cursor: pointer;
+}
+
+.closeLike {
+    text-align: right;
+}

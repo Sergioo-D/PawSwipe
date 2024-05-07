@@ -1,0 +1,198 @@
+body {
+    background-color: #f0f0f0;
+    /* Fondo gris claro */
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+textArea {
+    display: grid;
+    width: 73%;
+    height: 60px;
+    font-family: arial;
+    border-radius: 4px;
+}
+
+.publicar {
+    width: 160px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9900;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.toolbar {
+    background: #ffffff;
+    /* Fondo blanco */
+    padding: 10px 30px;
+    /* Espaciado amplio para respirabilidad */
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #ddd;
+}
+
+.toolbar img {
+    height: 45px;
+}
+
+.toolbar a,
+.toolbar button {
+    color: #666;
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.toolbar a:hover,
+.toolbar button:hover {
+    background-color: #ff9900;
+    color: white;
+}
+
+.cerrarModal {
+    float: right;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.modalImagen {
+    display: none;
+    /* Oculta la modal por defecto */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* Habilita el scroll si es necesario */
+    background-color: rgb(0, 0, 0, 0.4);
+    /* Color de fondo con opacidad */
+    padding-top: 50px;
+}
+
+.modalImagen form {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    /* Ajusta al tamaño deseado */
+    border-radius: 10px;
+    text-align: -webkit-center;
+}
+
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-text {
+    margin-left: 5px;
+
+    /* Espacio entre icono y texto */
+}
+
+.content {
+    padding: 20px;
+}
+
+.modal-search {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Fijo en la posición */
+    z-index: 1; /* Situado encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%; /* Anchura completa */
+    height: 100%; /* Altura completa */
+    overflow: auto; /* Habilita el desplazamiento si es necesario */
+    background-color: rgba(0,0,0,0.4); /* Negro con opacidad */
+}
+
+.modal-search-content {
+    background-color: #fefefe;
+     /* 15% desde arriba y centrado */
+    padding: 20px;
+    border: 1px solid #8886;
+    width: 20%; /* Puede ajustar esto según sus necesidades */
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-search-content input:hover{
+    outline: none;
+    border-color: #ff9900;
+}
+
+.modal-search-content input:focus-within{
+    outline: none;
+}
+
+.modal-search input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#resultados-busqueda div {
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#resultados-busqueda img {
+    margin-right: 7px;
+    vertical-align: middle;
+    border: 1px solid #666;
+}
+
+#resultados-busqueda i{
+    border: 2px solid #666;
+    border-radius: 50%;
+    font-size: 30px;
+    zoom: 170%;
+    vertical-align: middle;
+    color: black !important;
+}
+
+#resultados-busqueda a {
+    color: black;
+}
+
+#resultados-busqueda a:hover {
+    color:#ff9900;
+}
+
+
+/* #resultados-busqueda i:hover{
+    color:black !important;
+} */

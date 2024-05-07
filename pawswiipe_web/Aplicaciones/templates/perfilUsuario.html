@@ -1,417 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+{% extends 'barraNavegacion.html' %}
+{% block contenido %}
+{% load static %}
 
 <head>
-    {% extends 'barraNavegacion.html' %}
-    {% block contenido %}
-    {% load static %}
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-            /* background-image: url("{% static 'imagenes/fondo4.png' %}"); 
-            background-size: cover;  */
-        }
-
-        .contenedor {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-        }
-
-        h1 {
-            text-align: left;
-            color: #333;
-            display: flex;
-            align-items: flex-end;
-            flex-direction: column;
-        }
-
-        .perfil-miniaturas {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-            justify-content: flex-start;
-            margin-left: 50px;
-
-        }
-
-        .mascota-miniatura {
-            margin-top: 5px;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            margin: 5px;
-            overflow: hidden;
-            display: inline-block;
-            cursor: pointer;
-            border: 2px solid #ccc;
-        }
-
-        .mascota-miniatura-container {
-            display: flex;
-            flex-direction: column;
-            /* Apila los elementos verticalmente */
-            align-items: center;
-            /* Centra los elementos horizontalmente */
-            margin: 5px;
-        }
-
-        .nombre-mascota {
-            margin-top: 5px;
-            font-size: 14px;
-            color: #000000;
-            text-align: center;
-        }
-
-        .agregar-mascota {
-            display: inline-block;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            /* border: 1px solid #ccc; */
-            background-color: #ff9900;
-            font-size: 60px;
-            line-height: 50px;
-            text-align: center;
-            margin: 5px;
-            cursor: pointer;
-            color: #fefefe;
-            align-content: center;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        .prev,
-        .next {
-            display: none
-        }
-
-        .fotoPerfil {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-            border: 2px solid #ccc;
-
-        }
-
-        .fotoPerfil img {
-            width: 100%;
-            height: auto;
-        }
-
-        .textoPerfil {
-            text-align: left;
-            color: #666;
-            display: flex;
-            align-items: center;
-        }
-
-        .textoPerfil p {
-            margin: 5px 20px;
-            /* Espacio entre los textos */
-        }
-
-        form {
-            margin-top: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .botonModificar {
-            width: 160px;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ff9900;
-            color: #fff;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-        }
-
-        button[type="submit"]:hover,
-        .botonModificar:hover {
-            background-color: #ffcc80;
-        }
-
-        .infoPerfil {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex-grow: 1;
-        }
-
-        .infoBasica {
-            margin-bottom: 20px;
-            margin-top: 30px;
-            margin-left: 70px;
-        }
-
-        .detallesPerfil {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            text-align: center;
-            font-weight: bold;
-
-            p {
-                padding: 5px;
-                margin: 0;
-            }
-        }
-
-        .ventanaModificacion {
-            display: none;
-            /* Oculta la modal por defecto */
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            /* Habilita el scroll si es necesario */
-            background-color: rgb(0, 0, 0, 0.4);
-            /* Color de fondo con opacidad */
-        }
-
-        .ventana-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%;
-            /* Ajusta al tamaño deseado */
-            border-radius: 10px;
-            text-align: -webkit-center;
-        }
-
-        .ventana-content form {
-            width: 60%;
-            margin-bottom: 5px;
-            margin-top: 5px
-        }
-
-        .uploadLabel {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .publicar {
-            width: 80%;
-            background-color: #ff9900;
-        }
-
-        .botonCerrar {
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            color: #fffefe;
-        }
-
-
-        .publicar:hover {
-            background-color: #ff7402;
-        }
-
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-
-        textarea {
-            height: 100px;
-        }
-
-        .botonCerrar {
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-        }
-
-        .botonCerrar:hover {
-            color: #333;
-        }
-
-        .titlePost {
-            text-align: center;
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .icon-space {
-            margin-right: 10px;
-        }
-
-        .publicaciones-contenedor {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .publicacion {
-            width: 30%;
-            /* Ajusta esto según la cantidad de columnas deseadas */
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            /* border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-        }
-
-        .publicacion img {
-            width: 100%;
-            height: auto;
-            transition: transform .3s ease-in-out;
-        }
-
-
-        .more-images-indicator {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 50%;
-            display: none;
-            /* Oculto por defecto */
-        }
-
-        .publicacion .more-images-indicator {
-            display: block;
-            /* Solo mostrar al pasar el ratón por encima si hay más de una imagen */
-        }
-
-        .publicacion:hover img {
-            transform: scale(1.1);
-        }
-
-        /* Estilos para el modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            display: none;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            width: 22%;
-            max-height: 80%;
-            overflow-y: auto;
-            text-align: -webkit-center;
-        }
-
-        .modal-content .prev,
-        .modal-content .next {
-            cursor: pointer;
-            position: absolute;
-            top: 50%;
-            width: auto;
-            padding: 16px;
-            margin-top: -50px;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-            transition: 0.6s ease;
-            border-radius: 50%;
-            user-select: none;
-            -webkit-user-select: none;
-            border: none;
-            width: 52px;
-            height: 55px;
-            background-color: rgba(46, 45, 45, 0.471);
-        }
-
-        .modal-content .next {
-            right: 38%;
-            zoom: 50%
-        }
-
-        .modal-content .prev {
-            left: 38%;
-            zoom: 50%
-        }
-
-        .modal-content img {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 500px;
-            display: block;
-            margin: auto;
-            margin-bottom: 10px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
+    <link href="{% static 'css/perfilUsuario.css' %}" rel="stylesheet">
 </head>
 
 <body>
@@ -424,33 +18,56 @@
                 <icon class="fas fa-paw" style="zoom: 3"></icon>
                 {% endif %}
             </div>
+            {% if es_propietario %}
             <div>
-                <button id="botonModificar" onclick="abrirModal()" class="botonModificar">Editar perfil</button>
+                <button id="botonModificar" onclick="abrirModal('ventanaModificacion')" class="botonModificar">Editar
+                    perfil</button>
             </div>
+            {% else %}
+            <div>
+                <button id="boton-mensaje" class="boton-mensaje">Enviar mensaje</button>
+            </div>
+            {% endif %}
+
         </h1>
         <div class="infoPerfil">
             <div class="infoBasica">
                 <h3>{{ mascota_actual.nombre }}</h3>
+                {% if not es_propietario %}
+                <button id="boton-seguir" data-url="{% url 'seguir_perfil' mascota_actual.perfil.id %}"
+                    class="boton-seguir" type="button">
+                    {% if siguiendo %}
+                    Dejar de seguir
+                    {% else %}
+                    Seguir
+                    {% endif %}
+                </button>
+                </form>
+                {% endif %}
                 <p>{{mascota_actual.descripcion }}</p>
             </div>
+
             <div class="detallesPerfil">
                 <div>
                     <p>{{ perfil.totalPublicaciones }}</p>
                     <p>Publicaciones</p>
                 </div>
                 <div>
-                    <p>{{ perfil.numSeguidores }}</p>
+                    <p id="numSeguidores">{{ perfil.total_seguidores }}</p>
                     <p>Seguidores</p>
                 </div>
                 <div>
-                    <p>{{ perfil.numSeguidos }}</p>
+                    <p>{{ perfil.total_siguiendo }}</p>
                     <p>Seguidos</p>
                 </div>
             </div>
             <div class="perfil-miniaturas">
+                {% if not es_propietario %}
+                <p>Sus hermanos</p>
+                {% endif %}
                 {% for mascota in todas_las_mascotas %}
                 {% if mascota != mascota_actual %}
-                <div class="mascota-miniatura-container">
+                <div class="mascota-miniatura-container" data-url-base="{% url 'guardar_mascota' 9999 %}">
                     <div class="mascota-miniatura" onclick="cambiarPerfil({{ mascota.id }})">
                         {% if mascota.perfil.fotoPerfil %}
                         <img src="{{ mascota.perfil.fotoPerfil.url }}" alt="Foto de perfil">
@@ -462,22 +79,25 @@
                 </div>
                 {% endif %}
                 {% endfor %}
+                {% if es_propietario %}
                 <div class="mascota-miniatura-container">
                     <a href="{% url 'registro_mascota' request.user.mail %}" class="agregar-mascota">
                         +
                     </a>
                     <p class="nombre-mascota">Añadir mascota</p>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
     <div id="ventanaModificacion" class="ventanaModificacion">
         <div class="ventana-content">
             <span class="botonCerrar" onclick="closeModal('ventanaModificacion')">&times;</span>
-            <form method="post" action="{% url 'modificarDatos' %}" enctype="multipart/form-data">
+            <form method="post" action="{% url 'editar_datos_mascota' mascota_actual.id %}"
+                enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="fotoPerfil" id="imagePreview">
-                    <label for="images">
+                    <label for="img">
                         <input type="file" id="img" style="display: none;" name="img" onchange="vistaImages();">
                         {% if mascota_actual.perfil.fotoPerfil %}
                         <img id="profileImage" src="{{ mascota_actual.perfil.fotoPerfil.url }}">
@@ -492,9 +112,8 @@
                 <textarea id="descripcion" name="descripcion">{{ mascota_actual.descripcion }}</textarea>
                 <button type="submit" class="publicar">Guardar cambios</button>
             </form>
-            <form method="post" action="{% url 'eliminarCuenta' %}">
+            <form method="post" action="{% url 'eliminar_mascota' mascota_actual.id %}">
                 {% csrf_token %}
-                <input type="hidden" name="identificador" value="{{identificador}}">
                 <button type="submit" class="publicar">Eliminar mascota</button>
             </form>
         </div>
@@ -504,7 +123,7 @@
     </div>
     <div class="publicaciones-contenedor">
         {% for publicacion in publicaciones %}
-        <div class="publicacion" onclick="openModal(this)">
+        <div class="publicacion" onclick="openModal(this)" data-id="{{ publicacion.id }}">
             <img src="{{ publicacion.imagenes.first.urlImagen.url }}" alt="Imagen principal de publicación">
             {% if publicacion.imagenes.count > 1 %}
             <div class="more-images-indicator">
@@ -513,7 +132,7 @@
             {% endif %}
             <span hidden
                 data-images="{% for imagen in publicacion.imagenes.all %}{{ imagen.urlImagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                data-description="{{ publicacion.descripcion }}" data-likes="{{ publicacion.likes }}">
+                data-description="{{ publicacion.descripcion }}" data-id="{{ publicacion.id }}">
             </span>
         </div>
         {% endfor %}
@@ -522,124 +141,75 @@
     <div id="imageModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('imageModal')">&times;</span>
-            <!-- <button><i class="fas fa-trash"></i></button>             -->
             <img id="modalImage" src="" alt="Imagen ampliada">
             <button class="prev" onclick="changeImage(-1)">&#10094;</button>
             <button class="next" onclick="changeImage(1)">&#10095;</button>
-            <i class="fas fa-heart" style="text-align: center;"></i>
-            <p id="imageLikes" style="display: contents; text-align: center;"></p>
-            <div>
+            <div class="info-container">
+                <div class="modal-header">
+                    {% if es_propietario %}
+                    <button class="menu-post"
+                        onclick="openDeleteModal(document.getElementById('idPublicacion').textContent)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    {% endif %}
+                </div>
                 <p id="imageDescription"></p>
+                <div class="comentarios_container">
+                    <ul id="listaComentarios"></ul>
+                </div>
+                <div class="interaction-bar">
+                    <div class="likes-container">
+                        {%if es_propietario %}
+                        <i class="fas fa-heart"></i>
+                        {% else %}
+                        <i class="far fa-heart" id="likeIcon" onclick="toggleLikeInModal();"></i>
+                        {% endif %}
+                        <p id="imageLikes" onclick="openModalLikes({{ publicacion.id }})"></p>
+                    </div>
+                </div>
+                <div class="añadir-comentario">
+                    <div class="comment-form">
+                        <textarea id="nuevoComentario" placeholder="Añade un comentario..."></textarea>
+                        <button onclick="comentarioPost()">Publicar</button>
+                    </div>
+                </div>
             </div>
         </div>
+        <p id="idPublicacion" style="display: none;"></p>
     </div>
 
-    <!-- <div id="deleteModal" class="deleteModal">
-        <form method="post">
-            {{publicacion.id}}
-            <button type="submit">Eliminar publicacion</button>
-        </form>
-    </div> -->
 
+    {% if es_propietario %}
+    <div id="deleteModal" class="delete-modal" style="display: none;">
+        <div class="delete-modal-content">
+            <form id="deleteForm" method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" id="publicacionId" name="publicacion_id" value="">
+                <button type="submit">Eliminar</button>
+            </form>
+            <hr>
+            <button onclick="closeModal('deleteModal')">Cerrar</button>
 
-    <script>
+        </div>
+        <!-- <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <ul class="modal-menu">
+                <li><button onclick="confirmDelete(); closeModal('deleteModal');">Eliminar</button></li>
+                <li><button onclick="editPost();">Editar</button></li>
+                <li><button onclick="toggleLikesVisibility();">Ocultar número de Me gusta a los demás</button></li>
+                <li><button onclick="toggleComments();">Desactivar comentarios</button></li>
+                <li><button onclick="goToPost();">Ir a la publicación</button></li>
+                <li><button onclick="closeModal('deleteModal');">Cancelar</button></li>
+            </ul>
+        </div>
+        <form id="deleteForm" method="post" action="" style="display:none;">
+            {% csrf_token %}
+            <input type="hidden" id="publicacionId" name="publicacion_id" value="">
+        </form>-->
+    </div>
+    {% endif %}
 
-        let currentImageIndex = 0;
-        let images = [];
-        // Para abrir el modal
-        // function openModalDelete() {
-        //     document.getElementById('deleteModal').style.display = 'flex';
-        // }
-
-        function abrirModal() {
-            document.getElementById('ventanaModificacion').style.display = 'flex';
-        }
-
-        function cambiarPerfil(mascotaId) {
-            var urlGuardarMascota = `{% url 'guardar_mascota' 9999 %}`.replace('9999', mascotaId);
-
-            fetch(urlGuardarMascota, {
-                method: 'GET', // O POST si configuras CSRF y métodos adecuados en Django
-            })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = `/perfil/${mascotaId}/`;
-                    } else {
-                        alert(`/perfil/${mascotaId}/`);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function vistaImages() {
-            var file = input.files[0]; // Asume que solo hay un archivo
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var previewArea = document.getElementById('imagePreview');
-                    var existingImage = document.getElementById('profileImage');
-                    var icon = document.getElementById('profileIcon');
-
-                    if (existingImage) {
-                        existingImage.src = this.result;
-                    } else {
-                        if (icon) {
-                            previewArea.removeChild(icon);
-                        }
-                        var newImage = new Image();
-                        newImage.id = 'profileImage';
-                        newImage.src = this.result;
-                        previewArea.appendChild(newImage);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        document.getElementById('img').addEventListener('change', vistaImages);
-
-        function openModal(element) {
-            var dataElement = element.querySelector('span[data-images]');
-            var images = dataElement.getAttribute('data-images').split(',');
-            var description = dataElement.getAttribute('data-description');
-            var likes = dataElement.getAttribute('data-likes');
-
-            currentImageIndex = 0; // Resetear el índice al abrir
-            document.getElementById('modalImage').src = images[currentImageIndex];
-            document.getElementById('imageDescription').textContent = description;
-            document.getElementById('imageLikes').textContent = `${likes} Likes`;
-
-            // Guardar las imágenes en una variable global si necesitas cambiar entre ellas
-            window.currentImages = images;
-            var prevButton = document.querySelector('.prev');
-            var nextButton = document.querySelector('.next');
-            if (images.length > 1) {
-                prevButton.style.display = 'block';
-                nextButton.style.display = 'block';
-            } else {
-                prevButton.style.display = 'none';
-                nextButton.style.display = 'none';
-            }
-
-
-            document.getElementById('imageModal').style.display = 'flex';
-        }
-
-        function changeImage(direction) {
-            if (window.currentImages) {
-                currentImageIndex += direction;
-                if (currentImageIndex >= window.currentImages.length) {
-                    currentImageIndex = 0; // Volver al inicio si supera el número total
-                } else if (currentImageIndex < 0) {
-                    currentImageIndex = window.currentImages.length - 1; // Volver al final si es menor que 0
-                }
-                document.getElementById('modalImage').src = window.currentImages[currentImageIndex];
-            }
-        }
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-    </script>
+    <script src="{% static 'js/perfilUsuario.js' %}"></script>
     {% endblock %}
 </body>
 

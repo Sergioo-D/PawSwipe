@@ -1,0 +1,14 @@
+<div class="publicacion">
+    <div class="cabecera-publicacion">
+        <img src="{{ publicacion.perfil.fotoPerfil.url }}" alt="imagen de perfil">
+        <div class="detalles-usuario">
+            <strong>{{ publicacion.perfil.mascota.nombre }}</strong>
+            <span>{{ publicacion.fecha | date:"d M Y H:i" }}</span>
+        </div>
+    </div>
+    <p class="texto-publicacion">{{ publicacion.texto }}</p>
+    <div class="interacciones">
+        <span class="likes">{{ publicacion.likes }} Me gusta</span>
+        <!-- Agregar otros botones de interacción según necesidad -->
+    </div>
+</div>
