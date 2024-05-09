@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from requests import Response
 from Aplicaciones.bbdd.models import *
 from Aplicaciones.forms.formulario import ImagenForm, MascotaForm, PublicacionForm, UsuarioForm
@@ -165,6 +166,10 @@ def perfil(request, mascota_id=None):
         'es_propietario':es_propietario
     }
     return render(request, 'perfilUsuario.html', context)
+
+def notificaciones(request):
+    # Tu lógica de vista aquí
+     return HttpResponse("Esta es la página de notificaciones")
 
 def eliminar_mascota(request, mascota_id):
     mascota = get_object_or_404(Mascota, id=mascota_id, usuario=request.user)  # Asegúrate de que solo el dueño pueda eliminar la mascota
@@ -600,6 +605,7 @@ def enviar_mensaje(request,slug):
             mensaje=mensaje
         )
         return redirect('chat', slug=sala.slug)
+
     
 def chattt(request):
     return render(request, 'chatprueba3.html')    

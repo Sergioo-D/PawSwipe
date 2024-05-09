@@ -20,6 +20,9 @@ from Aplicaciones.bbdd.views import *
 from Aplicaciones.API.views import *
 from django.conf.urls.static import static
 from django.conf import settings
+from Aplicaciones.bbdd import views
+
+
 
 
 urlpatterns = [
@@ -34,6 +37,7 @@ urlpatterns = [
     path("eliminarCuenta/",eliminarCuenta, name="eliminarCuenta"),
      path('eliminar-mascota/<int:mascota_id>/', eliminar_mascota, name='eliminar_mascota'),
     path("modificarDatos/",modificarDatos, name="modificarDatos"),
+    path('notificaciones/', views.notificaciones, name='notificaciones'),
     path("create_post/", create_post_view, name="create_post"),
     path('has_liked/<int:publicacion_id>/', has_liked, name='has_liked'),
     path('like_post/<int:publicacion_id>/', like_post, name='like_post'),
