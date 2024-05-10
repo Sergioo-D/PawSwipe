@@ -15,11 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from Aplicaciones.bbdd.views import *
 from Aplicaciones.API.views import *
 from django.conf.urls.static import static
 from django.conf import settings
+from Aplicaciones.chat.views import *
 
 
 urlpatterns = [
@@ -43,14 +44,18 @@ urlpatterns = [
     path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
     path('chat/<str:slug>/', chat, name='chat'),
     path('enviar_mensaje/<str:slug>/', enviar_mensaje, name='enviar_mensaje'),
-    path('inbox/', inbox, name='inbox'),
+    #path('inbox/', inbox, name='inbox'),
     path('obtener_datos/',obtener_datos_usuario, name='obtener_datos'),
     path('borrar_usuario/',borrar_usuario, name='borrar_usuario'),
     path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
     path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
     path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
     path('chattt/', chattt, name='chattt'),
+    path('chatt/',include('Aplicaciones.chat.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 """  ,
     path('search-users/', search_users, name='search_users'),

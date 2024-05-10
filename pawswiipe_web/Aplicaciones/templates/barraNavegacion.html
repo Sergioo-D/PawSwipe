@@ -136,7 +136,7 @@
             <a href="{% url 'feed' %}"><i class="fas fa-newspaper"></i><span class="icon-text">Inicio</span></a>
             <a href="#" onclick="document.getElementById('uploadModal').style.display='block'"><i
                     class="fas fa-plus-square"></i><span class="icon-text">Añadir Publicación</span></a>
-            <a href="/inbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
+            <a href="/chatt/iinbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
         </div>
         <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
             {% csrf_token %}

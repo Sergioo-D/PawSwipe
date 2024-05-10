@@ -90,10 +90,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'pawswiipe.wsgi.application'
 ASGI_APPLICATION = 'pawswiipe.asgi.application'
 
-Chanel_LAYERS = {
-    "default":{
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
 }
 
 # Database
@@ -148,10 +148,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    #BASE_DIR / 'static',
     BASE_DIR / 'Aplicaciones' / 'static',
 ]
 

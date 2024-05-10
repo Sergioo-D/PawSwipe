@@ -91,12 +91,13 @@ class RegistroInicioSession(models.Model):
 
     
 class MensajeDirecto(models.Model):
-    user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="user")
+    # user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="user")
     emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="emisor")
     receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="receptor")
     timestamp = models.DateTimeField(auto_now_add=True)
     mensaje = models.TextField()
     is_read = models.BooleanField(default=False)
+    # sala = models.ForeignKey('Sala', on_delete=models.CASCADE, related_name='mensajes')
 
     def sendMessage(user,emisor,receptor,mensaje):
         sender_message = MensajeDirecto(user=emisor,emisor=emisor, receptor=receptor, mensaje=mensaje, is_read=True)
