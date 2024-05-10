@@ -1,18 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link href="{% static 'css/feed.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    {%extends 'barraNavegacion.html'%}
-    {%block contenido%}
-    <style>
-        p {
-            margin: 10px;
-        }
-    </style>
-</head>
-<body>
-    
-    <p>En esta página saldran las fotos y videos de los usuarios que sigues</p>
-    {%endblock%}
-</body>
-</html>
+<div class="contenedor-publicaciones">
+    {% for publicacion in publicaciones %}
+        {% include "publicacion.html" %}
+    {% endfor %}
+</div>
+<div id="end-element"></div>
+
+<p>En esta página saldran las fotos y videos de los usuarios que sigues</p>
+{%endblock%}
+{% block extra_js %}
+<script src="{% static 'js/feed.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,27 @@
+<div class="publicacion">
+    <div class="cabecera-publicacion">
+        {% if publicacion.perfil.fotoPerfil %}
+            <img src="{{ publicacion.perfil.fotoPerfil.url }}" alt="imagen de perfil">
+        {% else %}
+            <i class="fa fas-paw"></i>
+        {% endif %}
+        <div class="detalles-usuario">
+            <strong>{{ publicacion.perfil.mascota.nombre }}</strong>
+            <span>{{ publicacion.fecha | date:"d M Y H:i" }}</span>
+        </div>
+    </div>
+    <p class="texto-publicacion">{{ publicacion.texto }}</p>
+    
+    <!-- Mostrar imágenes de la publicación -->
+    <div class="imagenes-publicacion">
+        {% for imagen in publicacion.imagenes.all %}
+            <img class="publicacion-img" src="{{ imagen.urlImagen.url }}" alt="imagen de la publicación">
+        {% endfor %}
+    </div>
+    
+    <div class="interacciones">
+        <span class="likes">{{ publicacion.likes }} Me gusta</span>
+        <!-- Agregar otros botones de interacción según necesidad -->
+    </div>
+    <hr>
+</div>

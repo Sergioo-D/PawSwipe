@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
 {% load static %}
-{% block content %}
 
+<<<<<<< HEAD
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -143,10 +141,28 @@
             <button type="submit" class="icon-button"><i class="fas fa-power-off"></i><span
                     class="icon-text">Salir</span></button>
         </form>
+=======
+<div class="toolbar">
+    <img src="{% static 'imagenes/logoh2.png' %}" alt="PawSwipe Logo">
+    <div>
+        <a href="{% url 'perfil' %}"><i class="fas fa-paw"></i></i><span class="icon-text">Perfil</span></a>
+        <a href="{% url 'feed' %}"><i class="fas fa-home"></i><span class="icon-text">Inicio</span></a>
+        <a href="#" onclick="document.getElementById('uploadModal').style.display='block'"><i
+                class="fas fa-plus-square"></i><span class="icon-text">Publicación</span></a>
+        <a href="/inbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
+        <a href="#" onclick="abrirModal('searchModal')"><i class="fas fa-search"></i><span
+                class="icon-text">Buscar</span></a>
+>>>>>>> web2
     </div>
-    <div id="uploadModal" class="modalImagen" style="display:none;">
-        <button class="cerrarModal" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
-        <br></br>
+    <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="icon-button"><i class="fas fa-power-off"></i><span
+                class="icon-text">Salir</span></button>
+    </form>
+</div>
+<div id="uploadModal" class="modalImagen" style="display:none;">
+    <span class="cerrarModal" type="button" onclick="cerrarModal()">&times;</span>
+    <div>
         <form method="post" enctype="multipart/form-data" action="{% url 'create_post' %}">
             {% csrf_token %}
             <label for="images">Arrastra las fotos y los videos aquí o <span
@@ -157,49 +173,15 @@
             <button class="publicar" type="submit">Publicar</button>
         </form>
     </div>
+</div>
 
-    {% block contenido %}
-    {% endblock %}
-    <script>
-
-        function cerrarModal(id) {
-            var preview = document.getElementById("imageVista");
-            preview.innerHTML = ''; 
-            document.getElementById("uploadModal").style.display = 'none';
-        }
-        function previewImages() {
-            var preview = document.getElementById('imageVista');
-            preview.innerHTML = '';  // Limpia el contenedor de la vista previa
-            if (this.files) {
-                [].forEach.call(this.files, readAndPreview);
-            }
-
-            function readAndPreview(file) {
-
-                // Asegúrate de que `file.name` coincida con nuestro filtro de extensiones
-                if (!/\.(jpe?g|png|gif)$/i.test(file.name)) {
-                    return alert(file.name + " is not an image");
-                } // Si no es una imagen, salimos de la función
-
-                var reader = new FileReader();
-
-                reader.addEventListener("load", function () {
-                    var image = new Image();
-                    image.height = 300; // Establece la altura deseada para las imágenes de vista previa
-                    image.width = 300
-                    image.title = file.name;
-                    image.src = this.result;
-                    preview.appendChild(image);
-                });
-
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Añade el evento 'change' manualmente
-        document.getElementById('images').onchange = previewImages;
-    </script>
-</body>
-{% endblock %}
-
-</html>
+<div id="searchModal" class="modal-search" style="display: none;">
+    <span class="cerrarModal" onclick="cerrarModalSearch('searchModal')">&times;</span>
+    <div>
+        <form action="{% url 'buscar_perfiles' %}" method="get">
+            <h5>Búsqueda</h5>
+            <input type="text" id="input-busqueda" name="q" placeholder="Buscar mascota..." required>
+            <div id="resultados-busqueda"></div>
+        </form>
+    </div>
+</div>

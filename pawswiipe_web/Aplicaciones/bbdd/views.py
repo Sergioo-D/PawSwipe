@@ -1,8 +1,9 @@
+import json
 from django.utils import timezone
 import os
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from requests import Response
 from Aplicaciones.bbdd.models import *
 from Aplicaciones.forms.formulario import ImagenForm, MascotaForm, PublicacionForm, UsuarioForm
@@ -20,11 +21,15 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.http import require_POST
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-@login_required(login_url='home')
-def feed(request):
-    print("Usuario autenticado:" ,request.user.is_authenticated)
-    return render(request, 'feed.html')
+
+# def feed(request):
+#     print("Usuario autenticado:" ,request.user.is_authenticated)
+#     return render(request, 'feed.html')
 
 @redirigirUsuarios
 def home(request):
@@ -46,7 +51,10 @@ def home(request):
             if user.is_superuser:  # comprobar si el usuario es un administrador
                 return redirect('/admin/')  # si es administrador, redirigir a la página de administración
             else:
-                return redirect('feed')  # los usuarios normales son redirigidos a la página de inicio
+                if user.mascotas.exists():  # para verificar si hay mascotas
+                    return redirect('feed')  # Redirigir al feed si hay mascotas
+                else:
+                    return redirect('registro_mascota_initial', mail=user.mail, initial=1)  # Redirigir a registro de mascota si no hay mascotas
         else:
             try:
                 usuario = Usuario.objects.get(mail=mail)
@@ -66,10 +74,7 @@ def crear_perfil_default(mascota):
     try:
         perfil_default = Perfil.objects.create(
             mascota=mascota, 
-            fotoPerfil="",
-            numSeguidores=0, 
-            numSeguidos=0, 
-            totalPublicaciones=0
+            fotoPerfil=""
         )
         perfil_default.save()
     except Exception as e:
@@ -99,21 +104,21 @@ def registro(request):
                     fecha=formulario.cleaned_data.get('fecha')
                 )
                 usuario.save()
-                return redirect(reverse('registro_mascota', args=[usuario.mail]))
+                return redirect(reverse('registro_mascota_initial', args=[usuario.mail, 1]))
         else:
             return render(request, "formRegistro.html", {"form": formulario})  # Devuelve una respuesta si el formulario no es válido
     else:
         formulario = UsuarioForm()
         return render(request, "formRegistro.html", {"form": formulario})
     
-def registro_mascota(request, mail):
+def registro_mascota(request, mail, initial=None):
     usuario = Usuario.objects.get(mail=mail)
     if request.method == 'POST':
         form = MascotaForm(request.POST)
         if form.is_valid():
             nombre = form.cleaned_data.get('nombre')
             if Mascota.objects.filter(nombre=nombre).exists():
-                messages.error(request, 'Este nombre de perfil ya existe')
+                messages.error(request, 'El nombre de perfil ya existe')
                 return redirect('registro_mascota')
             else:
                 mascota= Mascota(
@@ -123,10 +128,15 @@ def registro_mascota(request, mail):
                 )
                 mascota.save()
                 crear_perfil_default(mascota)
-            return redirect(home) 
+                if initial:
+                    return redirect('home')
+                else:
+                    return redirect('perfil')
+                    
     else:
         form = MascotaForm()
-    return render(request, 'formRegistroMascota.html', {'form': form, 'usuario': usuario})  
+    context = {'form': form, 'usuario': usuario, 'initial': initial}
+    return render(request, 'formRegistroMascota.html', context)
 
 def logOut(request):
     logout(request)
@@ -139,7 +149,9 @@ def perfil(request, mascota_id=None):
         mascota_actual = get_object_or_404(Mascota, pk=mascota_id, usuario=usuario)
     else:
         mascota_actual = usuario.mascotas.first()
+        guardar_mascota_actual(request, mascota_actual.id)
 
+    es_propietario = True
     todas_las_mascotas = usuario.mascotas.all()
     perfil = mascota_actual.perfil
     publicaciones = perfil.publicaciones.all()
@@ -150,9 +162,15 @@ def perfil(request, mascota_id=None):
         'mascota_actual': mascota_actual,
         'todas_las_mascotas': todas_las_mascotas,
         'perfil': perfil,
-        'publicaciones': publicaciones
+        'publicaciones': publicaciones,
+        'es_propietario':es_propietario
     }
     return render(request, 'perfilUsuario.html', context)
+
+def eliminar_mascota(request, mascota_id):
+    mascota = get_object_or_404(Mascota, id=mascota_id, usuario=request.user)  # Asegúrate de que solo el dueño pueda eliminar la mascota
+    mascota.delete()
+    return redirect('perfil') 
 
 def eliminarCuenta(request):
     from django.core.exceptions import ObjectDoesNotExist
@@ -187,6 +205,33 @@ def modificarDatos(request):
         formulario = UsuarioForm(instance=user)
         return render(request, 'perfilUsuario.html', {'form': formulario})
     
+def modificarDatosMascota(request, mascota_id):
+    if request.method == 'POST':
+        mascota = get_object_or_404(Mascota, id=mascota_id, usuario=request.user)
+        fotoPerfil = request.FILES.get('img')
+        nombre = request.POST.get('nombreUsuario')
+        despcripcion = request.POST.get('descripcion')
+        perfil = get_object_or_404(Perfil, mascota_id=mascota_id)
+        
+        if fotoPerfil:
+            perfil.fotoPerfil = fotoPerfil
+            perfil.save()
+
+        if nombre:
+            mascota.nombre = nombre
+
+        if despcripcion:
+            mascota.descripcion = despcripcion
+
+        mascota.save()
+
+        # Actualizar la sesión del usuario para que no se cierre la sesión después de cambiar la contraseña
+        return redirect('perfil')
+    else:
+        formulario = MascotaForm(instance=mascota)
+        return render(request, 'perfilUsuario.html', {'form': formulario})
+    
+    
 def create_post_view(request):
     mascota = get_object_or_404(Mascota, pk=request.session['mascota_actual_id'])  # Asegura que la mascota existe
     if request.method == 'POST':
@@ -204,15 +249,301 @@ def create_post_view(request):
     return redirect('perfil') 
 
 def guardar_mascota_actual(request, mascota_id):
-    request.session['mascota_actual_id'] = mascota_id
-    return redirect('perfil_mascota', mascota_id=mascota_id)
-    
-def delete_post(publicacion_id):
+    mascota = get_object_or_404(Mascota, pk=mascota_id)
+
+    if mascota.usuario == request.user:
+        # Si el usuario es propietario de la mascota, actualiza la sesión y redirige a la vista 'perfil_mascota'
+        request.session['mascota_actual_id'] = mascota_id
+        return redirect('perfil_mascota', mascota_id=mascota_id)
+    else:
+        # Si el usuario no es propietario, actualiza la sesión y redirige a la vista 'perfil'
+        request.session['mascota_actual_id'] = mascota_id
+        return redirect('perfil-mascota', mascota_id=mascota_id)
+# @require_http_methods(["POST"])   
+# @csrf_protect 
+def delete_post(request, publicacion_id):
     try:
         post = Publicacion.objects.get(id=publicacion_id)
+        id_mascota = post.perfil.mascota_id
+        perfil = Perfil.objects.get(mascota_id=id_mascota)
+        perfil.totalPublicaciones -= 1
+        perfil.save()
         post.delete()
-    except ObjectDoesNotExist:
-        print("Usuario no existe")
+        return redirect('perfil_mascota', mascota_id=id_mascota)
+    except Publicacion.DoesNotExist:
+         return HttpResponse("Publicación no existe", status=404)
+     
+def delete_comentario(request, comentario_id):
+    try:
+        comentario = Comentario.objects.get(id=comentario_id)
+        comentario.delete()
+        return JsonResponse({'success': 'Comentario eliminado correctamente'})
+    except Comentario.DoesNotExist:
+        return JsonResponse({'error': 'Comentario no existe'}, status=404)
+     
+@require_POST
+def like_post(request, publicacion_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+
+    try:
+        # Obtener la mascota actual del usuario
+        mascota_actual_id = request.session.get('mascota_actual_id')
+        if mascota_actual_id:
+            mascota_actual = get_object_or_404(Mascota, pk=mascota_actual_id)
+            perfil_actual = mascota_actual.perfil
+        else:
+            return JsonResponse({'error': 'No se encontró la mascota actual en la sesión'}, status=404)
+
+        try:
+            # Intenta obtener el like del perfil actual para esta publicación
+            like = Like.objects.get(perfil=perfil_actual, publicacion=publicacion)
+            # Si el like existe, elimínalo y decrementa el conteo de likes
+            like.delete()
+            publicacion.likes -= 1
+            publicacion.save()
+            return JsonResponse({'message': 'Like removed', 'likes': publicacion.likes})
+        except Like.DoesNotExist:
+            # Si el like no existe, crea uno nuevo y aumenta el conteo de likes
+            Like.objects.create(perfil=perfil_actual, publicacion=publicacion)
+            publicacion.likes += 1
+            publicacion.save()
+            return JsonResponse({'message': 'Like added', 'likes': publicacion.likes})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    
+def has_liked(request, publicacion_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+
+    # Obtener la publicación y asegurarse de que existe
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+
+    # Obtener la mascota actual del usuario
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    if mascota_actual_id:
+        mascota_actual = get_object_or_404(Mascota, pk=mascota_actual_id)
+        perfil_actual = mascota_actual.perfil
+    else:
+        return JsonResponse({'error': 'No se encontró la mascota actual en la sesión'}, status=404)
+
+    # Comprobar si el perfil del usuario actual ha dado "like" a esta publicación
+    has_liked = Like.objects.filter(perfil=perfil_actual, publicacion=publicacion).exists()
+
+    return JsonResponse({'has_liked': has_liked})
+    
+
+
+def get_likes(request, publicacion_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    # Obtener el perfil del usuario actual, asumiendo que la sesión tiene una mascota seleccionada
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    perfil_usuario = get_object_or_404(Perfil, mascota__id=mascota_actual_id)
+
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    likes = Like.objects.filter(publicacion=publicacion).select_related('perfil__mascota').exclude(perfil=perfil_usuario)
+
+    likes_list = [{
+        'mascotaNombre': like.perfil.mascota.nombre,
+        'mascotaId': like.perfil.mascota.id,
+        'fotoPerfil': like.perfil.fotoPerfil.url if like.perfil.fotoPerfil else None,
+        'perfilUrl': reverse('perfil-mascota', args=[like.perfil.mascota.id]),
+        'perfilId': like.perfil.id,
+        'siguiendo': perfil_usuario.siguiendo.filter(id=like.perfil.id).exists()
+    } for like in likes if like.perfil.mascota]
+
+    return JsonResponse({'likes': publicacion.likes, 'lista_likes': likes_list})
+
+
+@require_POST
+def comentario_post(request, publicacion_id):
+    print(request.body)
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+
+    # Recuperar el ID de la mascota activa desde la sesión
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    if not mascota_actual_id:
+        return JsonResponse({'error': 'No active pet selected'}, status=400)
+
+    # Obtener la mascota y perfil actual basado en la sesión
+    mascota_actual = get_object_or_404(Mascota, pk=mascota_actual_id)
+    perfil_actual = mascota_actual.perfil
+
+    data = json.loads(request.body)
+    texto = data.get('texto', '').strip()
+
+    if not texto:
+        return JsonResponse({'error': 'El texto del comentario no puede estar vacío'}, status=400)
+
+    try:
+        publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+        nuevo_comentario = Comentario.objects.create(publicacion=publicacion, perfil=perfil_actual, texto=texto)
+        return JsonResponse({
+            'nuevoComentario': {
+                'autor': perfil_actual.mascota.nombre,
+                'texto': texto, 
+                'fotoPerfil': perfil_actual.fotoPerfil.url if perfil_actual.fotoPerfil else None,
+                'fecha': formatear_datetime(timezone.now())   
+            }
+            }, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def get_comments(request, publicacion_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    es_propietario = request.user == publicacion.perfil.mascota.usuario
+    comentarios = Comentario.objects.filter(publicacion=publicacion).select_related('perfil')
+    comentarios_list = [{
+        'id': comentario.id,
+        'autor': comentario.perfil.mascota.nombre,
+        'urlPerfil': reverse('perfil-mascota', args=[comentario.perfil.mascota.id]),
+        'texto': comentario.texto, 
+        'fecha': formatear_datetime(comentario.fecha_creacion),
+        'fotoPerfil': comentario.perfil.fotoPerfil.url if comentario.perfil.fotoPerfil else None,
+        'esPropietario': es_propietario
+        
+        } for comentario in comentarios]
+    return JsonResponse({'comentarios': comentarios_list})
+
+def formatear_datetime(dt):
+    # Asegúrate de que 'dt' sea una fecha "aware"
+    now = timezone.now()
+    delta = relativedelta(now, dt)
+    if delta.years > 0:
+        return f'hace {delta.years} años' if delta.years > 1 else 'hace un año'
+    if delta.months > 0:
+        return f'hace {delta.months} meses' if delta.months > 1 else 'hace un mes'
+    if delta.days > 0:
+        return f'hace {delta.days} días' if delta.days > 1 else 'hace un día'
+    if delta.hours > 0:
+        return f'hace {delta.hours} horas' if delta.hours > 1 else 'hace una hora'
+    if delta.minutes > 0:
+        return f'hace {delta.minutes} minutos' if delta.minutes > 1 else 'hace un minuto'
+    return 'hace unos segundos'
+
+def buscar_perfiles(request):
+    query = request.GET.get('q', '')
+    if query:
+        # Utiliza 'select_related' para recuperar la información de perfil en la misma consulta
+        mascotas = Mascota.objects.filter(nombre__icontains=query).exclude(usuario=request.user).select_related('perfil')
+        resultados = [
+            {
+                'id': mascota.id,
+                'nombre': mascota.nombre,
+                'foto_url': mascota.perfil.fotoPerfil.url if mascota.perfil and mascota.perfil.fotoPerfil else None,
+                'perfil_url': reverse('perfil-mascota', args=[mascota.id])
+            }
+            for mascota in mascotas
+        ]
+    else:
+        resultados = []
+    return JsonResponse({'resultados': resultados})
+
+def perfil_mascota(request, mascota_id):
+    mascota_actual = get_object_or_404(Mascota, pk=mascota_id)
+    es_propietario = mascota_actual.usuario == request.user
+    todas_las_mascotas = mascota_actual.usuario.mascotas.all()
+    mascota_session_id = request.session.get('mascota_actual_id')
+    mascota_sesion = Mascota.objects.get(pk=mascota_session_id, usuario=request.user)
+    perfil_usuario = mascota_sesion.perfil
+    siguiendo = perfil_usuario.siguiendo.filter(id=mascota_actual.perfil.id).exists()
+    
+    context = {
+        'mascota_actual': mascota_actual,
+        'es_propietario': es_propietario,
+        'publicaciones': mascota_actual.perfil.publicaciones.all(),
+        'perfil': mascota_actual.perfil,
+        'todas_las_mascotas': todas_las_mascotas,
+        'siguiendo': siguiendo 
+    }
+    return render(request, 'perfilUsuario.html', context)
+
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.shortcuts import render
+from .models import Publicacion
+
+@login_required(login_url='home')
+def feed(request):
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    mascota_actual = Mascota.objects.get(id=mascota_actual_id)
+    perfil_mascota_actual = mascota_actual.perfil
+    followed_profiles = perfil_mascota_actual.siguiendo.all()
+    
+    # Obtener las publicaciones de los perfiles seguidos
+    followed_publications = Publicacion.objects.filter(perfil__in=followed_profiles)
+    
+    # Obtener todas las publicaciones excepto las de los perfiles seguidos
+    other_publications = Publicacion.objects.exclude(perfil__in=followed_profiles)
+    
+    # Concatenar y ordenar todas las publicaciones
+    all_publications = followed_publications | other_publications
+    all_publications = all_publications.order_by('-fechaPublicacion')
+    
+    paginator = Paginator(all_publications, 10)  # Muestra 10 publicaciones por página
+    page_number = request.GET.get('page')
+    publicaciones = paginator.get_page(page_number)
+
+    if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        # Obtener los datos de las publicaciones y sus imágenes
+        publicaciones_data = []
+        for publicacion in publicaciones:
+            imagenes = publicacion.imagenes.all().values('urlImagen')
+            publicacion_data = {
+                'id': publicacion.id,
+                'perfil__fotoPerfil': publicacion.perfil.fotoPerfil.url if publicacion.perfil.fotoPerfil else None,
+                'perfil__mascota__nombre': publicacion.perfil.mascota.nombre,
+                'texto': publicacion.texto,
+                'fechaPublicacion': publicacion.fechaPublicacion,
+                'likes': publicacion.likes,
+                'imagenes': list(imagenes)
+            }
+            publicaciones_data.append(publicacion_data)
+        
+        # Devolver la respuesta JSON con los datos de las publicaciones y sus imágenes
+        return JsonResponse({
+            'publicaciones': publicaciones_data,
+            'has_next': publicaciones.has_next()
+        })
+
+    return render(request, 'feed.html', {'publicaciones': publicaciones})
+
+
+@login_required
+@require_POST  # Asegura que esta vista sólo acepte peticiones POST
+def seguir_perfil(request, perfil_id):
+    # Asegúrate de que la sesión tiene una mascota seleccionada
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    perfil_a_seguir = get_object_or_404(Perfil, id=perfil_id)
+    perfil_usuario = get_object_or_404(Perfil, mascota__id=mascota_actual_id)
+    
+    if perfil_usuario == perfil_a_seguir:
+        return JsonResponse({'error': 'No puedes seguirte a ti mismo'}, status=400)
+
+    # Comprobar si ya está siguiendo al perfil
+    if perfil_a_seguir in perfil_usuario.siguiendo.all():
+        perfil_usuario.siguiendo.remove(perfil_a_seguir)
+        accion = 'Dejado de seguir'
+    else:
+        perfil_usuario.siguiendo.add(perfil_a_seguir)
+        accion = 'Seguido'
+        
+    numSeguidores = perfil_a_seguir.seguidores.count()
+
+    return JsonResponse({
+        'success': f'Has {accion} a {perfil_a_seguir.mascota.nombre} correctamente',
+        'numSeguidores': numSeguidores
+        })
+
+
 
 @login_required
 def inbox(request):

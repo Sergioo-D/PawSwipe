@@ -15,3 +15,8 @@ class RegistroInicioSessionSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
         mail = serializers.CharField()
         password = serializers.CharField()
+        
+class MascotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mascota
+        fields = ['nombre', 'descripcion']

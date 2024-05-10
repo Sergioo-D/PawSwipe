@@ -151,7 +151,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
+<<<<<<< HEAD
     #BASE_DIR / 'static',
+=======
+    # os.path.join(BASE_DIR, 'static'),
+>>>>>>> web2
     BASE_DIR / 'Aplicaciones' / 'static',
 ]
 

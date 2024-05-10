@@ -1,0 +1,79 @@
+body {
+    background-color: #f5f5f5;
+    /* Fondo más neutro */
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-image: url("{% static 'imagenes/fondo7.png' %}");
+    background-size: cover;
+}
+
+/* header {
+    height: 30px;
+    background-color: #ffffff;
+    color: #ff9900;
+    padding: 20px 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-content: center;
+} */
+
+main {
+    width: 20%;
+    margin: 40px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 8%
+}
+
+form {
+    display: grid;
+    gap: 20px;
+    /* Más espacio entre campos */
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+    /* Texto más oscuro para mejor contraste */
+}
+
+h2{
+    color:#ff9900;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 100;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    /* Más alto para mejor accesibilidad */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    /* Borde más destacado */
+    border-radius: 6px;
+    /* Bordes más redondeados */
+}
+
+input:focus {
+    border-color: #ff9900;
+    outline: none;
+}
+
+button {
+    background-color:#fe6803; 
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    /* Transición suave */
+}
+
+button:hover {
+    background-color: #fe6803;  
+}
