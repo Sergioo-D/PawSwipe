@@ -249,13 +249,12 @@ function openModalLikes() {
     const nombres = JSON.parse(document.getElementById('imageLikes').getAttribute('data-nombres'));
     const lista = document.createElement('div');
     lista.id = 'modalLikes';
-    lista.innerHTML = '<div class="closeLike"><span onclick="closeModalLikes()">&times;</span></div><h3>Me gusta</h3><ul>' +
+    lista.innerHTML = '<div class="closeLike"><span style="font-size: 30px; cursor:pointer" onclick="closeModalLikes()">&times;</span></div><h5>Me gusta</h5><ul>' +
         nombres.map(data =>
             `<li>` +
             (data.fotoPerfil ? `<img src="${data.fotoPerfil}" class="comentario-imagen">` : `<i class="fas fa-paw comentario-imagen"></i>`) +
-            `<a href="${data.perfilUrl}">${data.mascotaNombre}</a>` +
-            (data.siguiendo ? `<button class="boton-seguir" onclick="toggleFollow(${data.mascotaId}, false)">Dejar de seguir</button>` :
-                `<button class="boton-seguir" onclick="toggleFollow(${data.mascotaId}, true)">Seguir</button>`) +
+            `<a class="modalLikes-nombre" href="${data.perfilUrl}">${data.mascotaNombre}</a>` +
+            `<span class="seguir-modal"  onclick="toggleFollow(${data.perfilId}, ${data.siguiendo}, this)">${data.siguiendo ? 'Dejar de seguir' : 'Seguir'}</span>` +
             `</li>`
         ).join('') +
         '</ul>';
@@ -344,25 +343,63 @@ function getCookie(name) {
 
 document.addEventListener('DOMContentLoaded', function () {
     const botonSeguir = document.getElementById('boton-seguir');
-
     if (botonSeguir) {
         botonSeguir.addEventListener('click', function () {
-            const url = botonSeguir.dataset.url;
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')  // Asegúrate de tener esta función definida para obtener el CSRF token
-                },
-                body: JSON.stringify({})
-            })
-                .then(response => response.json())
-                .then(data => {
-                    botonSeguir.textContent = botonSeguir.textContent.includes('Seguir') ? 'Dejar de seguir' : 'Seguir';
-                    document.getElementById('numSeguidores').textContent = data.numSeguidores;
-                })
-                .catch(error => console.error('Error:', error));
+            const mascotaId = botonSeguir.getAttribute('data-mascota-id');
+            const isFollowing = botonSeguir.getAttribute('data-siguiendo') === 'true';
+            toggleFollow(mascotaId, isFollowing, botonSeguir);
         });
     }
 });
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     const botonSeguir = document.getElementById('boton-seguir');
+
+//     if (botonSeguir) {
+//         botonSeguir.addEventListener('click', function () {
+//             const url = botonSeguir.dataset.url;
+
+//             fetch(url, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'X-CSRFToken': getCookie('csrftoken')  // Asegúrate de tener esta función definida para obtener el CSRF token
+//                 },
+//                 body: JSON.stringify({})
+//             })
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     botonSeguir.textContent = botonSeguir.textContent.includes('Seguir') ? 'Dejar de seguir' : 'Seguir';
+//                     document.getElementById('numSeguidores').textContent = data.numSeguidores;
+//                 })
+//                 .catch(error => console.error('Error:', error));
+//         });
+//     }
+// });
+
+
+function toggleFollow(perfilId, siguiendo, button) {
+    const csrfToken = getCookie('csrftoken'); // Asegúrate de que tienes esta función para obtener el CSRF token
+
+    fetch(`/seguir_perfil/${perfilId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ seguir: !siguiendo })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.textContent = siguiendo ? 'Seguir' : 'Dejar de seguir';
+            button.onclick = () => toggleFollow(perfilId, !siguiendo, button);
+            if (data.numSeguidores !== undefined) {
+                document.getElementById('numSeguidores').textContent = data.numSeguidores;
+            }
+        } else {
+            console.error('Error al cambiar el estado de seguimiento');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}

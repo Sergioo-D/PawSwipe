@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import  login, logout, authenticate
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
-from Aplicaciones.bbdd.serializers import UsuarioSerializer , LoginSerializer
+from Aplicaciones.bbdd.serializers import MascotaSerializer, UsuarioSerializer , LoginSerializer
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.db.models import Q
@@ -21,35 +21,52 @@ from PIL import Image
 from io import BytesIO
 
 
-def crear_perfil_default(user):
+def crear_perfil_default(mascota):
     try:
-        imgd = os.path.join(settings.MEDIA_ROOT,'perfil_images/default.jpg')
-        perfil_default = perfil.objects.create(usuario=user, fotoPerfil=imgd)
-        perfil_default.save()
+        Perfil.objects.create(
+            mascota=mascota, 
+            fotoPerfil=""  
+        )
     except Exception as e:
-        print(f"No se pudo crear el perfil predeterminado para {user.mail}: {e}")
+        print(f"No se pudo crear el perfil predeterminado para {mascota.nombre}: {e}")
+        raise Exception(f"Error al crear el perfil predeterminado: {e}")
 
 @api_view(['POST'])
 def registrar_usuario(request):
-    print(request.data)
     if request.method == 'POST':
         serializer = UsuarioSerializer(data=request.data)
         if serializer.is_valid():
-            # email = request.data.get('email')
-            # user = Usuario.objects.get(mail=email)
-            # if user.DoesNotExist:
+            email = serializer.validated_data.get('mail')
+            
+            if Usuario.objects.filter(mail=email).exists():
+                return Response({'message': 0,'error': 'Este email ya está registrado'},status=status.HTTP_226_IM_USED)
+
             password = serializer.validated_data.get('password')
             encriptar = make_password(password)
             serializer.validated_data['password'] = encriptar
             user = serializer.save()
-            crear_perfil_default(user)
+
             respuesta_data = serializer.data
             respuesta_data["message"] = 1
             return Response(respuesta_data, status=status.HTTP_201_CREATED)
-            # else: 
-            #     respuesta_data["message"] = 0
-            #     return Response (respuesta_data, status=status.HTTP_226_IM_USED)
+
+        # Retornar errores del serializador si no es válido
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def registrar_mascota(request, email):
+    usuario = Usuario.objects.get(mail=email)
+    if request.method == 'POST':
+        serializer = MascotaSerializer(data=request.data)
+        if serializer.is_valid():
+            nombre = serializer.validated_data['nombre']
+            if Mascota.objects.filter(nombre=nombre).exists():
+                return Response({'error': 'El nombre de la mascota ya existe', 'massage': 0}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save(usuario=usuario)
+                return Response({'message': '1'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 @api_view(['POST'])
@@ -65,7 +82,18 @@ def login_usuario(request):
 
             if user is not None:
                 token, created = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key, 'message': '1'}, status=status.HTTP_200_OK)
+                if user.mascotas.exists():
+                    return Response({
+                        'token': token.key,
+                        'message': '1',
+                        'has_mascotas': True
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        'token': token.key,
+                        'message': '1',
+                        'has_mascotas': False
+                    }, status=status.HTTP_200_OK)
             else:
                 return Response({'error': 'Usuario o contraseña incorrectos','message': '0'})
         else:
@@ -148,13 +176,13 @@ def modificar_usuario(request):
             # Guarda la URL de la imagen en la base de datos
             imagen_url = os.path.join(settings.MEDIA_ROOT, 'perfil_images', f'{user.mail}.jpg')
             try:
-                perfil_usuario = perfil.objects.get(usuario=user)
+                perfil_usuario = Perfil.objects.get(usuario=user)
                 perfil_usuario.fotoPerfil = imagen_url
                 perfil_usuario.save()
             # Decodificar el string base64 y crear un objeto Image
             # Guardar la imagen en el campo fotoPerfil
-            except perfil.DoesNotExist:
-                perfil_usuario = perfil.objects.create(usuario=user, fotoPerfil=imagen_url)
+            except Perfil.DoesNotExist:
+                perfil_usuario = Perfil.objects.create(usuario=user, fotoPerfil=imagen_url)
         return Response({'message': '1'})
     except ObjectDoesNotExist as e:
         # return Response({'message': str(e)}, status=404)
