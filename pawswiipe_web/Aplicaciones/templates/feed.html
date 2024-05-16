@@ -1,56 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link href="{% static 'css/feed.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
 
-<head>
-    {%extends 'barraNavegacion.html'%}
-    {%block contenido%}
-    <style>
-        p {
-            margin: 10px;
-        }
+<div class="contenedor-publicaciones">
+    {% for publicacion in publicaciones %}
+        {% include "publicacion.html" %}
+    {% endfor %}
+</div>
+<div id="end-element"></div>
 
-        .publicacion {
-            border: 1px solid #ccc;
-            margin: 10px;
-            padding: 10px;
-        }
-
-        .cabecera-publicacion {
-            display: flex;
-            align-items: center;
-        }
-
-        .cabecera-publicacion img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .detalles-usuario strong {
-            margin-left: 10px;
-        }
-
-        .interacciones {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="contenedor-publicaciones">
-        {% for publicacion in publicaciones %}
-            {% include "publicacion.html" %}
-        {% endfor %}
-    </div>
-
-    <p>En esta página saldran las fotos y videos de los usuarios que sigues</p>
-    {%endblock%}
-
-    <script>
-        function abrirModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-    </script>
-</body>
-
-</html>
+<p>En esta página saldran las fotos y videos de los usuarios que sigues</p>
+{%endblock%}
+{% block extra_js %}
+<script src="{% static 'js/feed.js' %}"></script>
+{% endblock %}

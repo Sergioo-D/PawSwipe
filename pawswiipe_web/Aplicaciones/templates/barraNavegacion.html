@@ -1,40 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
 {% load static %}
-{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
-    <link href="{% static 'css/barraNavegacion.css' %}" rel="stylesheet">
-</head>
-
-<body>
-    <div class="toolbar">
-        <img src="{% static 'imagenes/logoh2.png' %}" alt="PawSwipe Logo">
-        <div>
-            <a href="{% url 'perfil' %}"><i class="fas fa-paw"></i></i><span class="icon-text">Perfil</span></a>
-            <a href="{% url 'feed' %}"><i class="fas fa-home"></i><span class="icon-text">Inicio</span></a>
-            <a href="#" onclick="document.getElementById('uploadModal').style.display='block'"><i
-                    class="fas fa-plus-square"></i><span class="icon-text">Publicación</span></a>
-            <a href="/inbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
-            <a href="{% url 'notificaciones' %}">
-                <i class="fas fa-bell"></i>
-                <span class="icon-text">Notificaciones</span>
-            </a>
-            <a href="#" onclick="abrirModal('searchModal')"><i class="fas fa-search"></i><span class="icon-text">Buscar</span></a>
-        </div>
-        <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
-            {% csrf_token %}
-            <button type="submit" class="icon-button"><i class="fas fa-power-off"></i><span
-                    class="icon-text">Salir</span></button>
-        </form>
+<div class="toolbar">
+    <img src="{% static 'imagenes/logoh2.png' %}" alt="PawSwipe Logo">
+    <div>
+        <a href="{% url 'perfil' %}"><i class="fas fa-paw"></i></i><span class="icon-text">Perfil</span></a>
+        <a href="{% url 'feed' %}"><i class="fas fa-home"></i><span class="icon-text">Inicio</span></a>
+        <a href="#" onclick="document.getElementById('uploadModal').style.display='block'"><i
+                class="fas fa-plus-square"></i><span class="icon-text">Publicación</span></a>
+        <a href="/inbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
+        <a href="{% url 'notificaciones' %}">
+            <i class="fas fa-bell"></i>
+            <span class="icon-text">Notificaciones</span>
+        </a>
+        <a href="#" onclick="abrirModal('searchModal')"><i class="fas fa-search"></i><span
+                class="icon-text">Buscar</span></a>
     </div>
-    <div id="uploadModal" class="modalImagen" style="display:none;">
+    <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="icon-button"><i class="fas fa-power-off"></i><span
+                class="icon-text">Salir</span></button>
+    </form>
+</div>
+<div id="uploadModal" class="modalImagen" style="display:none;">
+    <span class="cerrarModal" type="button" onclick="cerrarModal()">&times;</span>
+    <div>
         <form method="post" enctype="multipart/form-data" action="{% url 'create_post' %}">
             {% csrf_token %}
-            <button class="cerrarModal" type="button" onclick="cerrarModal()">&times;</button>
             <label for="images">Arrastra las fotos y los videos aquí o <span
                     style="color: #ff9900; cursor: pointer;">seleccionar del ordenador</span></label>
             <input type="file" id="images" style="display: none;" name="images" multiple onchange="previewImages();">
@@ -43,22 +34,15 @@
             <button class="publicar" type="submit">Publicar</button>
         </form>
     </div>
+</div>
 
-    <div id="searchModal" class="modal-search" style="display: none;">
-        <div class="modal-search-content">
-            <button class="cerrarModal" onclick="cerrarModalSearch('searchModal')">&times;</button>
-            <form action="{% url 'buscar_perfiles' %}" method="get">
-                <h4>Búsqueda</h4>
-                <input type="text" id="input-busqueda" name="q" placeholder="Buscar mascota..." required>
-                <div id="resultados-busqueda"></div>
-            </form>
-        </div>
+<div id="searchModal" class="modal-search" style="display: none;">
+    <span class="cerrarModal" onclick="cerrarModalSearch('searchModal')">&times;</span>
+    <div>
+        <form action="{% url 'buscar_perfiles' %}" method="get">
+            <h5>Búsqueda</h5>
+            <input type="text" id="input-busqueda" name="q" placeholder="Buscar mascota..." required>
+            <div id="resultados-busqueda"></div>
+        </form>
     </div>
-
-    {% block contenido %}
-    {% endblock %}
-    <script src="{% static 'js/barraNavegacion.js' %}"></script>
-</body>
-{% endblock %}
-
-</html>
+</div>

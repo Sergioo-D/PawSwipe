@@ -211,6 +211,8 @@ class Publicacion(models.Model):
     descripcion = models.TextField(blank=True)
     fechaPublicacion = models.DateTimeField(auto_now_add=True)
     likes = models.IntegerField(default=0)
+    class Meta:
+     ordering = ['fechaPublicacion']
 
     def __str__(self):
         return f'Publicación de {self.perfil.mascota.nombre} el {self.fechaPublicacion}'

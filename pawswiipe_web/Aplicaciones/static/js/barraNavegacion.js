@@ -61,10 +61,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             const imageUrl = mascota.foto_url;
                             if (imageUrl) {
                                 // Si hay una URL de imagen, usarla para el <img>
-                                div.innerHTML = `<a href="${mascota.perfil_url}" style="zoom: 2; font-size: 8px"><img src="${imageUrl}" alt="Foto de ${mascota.nombre}" style="width:29px; height:29px; border-radius:50%;"> ${mascota.nombre} </a>`;
+                                div.innerHTML = `<a href="${mascota.perfil_url}"><img src="${imageUrl}" alt="Foto de ${mascota.nombre}" style="width:29px; height:29px; border-radius:50%;"> ${mascota.nombre} </a>`;
                             } else {
                                 // Si no hay imagen, usar un ícono de FontAwesome
-                                div.innerHTML = `<a href="${mascota.perfil_url}"><i class="fas fa-paw" style="font-size:30px; margin-right: 10px;"></i> ${mascota.nombre}</a>`;
+                                div.innerHTML = `<a href="${mascota.perfil_url}"><i class="fas fa-paw"></i> ${mascota.nombre}</a>`;
                             }
                             resultadosDiv.appendChild(div);
                         });

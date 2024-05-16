@@ -1,98 +1,95 @@
-<!DOCTYPE html>
-<html lang="es">
-{% extends 'barraNavegacion.html' %}
-{% block contenido %}
+{% extends 'base.html' %}
 {% load static %}
-
-<head>
-    <link href="{% static 'css/perfilUsuario.css' %}" rel="stylesheet">
-</head>
-
-<body>
-    <div class="contenedor">
-        <h1>
-            <div class="fotoPerfil">
-                {% if perfil.fotoPerfil %}
-                <img src="{{ perfil.fotoPerfil.url }}" alt="Imagen de perfil">
-                {% else %}
-                <icon class="fas fa-paw" style="zoom: 3"></icon>
-                {% endif %}
-            </div>
-            {% if es_propietario %}
-            <div>
-                <button id="botonModificar" onclick="abrirModal('ventanaModificacion')" class="botonModificar">Editar
-                    perfil</button>
-            </div>
+{% block extra_css %}
+<link href="{% static 'css/perfilUsuario.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="contenedor">
+    <h1>
+        <div class="fotoPerfil">
+            {% if perfil.fotoPerfil %}
+            <img src="{{ perfil.fotoPerfil.url }}" alt="Imagen de perfil">
             {% else %}
-            <div>
-                <button id="boton-mensaje" class="boton-mensaje">Enviar mensaje</button>
-            </div>
+            <icon class="fas fa-paw" style="zoom: 3"></icon>
             {% endif %}
+        </div>
+        {% if es_propietario %}
+        <div>
+            <button id="botonModificar" onclick="abrirModal('ventanaModificacion')" class="botonModificar">Editar
+                perfil</button>
+        </div>
+        {% else %}
+        <div>
+            <button id="boton-mensaje" class="boton-mensaje">Enviar mensaje</button>
+        </div>
+        {% endif %}
 
-        </h1>
-        <div class="infoPerfil">
-            <div class="infoBasica">
-                <h3>{{ mascota_actual.nombre }}</h3>
-                {% if not es_propietario %}
-                <button id="boton-seguir" data-url="{% url 'seguir_perfil' mascota_actual.perfil.id %}"
-                    class="boton-seguir" type="button">
-                    {% if siguiendo %}
-                    Dejar de seguir
-                    {% else %}
-                    Seguir
-                    {% endif %}
-                </button>
-                </form>
+    </h1>
+    <div class="infoPerfil">
+        <div class="infoBasica">
+            <h4>{{ mascota_actual.nombre }}</h4>
+            {% if not es_propietario %}
+            <button id="boton-seguir" data-mascota-id="{{ mascota_actual.perfil.id }}" data-siguiendo="{{ siguiendo }}"
+                class="boton-seguir" type="button">
+                <!-- data-url="{% url 'seguir_perfil' mascota_actual.perfil.id %}" -->
+                {% if siguiendo %}
+                Dejar de seguir
+                {% else %}
+                Seguir
                 {% endif %}
-                <p>{{mascota_actual.descripcion }}</p>
-            </div>
+            </button>
+            </form>
+            {% endif %}
+            <p>{{mascota_actual.descripcion }}</p>
+        </div>
 
-            <div class="detallesPerfil">
-                <div>
-                    <p>{{ perfil.totalPublicaciones }}</p>
-                    <p>Publicaciones</p>
-                </div>
-                <div>
-                    <p id="numSeguidores">{{ perfil.total_seguidores }}</p>
-                    <p>Seguidores</p>
-                </div>
-                <div>
-                    <p>{{ perfil.total_siguiendo }}</p>
-                    <p>Seguidos</p>
-                </div>
+        <div class="detallesPerfil">
+            <div>
+                <p>{{ perfil.totalPublicaciones }}</p>
+                <p>Publicaciones</p>
             </div>
-            <div class="perfil-miniaturas">
-                {% if not es_propietario %}
-                <p>Sus hermanos</p>
-                {% endif %}
-                {% for mascota in todas_las_mascotas %}
-                {% if mascota != mascota_actual %}
-                <div class="mascota-miniatura-container" data-url-base="{% url 'guardar_mascota' 9999 %}">
-                    <div class="mascota-miniatura" onclick="cambiarPerfil({{ mascota.id }})">
-                        {% if mascota.perfil.fotoPerfil %}
-                        <img src="{{ mascota.perfil.fotoPerfil.url }}" alt="Foto de perfil">
-                        {% else %}
-                        <icon class="fas fa-paw" style="zoom: 4"></icon>
-                        {% endif %}
-                    </div>
-                    <p class="nombre-mascota">{{ mascota.nombre }}</p>
-                </div>
-                {% endif %}
-                {% endfor %}
-                {% if es_propietario %}
-                <div class="mascota-miniatura-container">
-                    <a href="{% url 'registro_mascota' request.user.mail %}" class="agregar-mascota">
-                        +
-                    </a>
-                    <p class="nombre-mascota">Añadir mascota</p>
-                </div>
-                {% endif %}
+            <div>
+                <p id="numSeguidores">{{ perfil.total_seguidores }}</p>
+                <p>Seguidores</p>
+            </div>
+            <div>
+                <p>{{ perfil.total_siguiendo }}</p>
+                <p>Seguidos</p>
             </div>
         </div>
+        <div class="perfil-miniaturas">
+            {% if not es_propietario %}
+            <p>Sus hermanos</p>
+            {% endif %}
+            {% for mascota in todas_las_mascotas %}
+            {% if mascota != mascota_actual %}
+            <div class="mascota-miniatura-container" data-url-base="{% url 'guardar_mascota' 9999 %}">
+                <div class="mascota-miniatura" onclick="cambiarPerfil({{ mascota.id }})">
+                    {% if mascota.perfil.fotoPerfil %}
+                    <img src="{{ mascota.perfil.fotoPerfil.url }}" alt="Foto de perfil">
+                    {% else %}
+                    <icon class="fas fa-paw" style="zoom: 4"></icon>
+                    {% endif %}
+                </div>
+                <p class="nombre-mascota">{{ mascota.nombre }}</p>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% if es_propietario %}
+            <div class="mascota-miniatura-container">
+                <a href="{% url 'registro_mascota' request.user.mail %}" class="agregar-mascota">
+                    +
+                </a>
+                <p class="nombre-mascota">Añadir mascota</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    <div id="ventanaModificacion" class="ventanaModificacion">
-        <div class="ventana-content">
-            <span class="botonCerrar" onclick="closeModal('ventanaModificacion')">&times;</span>
+</div>
+<div id="ventanaModificacion" class="ventanaModificacion">
+    <div class="ventana-content">
+        <span class="close-modal" onclick="closeModal('ventanaModificacion')">&times;</span>
+        <div class="col-12">
             <form method="post" action="{% url 'editar_datos_mascota' mascota_actual.id %}"
                 enctype="multipart/form-data">
                 {% csrf_token %}
@@ -106,11 +103,13 @@
                         {% endif %}
                     </label>
                 </div>
-                <label for="nombre">Nombre mascota:</label>
-                <input type="text" id="nombre" name="nombre" value="{{ mascota_actual.nombre }}">
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion">{{ mascota_actual.descripcion }}</textarea>
-                <button type="submit" class="publicar">Guardar cambios</button>
+                <div class="datos-modificar">
+                    <label for="nombre">Nombre mascota:</label>
+                    <input type="text" id="nombre" name="nombre" value="{{ mascota_actual.nombre }}">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion">{{ mascota_actual.descripcion }}</textarea>
+                    <button type="submit" class="publicar">Guardar cambios</button>
+                </div>
             </form>
             <form method="post" action="{% url 'eliminar_mascota' mascota_actual.id %}">
                 {% csrf_token %}
@@ -118,80 +117,83 @@
             </form>
         </div>
     </div>
-    <div class="titlePost">
-        <i class="fas fa-th icon-space"></i>PUBLICACIONES
-    </div>
-    <div class="publicaciones-contenedor">
-        {% for publicacion in publicaciones %}
-        <div class="publicacion" onclick="openModal(this)" data-id="{{ publicacion.id }}">
-            <img src="{{ publicacion.imagenes.first.urlImagen.url }}" alt="Imagen principal de publicación">
-            {% if publicacion.imagenes.count > 1 %}
-            <div class="more-images-indicator">
-                <i class="fas fa-clone"></i>
-            </div>
-            {% endif %}
-            <span hidden
-                data-images="{% for imagen in publicacion.imagenes.all %}{{ imagen.urlImagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                data-description="{{ publicacion.descripcion }}" data-id="{{ publicacion.id }}">
-            </span>
+</div>
+<div class="titlePost">
+    <i class="fas fa-th icon-space"></i>PUBLICACIONES
+</div>
+<div class="publicaciones-contenedor">
+    {% for publicacion in publicaciones %}
+    <div class="publicacion" onclick="openModal(this)" data-id="{{ publicacion.id }}">
+        <img src="{{ publicacion.imagenes.first.urlImagen.url }}" alt="Imagen principal de publicación">
+        {% if publicacion.imagenes.count > 1 %}
+        <div class="more-images-indicator">
+            <i class="fas fa-clone"></i>
         </div>
-        {% endfor %}
+        {% endif %}
+        <span hidden
+            data-images="{% for imagen in publicacion.imagenes.all %}{{ imagen.urlImagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
+            data-description="{{ publicacion.descripcion }}" data-id="{{ publicacion.id }}">
+        </span>
     </div>
+    {% endfor %}
+</div>
 
-    <div id="imageModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('imageModal')">&times;</span>
+<div id="imageModal" class="modal">
+    <span class="close-modal" onclick="closeModal('imageModal')">&times;</span>
+    <div class=" row modal-content">
+        <div class="col-6">
             <img id="modalImage" src="" alt="Imagen ampliada">
             <button class="prev" onclick="changeImage(-1)">&#10094;</button>
             <button class="next" onclick="changeImage(1)">&#10095;</button>
-            <div class="info-container">
-                <div class="modal-header">
-                    {% if es_propietario %}
-                    <button class="menu-post"
-                        onclick="openDeleteModal(document.getElementById('idPublicacion').textContent)">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    {% endif %}
-                </div>
+        </div>
+        <div class=" col-6 info-container">
+            <div class="modal-header">
                 <p id="imageDescription"></p>
-                <div class="comentarios_container">
-                    <ul id="listaComentarios"></ul>
+                {% if es_propietario %}
+                <button class="menu-post"
+                    onclick="openDeleteModal(document.getElementById('idPublicacion').textContent)">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+                {% endif %}
+            </div>
+            <div class="comentarios_container">
+                <ul id="listaComentarios"></ul>
+            </div>
+            <div class="interaction-bar">
+                <div class="likes-container">
+                    {%if es_propietario %}
+                    <i class="fas fa-heart"></i>
+                    {% else %}
+                    <i class="far fa-heart" id="likeIcon" onclick="toggleLikeInModal();"></i>
+                    {% endif %}
+                    <p id="imageLikes" onclick="openModalLikes({{ publicacion.id }})"></p>
                 </div>
-                <div class="interaction-bar">
-                    <div class="likes-container">
-                        {%if es_propietario %}
-                        <i class="fas fa-heart"></i>
-                        {% else %}
-                        <i class="far fa-heart" id="likeIcon" onclick="toggleLikeInModal();"></i>
-                        {% endif %}
-                        <p id="imageLikes" onclick="openModalLikes({{ publicacion.id }})"></p>
-                    </div>
-                </div>
-                <div class="añadir-comentario">
-                    <div class="comment-form">
-                        <textarea id="nuevoComentario" placeholder="Añade un comentario..."></textarea>
-                        <button onclick="comentarioPost()">Publicar</button>
-                    </div>
+            </div>
+            <div class="añadir-comentario">
+                <div class="comment-form">
+                    <textarea id="nuevoComentario" placeholder="Añade un comentario..."></textarea>
+                    <button onclick="comentarioPost()">Publicar</button>
                 </div>
             </div>
         </div>
-        <p id="idPublicacion" style="display: none;"></p>
     </div>
+    <p id="idPublicacion" style="display: none;"></p>
+</div>
 
 
-    {% if es_propietario %}
-    <div id="deleteModal" class="delete-modal" style="display: none;">
-        <div class="delete-modal-content">
-            <form id="deleteForm" method="post" action="">
-                {% csrf_token %}
-                <input type="hidden" id="publicacionId" name="publicacion_id" value="">
-                <button type="submit">Eliminar</button>
-            </form>
-            <hr>
-            <button onclick="closeModal('deleteModal')">Cerrar</button>
+{% if es_propietario %}
+<div id="deleteModal" class="delete-modal" style="display: none;">
+    <div class="delete-modal-content">
+        <form id="deleteForm" method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" id="publicacionId" name="publicacion_id" value="">
+            <button type="submit">Eliminar</button>
+        </form>
+        <hr>
+        <button onclick="closeModal('deleteModal')">Cerrar</button>
 
-        </div>
-        <!-- <div id="deleteModal" class="modal" style="display: none;">
+    </div>
+    <!-- <div id="deleteModal" class="modal" style="display: none;">
         <div class="modal-content">
             <ul class="modal-menu">
                 <li><button onclick="confirmDelete(); closeModal('deleteModal');">Eliminar</button></li>
@@ -206,11 +208,9 @@
             {% csrf_token %}
             <input type="hidden" id="publicacionId" name="publicacion_id" value="">
         </form>-->
-    </div>
-    {% endif %}
-
-    <script src="{% static 'js/perfilUsuario.js' %}"></script>
-    {% endblock %}
-</body>
-
-</html>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/perfilUsuario.js' %}"></script>
+{% endblock %}

@@ -6,11 +6,11 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-textArea {
+.modalImagen textArea {
     display: grid;
-    width: 73%;
+    width: 100%;
     height: 60px;
-    font-family: arial;
+    /* font-family: arial; */
     border-radius: 4px;
 }
 
@@ -58,17 +58,17 @@ textArea {
 
 .toolbar a:hover,
 .toolbar button:hover {
-    background-color: #ff9900;
-    color: white;
+    /* background-color: #ff9900; */
+    color: #ff9900;
 }
 
 .cerrarModal {
-    float: right;
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 23px;
+    position: absolute;
+    top: 0px;
+    right: 15px;
+    font-size: 42px;
     cursor: pointer;
+    color: white;
 }
 
 .modalImagen {
@@ -76,15 +76,16 @@ textArea {
     /* Oculta la modal por defecto */
     position: fixed;
     z-index: 1;
-    left: 0;
+    /* left: 0; */
     top: 0;
-    width: 100%;
+    /* width: 100%; */
     height: 100%;
     overflow: auto;
     /* Habilita el scroll si es necesario */
     background-color: rgb(0, 0, 0, 0.4);
     /* Color de fondo con opacidad */
-    padding-top: 50px;
+    padding-top: 134px;
+    /* margin: 50px auto; */
 }
 
 .modalImagen form {
@@ -117,25 +118,35 @@ textArea {
 }
 
 .modal-search {
-    display: none; /* Oculto por defecto */
-    position: fixed; /* Fijo en la posición */
-    z-index: 1; /* Situado encima de otros elementos */
-    left: 0;
+    display: none;
+    /* Oculta la modal por defecto */
+    position: fixed;
+    z-index: 1;
+    /* left: 0; */
     top: 0;
-    width: 100%; /* Anchura completa */
-    height: 100%; /* Altura completa */
-    overflow: auto; /* Habilita el desplazamiento si es necesario */
-    background-color: rgba(0,0,0,0.4); /* Negro con opacidad */
+    width: 23%;
+    height: 100%;
+    /* Habilita el scroll si es necesario */
+    background-color: rgb(0 0 0 / 12%);
+    /* Color de fondo con opacidad */
+    padding-top: 40px;
+    /* margin: 50px auto; */
 }
 
-.modal-search-content {
+.modal-search form {
     background-color: #fefefe;
-     /* 15% desde arriba y centrado */
+    /* margin: 32px auto; */
     padding: 20px;
-    border: 1px solid #8886;
-    width: 20%; /* Puede ajustar esto según sus necesidades */
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* border: 1px solid #888; */
+    width: 145%;
+    
+    /* Ajusta al tamaño deseado */
+    border-radius: 10px;
+    /* text-align: -webkit-center; */
+    height: 100%;
+    /* margin-left: 50px; */
+    margin-top: 45px;
+    overflow: auto;
 }
 
 .modal-search-content input:hover{
@@ -176,20 +187,22 @@ textArea {
 }
 
 #resultados-busqueda i{
-    border: 2px solid #666;
+    border: 1px solid #666;
     border-radius: 50%;
-    font-size: 30px;
-    zoom: 170%;
+    font-size: 20px;
+    zoom: 150%;
     vertical-align: middle;
     color: black !important;
 }
 
 #resultados-busqueda a {
-    color: black;
+    color: #333;
+    font-weight: 500;
 }
 
 #resultados-busqueda a:hover {
     color:#ff9900;
+    text-decoration: none;
 }
 
 

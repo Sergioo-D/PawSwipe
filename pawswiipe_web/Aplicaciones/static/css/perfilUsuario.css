@@ -32,6 +32,8 @@ h1 {
     margin-top: 20px;
     margin-left: 50px;
     flex-direction: row;
+    overflow-x: auto;
+    max-width: 635px;
 }
 
 .mascota-miniatura {
@@ -72,15 +74,16 @@ h1 {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    /* border: 1px solid #ccc; */
+    border: 1px solid #ccc;
     background-color: #ff9900;
-    font-size: 60px;
+    font-size: 68px;
     line-height: 50px;
     text-align: center;
     margin: 5px;
     cursor: pointer;
     color: #fefefe;
     align-content: center;
+    align-content: stretch;
 }
 
 a {
@@ -104,7 +107,6 @@ a {
     justify-content: center;
     margin-right: 20px;
     border: 2px solid #ccc;
-
 }
 
 .fotoPerfil img {
@@ -125,13 +127,16 @@ a {
 }
 
 form {
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    color: #666;
+    color: #333;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align-last: start;
 }
 
 input[type="text"],
@@ -155,11 +160,32 @@ input[type="password"] {
     text-decoration: none;
     transition: background-color 0.3s ease;
     margin-top: 10px;
+    height: 40px;
+    font-size: 17px;
 }
 
+.datos-modificar label{
+    display: block;
+    margin-bottom: 5px;
+    color: #171616;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align-last: start;
+}
+
+.datos-modificar textarea{
+    width: 100%;
+    height: 50px;
+    resize: none;
+    overflow: auto;
+}
+
+
 .boton-mensaje {
-    width: 160px;
+    width: 155px;
     padding: 10px;
+    height: 35px;
+    font-size: 16px;
     border: none;
     border-radius: 5px;
     background-color: #ff9900;
@@ -172,6 +198,7 @@ input[type="password"] {
 
 .boton-seguir{
     width: 160px;
+    height: 35px;
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -182,10 +209,13 @@ input[type="password"] {
     transition: background-color 0.3s ease;
     margin-top: 10px;
     float: right;
-    margin-right: 72px;
+    margin-right: 0px;
 }
 
-button[type="submit"]:hover,
+.boton-seguir:focus {
+    outline: none;
+}
+
 .botonModificar:hover {
     background-color: #ffcc80;
 }
@@ -232,19 +262,20 @@ button[type="submit"]:hover,
 
 .ventana-content {
     background-color: #fefefe;
-    margin: auto;
+    margin: 120px auto;
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
     /* Ajusta al tamaño deseado */
+    height: 500px;
     border-radius: 10px;
     text-align: -webkit-center;
 }
 
 .ventana-content form {
-    width: 60%;
-    margin-bottom: 5px;
-    margin-top: 5px
+    width: 80%;
+    /* margin-bottom: 5px; */
+    /* margin-top: 5px; */
 }
 
 .uploadLabel {
@@ -257,6 +288,10 @@ button[type="submit"]:hover,
 .publicar {
     width: 80%;
     background-color: #ff9900;
+}
+
+.publicar:focus {
+    outline: none;
 }
 
 .botonCerrar {
@@ -277,7 +312,7 @@ input[type="text"],
 textarea {
     width: 100%;
     padding: 10px;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     border: 1px solid #ccc;
     border-radius: 5px;
 }
@@ -290,10 +325,10 @@ textarea {
 }
 
 .botonCerrar {
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    color: #666;
+    /* top: 10px; */
+    right: 20px;
+    font-size: 40px;
+    color: #fff;
     cursor: pointer;
 }
 
@@ -340,6 +375,15 @@ textarea {
     width: 100%;
     height: auto;
     transition: transform .3s ease-in-out;
+}
+
+.seguir-modal {
+    background-color: #ffffff;
+    font-size: 16px;
+    float: inline-end;
+    color: orange;
+    font-weight: 500;
+    cursor: pointer;
 }
 
 
@@ -416,41 +460,42 @@ textarea {
 }
 
 .modal-content .next {
-    right: 50%;
+    right: 3%;
     zoom: 56%;
     font-size: 30px;
 }
 
 .modal-content .prev {
-    left: 6%;
+    left: 3%;
     zoom: 56%;
     font-size: 30px;
 }
 
 #modalImage {
-    width: 50%;
+    width: 100%;
     height:100%;
     margin-right: 20px;
     /* Espacio entre la imagen y la información */
 }
 
 .interaction-bar {
-    position: fixed; /* Cambia a fixed para evitar que se mueva con el scroll */
-    bottom: 130px;
+    /* position: fixed; */ /* Cambia a fixed para evitar que se mueva con el scroll */
+    /* bottom: 130px; */
     /* left: 0; */
-    width: 30%; /* Asegura que ocupe todo el ancho */
+    /* width: 30%; */ /* Asegura que ocupe todo el ancho */
     background: white; /* Fondo blanco para sobresalir sobre el contenido */
-    padding: 10px 20px; /* Añade padding para espaciar el contenido */
+    /* padding: 10px 20px; */ /* Añade padding para espaciar el contenido */
     /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */ /* Sombra para distinguir la barra del resto */
+    /* border-top: 1px solid #ccc; */
 }
 
 .añadir-comentario {
-    position: fixed; /* Similar a interaction-bar para mantenerlo visible */
-    bottom: 82px;
+    /* position: fixed; */ /* Similar a interaction-bar para mantenerlo visible */
+    /* bottom: 82px; */
     /* right: 0; */
-    width: 33%; /* Asegura que ocupe el ancho completo */
+    /* width: 33%; */ /* Asegura que ocupe el ancho completo */
     background: white; /* Fondo blanco */
-    padding: 10px 10px; /* Padding similar al de interaction-bar */
+    /* padding: 10px 10px; */ /* Padding similar al de interaction-bar */
     /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); */ /* Sombra similar */
 }
 
@@ -463,39 +508,38 @@ textarea {
 .comment-form textarea {
     flex-grow: 1; /* Permite que el textarea ocupe todo el espacio disponible */
     margin-right: 10px; /* Espacio entre el textarea y el botón */
+    height: 50px;
 }
 
 .comment-form button {
-    white-space: nowrap; /* Evita que el texto del botón se envuelva */
+    /* white-space: nowrap; */ /* Evita que el texto del botón se envuelva */
     padding: 8px 16px;
     background-color: #ff9900;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 10px;
-    height: 40px;
-    align-self: self-end;
-}
-
-¡.añadir-comentario {
-    border-top: 1px solid #ccc; /* Línea divisoria para mejor visualización */
+    height: 45px;
+    /* align-self: self-end; */
+    align-self: center;
+    width: 120px;
 }
 
 .menu-post {
-    position: absolute;
+    /* position: absolute; */
     top: 60px;
     right: 15px;
     border: none;
     background: none;
     cursor: pointer;
     font-size: 24px;
-    color: white;
+    /* color: white; */
 }
 
 .likes-container {
     display: flex; /* Usa flexbox para alinear los elementos horizontalmente */
-    align-items: center; /* Alinea los elementos verticalmente en el centro */
-    justify-content: start; /* Alinea los elementos horizontalmente al inicio */
+    /* align-items: center; */ /* Alinea los elementos verticalmente en el centro */
+    /* justify-content: start; */ /* Alinea los elementos horizontalmente al inicio */
     /* padding: 10px; */ /* Añade algo de padding para espaciar los elementos dentro del contenedor */
     width: 100%; /* Asegúrate de que el contenedor ocupe todo el ancho disponible */
 }
@@ -506,6 +550,7 @@ textarea {
 
 #imageLikes {
     cursor: pointer;
+    font-weight: 700;
 }
 
 .comentarios-container {
@@ -514,7 +559,7 @@ textarea {
 }
 
 #listaComentarios {
-    height: 480px;
+    height: 460px;
     overflow-y: auto;
     width: 570px;
     padding: 0;
@@ -528,21 +573,26 @@ textarea {
     max-width: 560px;
 }
 
+.modal-header {
+    padding: 0px;
+    /* left: 5px; */
+}
+
 .comentario-eliminar {
     display: block;
     color: #888;
-    font-size: 13px;
+    font-size: 15px;
     /* margin-top: 2px; */
     border: none;
     background-color: white;
     align-self: flex-start;
-    margin-left: 20px;
+    /* margin-left: 20px; */
     cursor: pointer;
 }
 
 .comentario-imagen {
-    width: 30px; /* o el tamaño que prefieras */
-    height: 30px;
+    width: 35px; /* o el tamaño que prefieras */
+    height: 35px;
     border-radius: 50%; /* Hace la imagen circular */
     margin-right: 10px;
     /* margin-bottom: 10px; */
@@ -553,24 +603,32 @@ textarea {
 .comentario-nombre {
     font-weight: bold;
     margin-right: 5px;
+    color: #333;
+}
+
+.comentario-nombre:hover {
+    text-decoration: none;
+    color:#ff9900
 }
 
 .comentario-texto {
     flex-grow: 1;
-    max-width: 289px;
+    max-width: 330px;
     flex-grow: 1;
     word-wrap: break-word;
-    margin-right: 20px;
+    /* margin-right: 20px; */
     /* align-self: center; */
+    width: 300px;
 }
 
 
 .comentario-fecha {
-    display: block;
+    /* display: block; */
     color: #888;
     font-size: 12px;
     margin-top: 2px;
     /* margin-left: 110px; */
+    width: 115px;
 }
 
 .close-modal {
@@ -603,10 +661,10 @@ textarea {
     background: white;
     border-radius: 8px;
     width: 230px;
-    /* padding: 20px; */
+    padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align-last: center;
-    height: 128px;
+    height: 125px;
 }
 
 /* .delete-modal-menu {
@@ -627,9 +685,9 @@ textarea {
 .delete-modal-content button {
     background: none;
     border: none;
-    width: 100%;
-    text-align: left;
-    padding: 10px 0;
+    /* width: 100%; */
+    /* text-align: left; */
+    /* padding: 10px 0; */
     font-size: 16px;
     cursor: pointer;
 }
@@ -676,16 +734,22 @@ textarea {
 
 #modalLikes li {
     margin: 10px 0;
-    background: #f9f9f9;
+    background: #ffffff;
     padding: 8px;
     border-radius: 4px;
 }
 
-#modalLikes span {
-    /* text-align: right; */
+/* modalLikes span {
+    /* text-align: right; 
     font-size:25px;
     color: #333;
     cursor: pointer;
+} */
+
+.modalLikes-nombre:hover {
+    text-decoration: none;
+    color:#ff9900;
+    /* font-size: 15px; */
 }
 
 .closeLike {

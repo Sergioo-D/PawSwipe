@@ -25,11 +25,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_POST
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-@login_required(login_url='home')
-def feed(request):
-    print("Usuario autenticado:" ,request.user.is_authenticated)
-    return render(request, 'feed.html')
+
+# def feed(request):
+#     print("Usuario autenticado:" ,request.user.is_authenticated)
+#     return render(request, 'feed.html')
 
 @redirigirUsuarios
 def home(request):
@@ -167,10 +168,6 @@ def perfil(request, mascota_id=None):
     }
     return render(request, 'perfilUsuario.html', context)
 
-def notificaciones(request):
-    # Tu lógica de vista aquí
-     return HttpResponse("Esta es la página de notificaciones")
-
 def eliminar_mascota(request, mascota_id):
     mascota = get_object_or_404(Mascota, id=mascota_id, usuario=request.user)  # Asegúrate de que solo el dueño pueda eliminar la mascota
     mascota.delete()
@@ -208,6 +205,10 @@ def modificarDatos(request):
     else:
         formulario = UsuarioForm(instance=user)
         return render(request, 'perfilUsuario.html', {'form': formulario})
+    
+def notificaciones(request):
+    # Tu lógica de vista aquí
+     return HttpResponse("Esta es la página de notificaciones")
     
 def modificarDatosMascota(request, mascota_id):
     if request.method == 'POST':
@@ -345,37 +346,23 @@ def get_likes(request, publicacion_id):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Authentication required'}, status=401)
     
+    # Obtener el perfil del usuario actual, asumiendo que la sesión tiene una mascota seleccionada
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    perfil_usuario = get_object_or_404(Perfil, mascota__id=mascota_actual_id)
+
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
-    es_propietario = request.user == publicacion.perfil.mascota.usuario
-    likes = Like.objects.filter(publicacion=publicacion).select_related('perfil')
+    likes = Like.objects.filter(publicacion=publicacion).select_related('perfil__mascota').exclude(perfil=perfil_usuario)
+
     likes_list = [{
         'mascotaNombre': like.perfil.mascota.nombre,
         'mascotaId': like.perfil.mascota.id,
         'fotoPerfil': like.perfil.fotoPerfil.url if like.perfil.fotoPerfil else None,
         'perfilUrl': reverse('perfil-mascota', args=[like.perfil.mascota.id]),
-        'es_propietario': es_propietario
-        
+        'perfilId': like.perfil.id,
+        'siguiendo': perfil_usuario.siguiendo.filter(id=like.perfil.id).exists()
     } for like in likes if like.perfil.mascota]
+
     return JsonResponse({'likes': publicacion.likes, 'lista_likes': likes_list})
-
-# @require_POST
-# def get_likes(request, publicacion_id):
-#     if not request.user.is_authenticated:
-#         return JsonResponse({'error': 'Authentication required'}, status=401)
-
-#     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
-
-#     # Suponiendo que cada usuario puede tener varias mascotas y que Mascota tiene un campo 'usuario'
-#     # que relaciona directamente a la mascota con el usuario.
-#     perfiles_excluir = Mascota.objects.filter(usuario=request.user).values_list('perfil_id', flat=True)
-    
-#     # Filtrar los likes para excluir los perfiles de las mascotas del usuario actual
-#     likes = Like.objects.filter(publicacion=publicacion).exclude(perfil_id__in=perfiles_excluir).select_related('perfil')
-
-#     # Lista de nombres de mascotas de los perfiles que dieron like, excluyendo los del usuario actual
-#     likes_list = [like.perfil.mascota.nombre for like in likes if like.perfil.mascota]
-
-#     return JsonResponse({'likes': publicacion.likes, 'lista_likes': likes_list})
 
 
 @require_POST
@@ -406,7 +393,7 @@ def comentario_post(request, publicacion_id):
             'nuevoComentario': {
                 'autor': perfil_actual.mascota.nombre,
                 'texto': texto, 
-                'fotoPerfil': perfil_actual.fotoPerfil.url,
+                'fotoPerfil': perfil_actual.fotoPerfil.url if perfil_actual.fotoPerfil else None,
                 'fecha': formatear_datetime(timezone.now())   
             }
             }, status=201)
@@ -426,7 +413,7 @@ def get_comments(request, publicacion_id):
         'texto': comentario.texto, 
         'fecha': formatear_datetime(comentario.fecha_creacion),
         'fotoPerfil': comentario.perfil.fotoPerfil.url if comentario.perfil.fotoPerfil else None,
-        'esPropiertario': es_propietario
+        'esPropietario': es_propietario
         
         } for comentario in comentarios]
     return JsonResponse({'comentarios': comentarios_list})
@@ -483,6 +470,57 @@ def perfil_mascota(request, mascota_id):
         'siguiendo': siguiendo 
     }
     return render(request, 'perfilUsuario.html', context)
+
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.shortcuts import render
+from .models import Publicacion
+
+@login_required(login_url='home')
+def feed(request):
+    mascota_actual_id = request.session.get('mascota_actual_id')
+    mascota_actual = Mascota.objects.get(id=mascota_actual_id)
+    perfil_mascota_actual = mascota_actual.perfil
+    followed_profiles = perfil_mascota_actual.siguiendo.all()
+    
+    # Obtener las publicaciones de los perfiles seguidos
+    followed_publications = Publicacion.objects.filter(perfil__in=followed_profiles)
+    
+    # Obtener todas las publicaciones excepto las de los perfiles seguidos
+    other_publications = Publicacion.objects.exclude(perfil__in=followed_profiles)
+    
+    # Concatenar y ordenar todas las publicaciones
+    all_publications = followed_publications | other_publications
+    all_publications = all_publications.order_by('-fechaPublicacion')
+    
+    paginator = Paginator(all_publications, 10)  # Muestra 10 publicaciones por página
+    page_number = request.GET.get('page')
+    publicaciones = paginator.get_page(page_number)
+
+    if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        # Obtener los datos de las publicaciones y sus imágenes
+        publicaciones_data = []
+        for publicacion in publicaciones:
+            imagenes = publicacion.imagenes.all().values('urlImagen')
+            publicacion_data = {
+                'id': publicacion.id,
+                'perfil__fotoPerfil': publicacion.perfil.fotoPerfil.url if publicacion.perfil.fotoPerfil else None,
+                'perfil__mascota__nombre': publicacion.perfil.mascota.nombre,
+                'texto': publicacion.texto,
+                'fechaPublicacion': publicacion.fechaPublicacion,
+                'likes': publicacion.likes,
+                'imagenes': list(imagenes)
+            }
+            publicaciones_data.append(publicacion_data)
+        
+        # Devolver la respuesta JSON con los datos de las publicaciones y sus imágenes
+        return JsonResponse({
+            'publicaciones': publicaciones_data,
+            'has_next': publicaciones.has_next()
+        })
+
+    return render(request, 'feed.html', {'publicaciones': publicaciones})
+
 
 @login_required
 @require_POST  # Asegura que esta vista sólo acepte peticiones POST
@@ -605,7 +643,6 @@ def enviar_mensaje(request,slug):
             mensaje=mensaje
         )
         return redirect('chat', slug=sala.slug)
-
     
 def chattt(request):
     return render(request, 'chatprueba3.html')    
