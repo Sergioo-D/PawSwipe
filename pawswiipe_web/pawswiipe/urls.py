@@ -66,19 +66,20 @@ urlpatterns = [
     path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
     path('chat/<str:slug>/', chat, name='chat'),
     path('enviar_mensaje/<str:slug>/', enviar_mensaje, name='enviar_mensaje'),
-<<<<<<< HEAD
     #path('inbox/', inbox, name='inbox'),
     path('obtener_datos/',obtener_datos_usuario, name='obtener_datos'),
     path('borrar_usuario/',borrar_usuario, name='borrar_usuario'),
     path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
-=======
-    path('inbox/', inbox, name='inbox'),
+    # path('inbox/', inbox, name='inbox'),
     
     
     
->>>>>>> web2
     path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
+    path('crear_sala/', crear_sala, name='crear_sala'),
     
+    path('reset/', include('Aplicaciones.reset.urls')),
+    path('lista_seguidores/<int:mascota_id>', obtener_lista_seguidores, name='lista_seguidores'),
+    path('lista_seguidos/<int:mascota_id>', obtener_lista_seguidos, name='lista_seguidos'),
     path('chattt/', chattt, name='chattt'),
     path('chatt/',include('Aplicaciones.chat.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

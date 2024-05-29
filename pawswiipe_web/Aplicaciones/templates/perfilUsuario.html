@@ -20,7 +20,7 @@
         </div>
         {% else %}
         <div>
-            <button id="boton-mensaje" class="boton-mensaje">Enviar mensaje</button>
+            <button id="boton-mensaje" onclick="crearChat('{{usuario.mail}}', '{{user_mascota}}','{{perfil.mascota.nombre}}')" class="boton-mensaje">Enviar mensaje</button>
         </div>
         {% endif %}
 
@@ -48,13 +48,27 @@
                 <p>{{ perfil.totalPublicaciones }}</p>
                 <p>Publicaciones</p>
             </div>
-            <div>
+            <div id="seguidores" style="cursor: pointer;" data-perfil-id="{{ mascota_actual.id }}">
                 <p id="numSeguidores">{{ perfil.total_seguidores }}</p>
                 <p>Seguidores</p>
             </div>
-            <div>
+            <div id="modalSeguidores" class="modal" style="display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1050;">
+                <div class="ventana-content">
+                    <h2>Seguidores</h2>
+                    <ul id="listaSeguidores" style="list-style: none; padding: 0;"></ul>
+                    <span class="close-modal" onclick="cerrarModal('modalSeguidores')">X</span>
+                </div>
+            </div>
+            <div id="seguidos" style="cursor: pointer;" data-perfil-id="{{ mascota_actual.id }}">
                 <p>{{ perfil.total_siguiendo }}</p>
                 <p>Seguidos</p>
+            </div>
+            <div id="modalSeguidos" style="display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1050;">
+                <div class="ventana-content">
+                    <h2>Seguidos</h2>
+                    <ul id="listaSeguidos" style="list-style: none; padding: 0;"></ul>
+                    <span class="close-modal" onclick="cerrarModal('modalSeguidos')">X</button>
+                </div>
             </div>
         </div>
         <div class="perfil-miniaturas">

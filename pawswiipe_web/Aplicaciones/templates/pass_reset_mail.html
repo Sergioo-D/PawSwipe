@@ -1,0 +1,5 @@
+El usuario {{nombreUsuario}} del email {{mail}} ha solicitado restablecer su contraseña. Para ello, haga clic en el siguiente enlace:
+
+{{ protocol }}://{{ domain }}{% url 'pass_reset_confirm' uidb64=uid token=token %}
+
+Si usted no ha solicitado restablecer su contraseña, por favor ignore este mensaje.

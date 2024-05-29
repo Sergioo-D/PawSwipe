@@ -1,0 +1,20 @@
+{% load static %}
+
+<link href="{% static 'css/login.css' %}" rel="stylesheet">
+
+{% block content %}
+<div>
+   <h2>Restablecer contraseña</h2>
+   {% if validlink %}
+      <p>Introduzca su nueva contraseña</p>
+      <form method="post">
+            {{ form.as_p }}
+         {% csrf_token %}
+            <button type="submit" >Restablecer contraseña</button>
+        </form>
+    {% else %}
+        <p>El enlace de restablecimiento de contraseña es inválido o ha caducado.</p>
+        <p><a href="{% url 'password_reset' %}">Solicitar un nuevo enlace de restablecimiento de contraseña</a></p>
+    {% endif %}
+</div>    
+{% endblock %}

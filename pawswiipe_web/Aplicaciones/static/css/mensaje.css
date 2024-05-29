@@ -9,13 +9,13 @@ body {
     max-width: 600px; /* Máximo ancho del contenedor */
     padding: 20px;
     background: white;
-    border-radius: 15px; /* Bordes redondeados para efecto burbuja */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
     text-align: center;
     display: flex;
     flex-direction: column; /* Organiza los elementos en una columna */
     align-items: center; /* Alinea los elementos al centro horizontalmente */
-    margin: 40px auto; /* Centrado automático y margen vertical */
+    overflow-y: auto;
+    max-height: 660px; /* Altura máxima para el desplazamiento */
 }
 
 .chat-list a {
@@ -47,6 +47,22 @@ body {
 
 }
 
+.btn-primary {
+    background-color: #ff9900;
+    color: white;
+    width: 217px;  /* Ancho fijo */
+    height: 50px;
+}
+
+.btn-primary:hover {
+    background-color: #fe6803;
+}
+.btn-primary:focus {
+    background-color: #fe6803; /* Cambia esto al color que prefieras */
+    outline: none; /* Esto quita el borde azul predeterminado en algunos navegadores */
+}
+
+
 /*-----------------------------------------------------------------------------------------------------*/
 
 /* CSS del chat */
@@ -64,9 +80,9 @@ body {
 }
 
 #chat-log {
-    height: 400px;
+    height: 100%;
+    height: 628px;
     /* Increased height for more chat visibility */
-    width: 71%;
     /* Responsive width */
     /* Maximum width for better appearance on large screens */
     overflow-y: auto;
@@ -82,15 +98,15 @@ body {
     /* Space between chat log and input area */
     display: flex;
     flex-direction: column;
-    margin: 40px auto;
-    border-radius: 20px;
+    margin: 15px auto;
     /* Espacio para la cabecera */
-    padding-bottom: 60px;
     /* Espacio para la barra de entrada */
-    height: 80vh;
+    
     /* O ajusta según sea necesario */
     box-sizing: border-box;
     /* Incluye el padding en la altura total */
+    flex-grow: 1;
+    box-sizing: border-box;
 }
 
 p {
@@ -177,14 +193,15 @@ margin-left: auto;
     /* Permite el desplazamiento dentro del contenedor */
     height: calc(100vh - 120px);
     /* ... cualquier otro estilo que quieras aplicar a los mensajes ... */
+    flex-grow: 1;
 }
 
 #input-container {
     text-align: center;
-    position: fixed;
-    bottom: 30px;
+    position: sticky;
+    bottom: 0;
     /* Asegura que se quede en la parte inferior de la ventana */
-    width: 69%;
+    width: 100%;
     /* Asegúrate de ajustar el ancho como necesario */
     background: white;
     /* Fondo sólido para la visibilidad */
@@ -194,13 +211,15 @@ margin-left: auto;
     /* Añade padding según necesario */
     box-sizing: border-box;
     /* Centra los elementos de entrada si lo deseas */
+    
 }
 
 #cabecera {
     padding-bottom: 0px;
-    margin-bottom: -87px;
+    margin-bottom: -59px;
     position: sticky;
-    top: -11px;
+    top: 0;
+    width: 100%;
     /* Asegura que se quede en la parte superior de la ventana */
     background: white;
     /* Para garantizar que el fondo sea sólido y los textos no se mezclen */
@@ -212,3 +231,11 @@ margin-left: auto;
     font-size: 20px !important;
     font-weight: bold !important;
 }
+
+#chat-container {
+    position: relative; /* Establece como contenedor relativo para elementos fijos internos */
+    height: 100%; /* Asegúrate de que ocupa todo el espacio vertical disponible */
+    display: flex; /* Usa flexbox para facilitar la organización de los elementos */
+    flex-direction: column; /* Los elementos se organizan en columna */
+}
+
