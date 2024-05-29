@@ -72,13 +72,15 @@ def registrar_mascota(request):
             else:
                 # Guarda la nueva mascota con el usuario autenticado
                 nueva_mascota = serializer.save(usuario=usuario)
+                print(nueva_mascota)
+                print("nueva mascota id?", nueva_mascota.id)
                 try:
                     # Crea un perfil predeterminado para la nueva mascota
                     crear_perfil_default(nueva_mascota)
                 except Exception as e:
                     return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                return Response({'message': '1'}, status=status.HTTP_201_CREATED)
+                return Response({'message': '1', "idMascota": nueva_mascota.id}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -225,17 +227,18 @@ def perfil_completo(request):
     usuario = request.user
     mascota_id = request.query_params.get('mascota_id')
 
-    if mascota_id is None:
+    if mascota_id:
         mascota_actual = Mascota.objects.filter(usuario=usuario).first()
     else:
-        mascota_actual = Mascota.objects.filter(id=mascota_id).first()
+        mascota_actual = Mascota.objects.filter(id=mascota_id, usuario=usuario).first()
+
+    if mascota_actual is None:
+        return Response({'error': 'No se encontró la mascota actual'}, status=status.HTTP_404_NOT_FOUND)
 
     todas_las_mascotas = Mascota.objects.filter(usuario=usuario).exclude(id=mascota_actual.id)
     mascota_actual_serializer = MascotaSerializer(mascota_actual)
     todas_las_mascotas_serializer = MascotaSerializer(todas_las_mascotas, many=True)
-    
-    print(mascota_actual_serializer.data)
-    
+
     return Response({
         'mascota_actual': mascota_actual_serializer.data,
         'todas_las_mascotas': todas_las_mascotas_serializer.data
@@ -498,14 +501,16 @@ def dar_like(request):
 @permission_classes([IsAuthenticated])
 def follow_perfil(request):
     mascota_actual_id = request.data.get('idMascota')
+    print("mascota_actual_id", mascota_actual_id)
     perfil_id = request.data.get('perfilId')
     print(perfil_id)
     if not mascota_actual_id:
         return Response({'error': 'No hay una mascota seleccionada en la sesión'}, status=400)
 
     perfil_a_seguir = get_object_or_404(Perfil, id=perfil_id)
-    perfil_usuario = get_object_or_404(Perfil, mascota__id=mascota_actual_id)
-    print(perfil_usuario.id)
+    print("perfil a seguir", perfil_a_seguir.id)
+    perfil_usuario = get_object_or_404(Perfil, mascota_id=mascota_actual_id)
+    print("perfil usuario", perfil_usuario.id)
     
     if perfil_usuario == perfil_a_seguir:
         return Response({'error': 'No puedes seguirte a ti mismo'}, status=400)

@@ -421,9 +421,11 @@ textarea {
 }
 
 .publicacion img {
+    height: 330px;
+    max-height: 400px;
     width: 100%;
-    height: auto;
-    transition: transform .3s ease-in-out;
+    /* height: auto; */
+    transition: transform .3s ease-in-out
 }
 
 .seguir-modal {

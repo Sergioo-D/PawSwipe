@@ -148,7 +148,7 @@ def logOut(request):
 @login_required(login_url='home')
 def perfil(request, mascota_id=None):
     usuario = request.user
-    mascota_id = request.session.get('mascota_actual_id')
+    # mascota_id = request.session.get('mascota_actual_id')
     if mascota_id:
         mascota_actual = get_object_or_404(Mascota, pk=mascota_id, usuario=usuario)
         guardar_mascota_actual(request, mascota_actual.id)
