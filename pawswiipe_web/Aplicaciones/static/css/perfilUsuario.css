@@ -32,6 +32,8 @@ h1 {
     margin-top: 20px;
     margin-left: 50px;
     flex-direction: row;
+    max-width: 635px;
+    overflow-x: auto;
 }
 
 .mascota-miniatura {
@@ -62,7 +64,7 @@ h1 {
 
 .nombre-mascota {
     margin-top: 5px;
-    font-size: 14px;
+    font-size: 11px;
     color: #000000;
     /* text-align: center; */
 }
@@ -82,6 +84,11 @@ h1 {
     color: #fefefe;
     align-content: center;
     align-content: stretch;
+}
+
+.agregar-mascota:hover {
+    text-decoration: none;
+    color: white;
 }
 
 a {
@@ -315,15 +322,59 @@ textarea {
     border-radius: 5px;
 }
 
-
 textarea {
     height: 20px;
     width: 100%;
     resize: none;
 }
 
+.iconoConfig {
+    float: right;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.modal-title {
+    text-align: center;
+}
+
+.guardar {
+    background-color: #ff9900;
+    border-color:  #ff9900;
+    cursor: pointer;
+}
+
+.eliminar {
+    cursor: pointer;
+}
+
+.modal-body {text-align-last: center;}
+
+.modal-config {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    display: none;
+    overflow-y: auto;
+}
+
+.modal-config-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    flex-direction: row;
+    overflow-y: auto;
+    margin-top: 38px;
+}
+
 .botonCerrar {
-    /* top: 10px; */
     right: 20px;
     font-size: 40px;
     color: #fff;
@@ -471,7 +522,7 @@ textarea {
 
 #modalImage {
     width: 100%;
-    height:100%;
+    max-height: 700px;
     margin-right: 20px;
     /* Espacio entre la imagen y la información */
 }
@@ -523,6 +574,10 @@ textarea {
     width: 120px;
 }
 
+.comment-form button:focus-within {
+    outline: none;
+}
+
 .menu-post {
     /* position: absolute; */
     top: 60px;
@@ -535,11 +590,8 @@ textarea {
 }
 
 .likes-container {
-    display: flex; /* Usa flexbox para alinear los elementos horizontalmente */
-    /* align-items: center; */ /* Alinea los elementos verticalmente en el centro */
-    /* justify-content: start; */ /* Alinea los elementos horizontalmente al inicio */
-    /* padding: 10px; */ /* Añade algo de padding para espaciar los elementos dentro del contenedor */
-    width: 100%; /* Asegúrate de que el contenedor ocupe todo el ancho disponible */
+    display: flex; 
+    width: 100%; 
 }
 
 .likes-container i {
@@ -557,9 +609,9 @@ textarea {
 }
 
 #listaComentarios {
-    height: 460px;
+    height: auto;
     overflow-y: auto;
-    width: 570px;
+    width: 100%;
     padding: 0;
 }
 
@@ -568,7 +620,7 @@ textarea {
     /* align-items: center; */
     padding: 5px 10px;
     /* flex-direction: row; */
-    max-width: 560px;
+    max-width: 100%;
 }
 
 .modal-header {
@@ -589,7 +641,7 @@ textarea {
 }
 
 .comentario-imagen {
-    width: 35px; /* o el tamaño que prefieras */
+    width: 35px;
     height: 35px;
     border-radius: 50%; /* Hace la imagen circular */
     margin-right: 10px;
@@ -611,7 +663,7 @@ textarea {
 
 .comentario-texto {
     flex-grow: 1;
-    max-width: 330px;
+    max-width: 380px;
     flex-grow: 1;
     word-wrap: break-word;
     /* margin-right: 20px; */

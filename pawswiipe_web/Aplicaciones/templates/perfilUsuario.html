@@ -20,12 +20,19 @@
         </div>
         {% else %}
         <div>
-            <button id="boton-mensaje" class="boton-mensaje">Enviar mensaje</button>
+            <button id="boton-mensaje"
+                onclick="crearChat('{{ usuario.mail }}', '{{ user_mascota }}', '{{ mascota_actual.nombre}}'')"
+                class="boton-mensaje">Enviar mensaje</button>
         </div>
         {% endif %}
 
     </h1>
     <div class="infoPerfil">
+        <div>
+            {% if es_propietario %}
+            <i class="fas fa-cog iconoConfig"></i>
+            {% endif %}
+        </div>
         <div class="infoBasica">
             <h4>{{ mascota_actual.nombre }}</h4>
             {% if not es_propietario %}
@@ -178,6 +185,33 @@
         </div>
     </div>
     <p id="idPublicacion" style="display: none;"></p>
+</div>
+
+<div class="modal-config" id="configModal">
+    <span class="close-modal" onclick="closeModal('configModal')">&times;</span>
+    <div class="modal-dialog" role="document">
+        <div class="modal-config-content">
+            <h5 class="modal-title" id="configModalLabel">Configuración de la cuenta</h5>
+            <div class="modal-body">
+                <form method="post" action="{% url 'modificarDatos' %}">
+                    {% csrf_token %}
+                    <label for="id_nombreUsuario">Nombre de Usuario:</label>
+                    <input id="nombreUsuario" type="text">
+                    <label>Contraseña actual:</label>
+                    <input id="passActual" type="password">
+                    <label>Contraseña nueva:</label>
+                    <input id="passNew" type="password">
+                    <button type="submit" class="btn btn-primary guardar">Guardar Cambios</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{% url 'eliminarCuenta' %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary eliminar">Eliminar cuenta</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 

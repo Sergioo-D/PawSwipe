@@ -1,27 +1,74 @@
 <div class="publicacion">
     <div class="cabecera-publicacion">
-        {% if publicacion.perfil.fotoPerfil %}
-            <img src="{{ publicacion.perfil.fotoPerfil.url }}" alt="imagen de perfil">
+        {% if publicacion.perfil__fotoPerfil %}
+            <img src="{{ publicacion.perfil__fotoPerfil }}" alt="imagen de perfil">
         {% else %}
-            <i class="fa fas-paw"></i>
+            <i class="fas fa-paw"></i>
         {% endif %}
         <div class="detalles-usuario">
-            <strong>{{ publicacion.perfil.mascota.nombre }}</strong>
-            <span>{{ publicacion.fecha | date:"d M Y H:i" }}</span>
+            <a class="nombre-perfil" href="{{ publicacion.perfil_url }}"><strong>{{ publicacion.perfil__mascota__nombre }}</strong></a>
+            <span>{{ publicacion.fechaPublicacion }}</span>
         </div>
-    </div>
-    <p class="texto-publicacion">{{ publicacion.texto }}</p>
-    
-    <!-- Mostrar imágenes de la publicación -->
-    <div class="imagenes-publicacion">
-        {% for imagen in publicacion.imagenes.all %}
-            <img class="publicacion-img" src="{{ imagen.urlImagen.url }}" alt="imagen de la publicación">
+    </div> 
+    <div class="imagenes-publicacion" id="publicacion-img-container-{{ publicacion.id }}">
+        {% if publicacion.imagenes|length > 1 %}
+            <button class="prev" onclick="changeImageG('publicacion-img-container-{{ publicacion.id }}', -1)">&#10094;</button>
+        {% endif %}
+        {% for imagen in publicacion.imagenes %}
+            <img class="publicacion-img" src="{{ imagen.urlImagen.url }}" alt="imagen de la publicación" {% if forloop.first %}style="display:block;"{% else %}style="display:none;"{% endif %}>
         {% endfor %}
+        {% if publicacion.imagenes|length > 1 %}
+            <button class="next" onclick="changeImageG('publicacion-img-container-{{ publicacion.id }}', 1)">&#10095;</button>
+        {% endif %}
     </div>
     
     <div class="interacciones">
-        <span class="likes">{{ publicacion.likes }} Me gusta</span>
-        <!-- Agregar otros botones de interacción según necesidad -->
+        {% if publicacion.has_user_liked %}
+            <icon id="likeIcon-{{ publicacion.id }}" class="fas fa-heart iconHeart" style="color:#ff9900;" onclick="toggleLike({{ publicacion.id }})"></icon>
+        {% else %}
+            <icon id="likeIcon-{{ publicacion.id }}" class="far fa-heart iconHeart" onclick="toggleLike({{ publicacion.id }})"></icon>
+        {% endif %}
+        <span id="imageLikes-{{ publicacion.id }}" class="likes" onclick="openModalLikes({{ publicacion.id }})">{{ publicacion.likes }} Likes</span>
     </div>
+    <br>
+    <p class="texto-publicacion">{{ publicacion.texto }}</p>
+    <span class="ver-comentarios" onclick="openModal(this)" data-id="{{ publicacion.id }}" data-images="{% for imagen in publicacion.imagenes %}{{ imagen.urlImagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}" data-description="{{ publicacion.texto }}">Ver comentarios</span>
     <hr>
+</div>
+
+<!-- Modal para la publicación -->
+<div id="imageModal" class="modal">
+    <span class="close-modal" onclick="closeModal('imageModal')">&times;</span>
+    <div class="row modal-content">
+        <div class="col-6">
+            <img id="modalImage" src="" alt="Imagen ampliada">
+            <button class="prev" onclick="changeImage(-1)">&#10094;</button>
+            <button class="next" onclick="changeImage(1)">&#10095;</button>
+        </div>
+        <div class="col-6 info-container">
+            <div class="modal-header">
+                <p id="imageDescription"></p>
+            </div>
+            <div class="comentarios_container">
+                <ul id="listaComentarios"></ul>
+            </div>
+            <div class="interaction-bar">
+                <div class="likes-container">
+                    {%if es_propietario %}
+                    <i class="fas fa-heart"></i>
+                    {% else %}
+                    <i class="far fa-heart" id="likeIcon" onclick="toggleLike();"></i>
+                    {% endif %}
+                    <p id="imageLikes" onclick="openModalLikes({{ publicacion.id }})"></p>
+                </div>
+            </div>
+            <div class="añadir-comentario">
+                <div class="comment-form">
+                    <textarea id="nuevoComentario" placeholder="Añade un comentario..."></textarea>
+                    <button onclick="comentarioPost()">Publicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p id="idPublicacion" style="display: none;"></p>
 </div>

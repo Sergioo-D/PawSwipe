@@ -91,7 +91,6 @@ class RegistroInicioSession(models.Model):
 
     
 class MensajeDirecto(models.Model):
-    user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="user")
     emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="emisor")
     receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="receptor")
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -176,8 +175,8 @@ class Post(models.Model):
 
 class Mascota(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='mascotas')
-    nombre = models.CharField(max_length=50, unique=True)
-    descripcion = models.TextField()
+    nombre = models.CharField(max_length=50)
+    descripcion = models.TextField(blank=True)
 
     def __str__(self):
         return self.nombre

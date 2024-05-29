@@ -3,8 +3,8 @@
 <div class="toolbar">
     <img src="{% static 'imagenes/logoh2.png' %}" alt="PawSwipe Logo">
     <div>
-        <a href="{% url 'perfil' %}"><i class="fas fa-paw"></i></i><span class="icon-text">Perfil</span></a>
         <a href="{% url 'feed' %}"><i class="fas fa-home"></i><span class="icon-text">Inicio</span></a>
+        <a href="{% url 'perfil' %}"><i class="fas fa-paw"></i></i><span class="icon-text">Perfil</span></a>
         <a href="#" onclick="document.getElementById('uploadModal').style.display='block'"><i
                 class="fas fa-plus-square"></i><span class="icon-text">Publicación</span></a>
         <a href="/inbox"><i class="fas fa-envelope"></i><span class="icon-text">Mensajes</span></a>
@@ -22,8 +22,8 @@
     <div>
         <form method="post" enctype="multipart/form-data" action="{% url 'create_post' %}">
             {% csrf_token %}
-            <label for="images">Arrastra las fotos y los videos aquí o <span
-                    style="color: #ff9900; cursor: pointer;">seleccionar del ordenador</span></label>
+            <label for="images"><span
+                    style="color: #ff9900; cursor: pointer;">Seleccionar imagenes del ordenador</span></label>
             <input type="file" id="images" style="display: none;" name="images" multiple onchange="previewImages();">
             <div id="imageVista"></div>
             <textarea name="descripcion" placeholder="Descripción..."></textarea>

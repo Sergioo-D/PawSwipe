@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-%fr2gm5q^3nyr2ur50f1xxgfh#9*)vj-9w$ku*^2er(^jf^do9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.1.105.56', 'localhost', '127.0.0.1','10.1.105.37','10.1.105.46', '192.168.1.139', '172.20.10.4', '10.1.105.61', '10.1.105.2', '10.1.3.89', '10.1.105.36']
+ALLOWED_HOSTS = ['10.1.105.56', 'localhost', '10.1.105.18','10.1.105.19', '127.0.0.1','10.1.105.37','10.1.105.46', '192.168.1.139', '192.168.1.241', '172.20.10.4']
 
 
 # Application definition
@@ -55,6 +55,12 @@ INSTALLED_APPS = [
     'channels',
     'Aplicaciones.chat',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

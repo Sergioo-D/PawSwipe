@@ -32,7 +32,7 @@ urlpatterns = [
     path("perfil/<int:mascota_id>/", perfil, name='perfil_mascota'),
     path('perfil-mascota/<int:mascota_id>/', perfil_mascota, name='perfil-mascota'),
     path("eliminarCuenta/",eliminarCuenta, name="eliminarCuenta"),
-     path('eliminar-mascota/<int:mascota_id>/', eliminar_mascota, name='eliminar_mascota'),
+    path('eliminar-mascota/<int:mascota_id>/', eliminar_mascota, name='eliminar_mascota'),
     path("modificarDatos/",modificarDatos, name="modificarDatos"),
     path("create_post/", create_post_view, name="create_post"),
     path('has_liked/<int:publicacion_id>/', has_liked, name='has_liked'),
@@ -51,16 +51,29 @@ urlpatterns = [
     path('registro_mascota_initial/<str:mail>/<int:initial>/', registro_mascota, name='registro_mascota_initial'),
     
     # API ---------------------------------------------------------------------
-    path('logear/', login_usuario, name='login_usuario'),
-    path('bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
-    path('registrar/', registrar_usuario, name='registrar_usuario'),
-    path('borrar_usuario/',borrar_usuario, name='borrar_usuario'),
-    path('obtener_datos/',obtener_datos_usuario, name='obtener_datos'),
-    path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
-    path('registrar_mascota/', registrar_mascota, name="registro_mascota"),
+    path('api/logear/', login_usuario, name='login_usuario'),
+    path('api/bloquear_cuenta/',bloquear_cuenta, name='bloquear_cuenta'),
+    path('api/registrar/', registrar_usuario, name='registrar_usuario'),
+    path('api/borrar_usuario/',borrar_usuario, name='borrar_usuario'),
+     path('api/muro/',muro, name='muro'),
+    path('api/dar_like/',dar_like, name='dar_like'),
+    path('api/follow_perfil/',follow_perfil, name='follow_perfil'),
+    path('api/modificar_usuario/',modificar_usuario, name='modificar_usuario'),
+    path('api/registrar_mascota/', registrar_mascota, name="registro_mascota"),
+    path('api/perfil_completo/', perfil_completo, name='perfil_completo'),
+    path('api/perfil_completo_visitado/', perfil_completo_visitado, name='perfil_completo_visitado'),
+    path('api/cerrar_sesion/', cerrar_sesion, name='cerrar_sesion'),
+    path('api/insert_comentario/', insert_comentario, name='insert_comentario'),
+    path('api/comentarios/<int:publicacion_id>/', comments, name='comments'),
+    path('api/actualizar_mascota/', actualizar_mascota, name='actualizar_mascota'),
+    path('api/delete_mascota/', delete_mascota, name="delete_mascota"),
+    path('api/eliminar_publicacion/', eliminar_publicacion, name="eliminar_publicacion"),
+    path('api/eliminar_comentario/', eliminar_comentario, name="eliminar_comentario"),
+    path('api/crear_publicacion/', crear_publicacion, name="crear_publicacion"),
+    path('api/search_perfiles/', search_perfiles, name='search_perfiles'),
     # --------------------------------------------------------------------------
     
-    path('cerrar_sesion/', cerrarSesion, name='cerrar_sesion'),
+    
     path('buscar_perfiles/', buscar_perfiles, name='buscar_perfiles'),
     path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
     path('chat/<str:slug>/', chat, name='chat'),
@@ -69,7 +82,7 @@ urlpatterns = [
     
     
     
-    path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
+    path('cerrar_sesion/',cerrar_sesion, name='cerrar_sesion'),
     
     path('chattt/', chattt, name='chattt'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

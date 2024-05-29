@@ -1,9 +1,12 @@
 import json
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 import os
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+import emoji
 from requests import Response
 from Aplicaciones.bbdd.models import *
 from Aplicaciones.forms.formulario import ImagenForm, MascotaForm, PublicacionForm, UsuarioForm
@@ -124,7 +127,7 @@ def registro_mascota(request, mail, initial=None):
                 mascota= Mascota(
                     usuario=usuario,
                     nombre=nombre,
-                    descripcion=form.cleaned_data.get('descripcion'),
+                    descripcion=convertir_emoji(form.cleaned_data.get('descripcion')),
                 )
                 mascota.save()
                 crear_perfil_default(mascota)
@@ -145,8 +148,10 @@ def logOut(request):
 @login_required(login_url='home')
 def perfil(request, mascota_id=None):
     usuario = request.user
+    mascota_id = request.session.get('mascota_actual_id')
     if mascota_id:
         mascota_actual = get_object_or_404(Mascota, pk=mascota_id, usuario=usuario)
+        guardar_mascota_actual(request, mascota_actual.id)
     else:
         mascota_actual = usuario.mascotas.first()
         guardar_mascota_actual(request, mascota_actual.id)
@@ -163,7 +168,8 @@ def perfil(request, mascota_id=None):
         'todas_las_mascotas': todas_las_mascotas,
         'perfil': perfil,
         'publicaciones': publicaciones,
-        'es_propietario':es_propietario
+        'es_propietario':es_propietario,
+        
     }
     return render(request, 'perfilUsuario.html', context)
 
@@ -188,14 +194,16 @@ def modificarDatos(request):
     if request.method == 'POST':
         user = request.user
         nombreUsuario = request.POST.get('nombreUsuario')
-        password = request.POST.get('password')
+        password_actual = request.POST.get('passActual')
+        password_new = request.POST.get('passNew')
+        
+        if password_actual:
+            if password_actual == user.password:
+                if nombreUsuario:
+                    user.nombreUsuario = nombreUsuario
 
-        if nombreUsuario:
-            user.nombreUsuario = nombreUsuario
-
-        if password:
-            user.set_password(password)
-
+                if password_new:
+                    user.set_password(password_new)
         user.save()
 
         # Actualizar la sesión del usuario para que no se cierre la sesión después de cambiar la contraseña
@@ -221,7 +229,7 @@ def modificarDatosMascota(request, mascota_id):
             mascota.nombre = nombre
 
         if despcripcion:
-            mascota.descripcion = despcripcion
+            mascota.descripcion = convertir_emoji(despcripcion)
 
         mascota.save()
 
@@ -238,7 +246,7 @@ def create_post_view(request):
         descripcion = request.POST.get('descripcion', '')
         images = request.FILES.getlist('images')
         if images:
-            publicacion = Publicacion(perfil=mascota.perfil, descripcion=descripcion, fechaPublicacion=timezone.now(), likes=0)
+            publicacion = Publicacion(perfil=mascota.perfil, descripcion=convertir_emoji(descripcion), fechaPublicacion=timezone.now(), likes=0)
             publicacion.save()
             perfil = Perfil.objects.get(mascota_id=mascota.id)
             perfil.totalPublicaciones += 1
@@ -383,11 +391,11 @@ def comentario_post(request, publicacion_id):
 
     try:
         publicacion = get_object_or_404(Publicacion, id=publicacion_id)
-        nuevo_comentario = Comentario.objects.create(publicacion=publicacion, perfil=perfil_actual, texto=texto)
+        nuevo_comentario = Comentario.objects.create(publicacion=publicacion, perfil=perfil_actual, texto=convertir_emoji(texto))
         return JsonResponse({
             'nuevoComentario': {
                 'autor': perfil_actual.mascota.nombre,
-                'texto': texto, 
+                'texto': convertir_emoji(texto), 
                 'fotoPerfil': perfil_actual.fotoPerfil.url if perfil_actual.fotoPerfil else None,
                 'fecha': formatear_datetime(timezone.now())   
             }
@@ -405,13 +413,15 @@ def get_comments(request, publicacion_id):
         'id': comentario.id,
         'autor': comentario.perfil.mascota.nombre,
         'urlPerfil': reverse('perfil-mascota', args=[comentario.perfil.mascota.id]),
-        'texto': comentario.texto, 
+        'texto': recuperar_emoji(comentario.texto), 
         'fecha': formatear_datetime(comentario.fecha_creacion),
         'fotoPerfil': comentario.perfil.fotoPerfil.url if comentario.perfil.fotoPerfil else None,
         'esPropietario': es_propietario
         
         } for comentario in comentarios]
+    print(comentarios_list)
     return JsonResponse({'comentarios': comentarios_list})
+
 
 def formatear_datetime(dt):
     # Asegúrate de que 'dt' sea una fecha "aware"
@@ -462,60 +472,61 @@ def perfil_mascota(request, mascota_id):
         'publicaciones': mascota_actual.perfil.publicaciones.all(),
         'perfil': mascota_actual.perfil,
         'todas_las_mascotas': todas_las_mascotas,
-        'siguiendo': siguiendo 
+        'siguiendo': siguiendo ,
+        'usuario': request.user,
+        'user_mascota': mascota_actual.usuario.mail
     }
     return render(request, 'perfilUsuario.html', context)
 
-from django.core.paginator import Paginator
-from django.http import JsonResponse
-from django.shortcuts import render
-from .models import Publicacion
 
 @login_required(login_url='home')
 def feed(request):
     mascota_actual_id = request.session.get('mascota_actual_id')
-    mascota_actual = Mascota.objects.get(id=mascota_actual_id)
+    if mascota_actual_id:
+        mascota_actual = Mascota.objects.get(id=mascota_actual_id)
+    else:
+        mascota_actual = request.user.mascotas.first()
+
     perfil_mascota_actual = mascota_actual.perfil
     followed_profiles = perfil_mascota_actual.siguiendo.all()
-    
-    # Obtener las publicaciones de los perfiles seguidos
+
     followed_publications = Publicacion.objects.filter(perfil__in=followed_profiles)
-    
-    # Obtener todas las publicaciones excepto las de los perfiles seguidos
     other_publications = Publicacion.objects.exclude(perfil__in=followed_profiles)
-    
-    # Concatenar y ordenar todas las publicaciones
-    all_publications = followed_publications | other_publications
-    all_publications = all_publications.order_by('-fechaPublicacion')
-    
+    all_publications = (followed_publications | other_publications).order_by('-fechaPublicacion')
+
+    # Anotar publicaciones con información de "like" del usuario actual
+    all_publications = all_publications.annotate(
+        has_user_liked=Exists(Like.objects.filter(
+            publicacion_id=OuterRef('id'),
+            perfil=perfil_mascota_actual
+        ))
+    )
+
     paginator = Paginator(all_publications, 10)  # Muestra 10 publicaciones por página
     page_number = request.GET.get('page')
     publicaciones = paginator.get_page(page_number)
 
+    # Añadir información adicional a cada publicación
+    publicaciones_data = []
+    for publicacion in publicaciones:
+        publicacion_data = {
+            'id': publicacion.id,
+            'perfil__fotoPerfil': publicacion.perfil.fotoPerfil.url if publicacion.perfil.fotoPerfil else None,
+            'perfil__mascota__nombre': publicacion.perfil.mascota.nombre,
+            'perfil_url': reverse('perfil-mascota', args=[publicacion.perfil.mascota.id]),  # Generar URL del perfil
+            'texto': publicacion.descripcion,
+            'fechaPublicacion': formatear_datetime(publicacion.fechaPublicacion),
+            'likes': publicacion.likes,
+            'has_user_liked': publicacion.has_user_liked,  # Estado del "like"
+            'imagenes': list(publicacion.imagenes.all())  # Lista de imágenes
+        }
+        publicaciones_data.append(publicacion_data)
+
     if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-        # Obtener los datos de las publicaciones y sus imágenes
-        publicaciones_data = []
-        for publicacion in publicaciones:
-            imagenes = publicacion.imagenes.all().values('urlImagen')
-            publicacion_data = {
-                'id': publicacion.id,
-                'perfil__fotoPerfil': publicacion.perfil.fotoPerfil.url if publicacion.perfil.fotoPerfil else None,
-                'perfil__mascota__nombre': publicacion.perfil.mascota.nombre,
-                'texto': publicacion.texto,
-                'fechaPublicacion': publicacion.fechaPublicacion,
-                'likes': publicacion.likes,
-                'imagenes': list(imagenes)
-            }
-            publicaciones_data.append(publicacion_data)
-        
-        # Devolver la respuesta JSON con los datos de las publicaciones y sus imágenes
-        return JsonResponse({
-            'publicaciones': publicaciones_data,
-            'has_next': publicaciones.has_next()
-        })
+        html = render_to_string('publicaciones.html', {'publicaciones': publicaciones_data}, request=request)
+        return JsonResponse({'html': html, 'has_next': publicaciones.has_next()})
 
-    return render(request, 'feed.html', {'publicaciones': publicaciones})
-
+    return render(request, 'feed.html', {'publicaciones': publicaciones_data})
 
 @login_required
 @require_POST  # Asegura que esta vista sólo acepte peticiones POST
@@ -641,3 +652,11 @@ def enviar_mensaje(request,slug):
     
 def chattt(request):
     return render(request, 'chatprueba3.html')    
+
+def convertir_emoji(texto):
+    texto = emoji.demojize(texto)
+    return texto
+
+def recuperar_emoji(texto):
+    texto = emoji.emojize(texto)
+    return texto

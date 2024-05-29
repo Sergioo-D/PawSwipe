@@ -403,3 +403,24 @@ function toggleFollow(perfilId, siguiendo, button) {
     })
     .catch(error => console.error('Error:', error));
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    var configIcon = document.querySelector('.iconoConfig');
+    if (configIcon) {
+      configIcon.addEventListener('click', function() {
+        openModalConfig();
+      });
+    }
+  });
+
+  function openModalConfig() {
+    var configModal = document.getElementById('configModal');
+    configModal.style.display = 'flex';
+  }
+
+
+  function eliminarCuenta() {
+    console.log("holaaaa")
+}
+
+  

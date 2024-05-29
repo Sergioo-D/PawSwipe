@@ -9,12 +9,23 @@
 .cabecera-publicacion {
     display: flex;
     align-items: center;
+    margin-bottom: 15px;
+}
+
+.nombre-perfil {
+    color:black;
+}
+
+.nombre-perfil:hover{
+    color:#ff9900;
+    text-decoration: none;   
 }
 
 .cabecera-publicacion img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    border: 1px solid #00000063;
 }
 
 .detalles-usuario strong {
@@ -37,5 +48,372 @@
     width: 100%;
     border: 1px solid #ccc;
     vertical-align: middle;
+    max-width: 700px;
 }
+
+.iconHeart {
+    margin-right: 5px;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.likes {
+    font-weight: 600;
+    vertical-align: text-bottom;
+    cursor: pointer;
+}
+
+.comentarios-container {
+    position: fixed;
+    overflow-y: auto;
+}
+
+#listaComentarios {
+    height: 580px;
+    overflow-y: auto;
+    width: 100%;
+    padding: 0;
+}
+
+.comentario-item {
+    display: flex;
+    /* align-items: center; */
+    padding: 5px 10px;
+    /* flex-direction: row; */
+    max-width: 100%;
+}
+
+.modal-header {
+    padding: 0px;
+    /* left: 5px; */
+}
+
+.comentario-eliminar {
+    display: block;
+    color: #888;
+    font-size: 15px;
+    /* margin-top: 2px; */
+    border: none;
+    background-color: white;
+    align-self: flex-start;
+    /* margin-left: 20px; */
+    cursor: pointer;
+}
+
+.comentario-imagen {
+    width: 35px; /* o el tamaño que prefieras */
+    height: 35px;
+    border-radius: 50%; /* Hace la imagen circular */
+    margin-right: 10px;
+    /* margin-bottom: 10px; */
+    border: 2px solid #888;
+    font-size: 30px;
+}
+
+.comentario-nombre {
+    font-weight: bold;
+    margin-right: 5px;
+    color: #333;
+}
+
+.comentario-nombre:hover {
+    text-decoration: none;
+    color:#ff9900
+}
+
+.comentario-texto {
+    flex-grow: 1;
+    max-width: 450px;
+    flex-grow: 1;
+    word-wrap: break-word;
+    /* margin-right: 20px; */
+    /* align-self: center; */
+    width: 300px;
+}
+
+
+.comentario-fecha {
+    /* display: block; */
+    color: #888;
+    font-size: 12px;
+    margin-top: 2px;
+    /* margin-left: 110px; */
+    width: 115px;
+}
+
+
+.modal-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+    margin-top: 50px;
+    margin-left: 220px;
+    margin-right: 220px;
+    margin-bottom: 50px;
+}
+
+#modalImage {
+    width: 100%;
+    height:100%;
+    margin-right: 20px;
+   max-height: 700px;
+}
+
+.modal-content .prev,
+.modal-content .next {
+    cursor: pointer;
+    position:absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.6s ease;
+    border-radius: 50%;
+    user-select: none;
+    -webkit-user-select: none;
+    border: none;
+    width: 60px;
+    height: 67px;
+    background-color: rgba(46, 45, 45, 0.471);
+}
+
+#listaComentarios {
+    height: auto;
+    overflow-y: auto;
+    width: 100%;
+    padding: 0;
+}
+
+
+.modal-content .next {
+    right: 3%;
+    zoom: 56%;
+    font-size: 30px;
+}
+
+.modal-content .prev {
+    left: 3%;
+    zoom: 56%;
+    font-size: 30px;
+}
+
+
+
+.imagenes-publicacion .prev,
+.imagenes-publicacion .next {
+    cursor: pointer;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    transition: 0.6s ease;
+    border-radius: 50%;
+    user-select: none;
+    -webkit-user-select: none;
+    border: none;
+    width: 60px;
+    height: 67px;
+    background-color: rgba(46, 45, 45, 0.471);
+}
+
+.imagenes-publicacion .next {
+    right: 35%;
+    zoom: 56%;
+    font-size: 30px;
+}
+
+.imagenes-publicacion .prev {
+    left: 35%;
+    zoom: 56%;
+    font-size: 30px;
+    /* top: 50%; */
+}
+
+.close-modal {
+    position: absolute;
+    top: 0px;
+    right: 15px;
+    font-size: 42px;
+    cursor: pointer;
+    color: white;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* display: flex; */
+    /* overflow-y: auto; */
+}
+
+#modalLikes {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    padding-top: 5px;
+    z-index: 1000;
+    padding-right: 15px;
+    width: 25%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    height: auto;
+    overflow-y: auto;
+}
+
+#modalLikes h3 {
+    margin-top: 0;
+}
+
+#modalLikes ul {
+    list-style: none;
+    padding: 0;
+}
+
+#modalLikes li {
+    margin: 10px 0;
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+/* modalLikes span {
+    /* text-align: right; 
+    font-size:25px;
+    color: #333;
+    cursor: pointer;
+} */
+
+.modalLikes-nombre:hover {
+    text-decoration: none;
+    color:#ff9900;
+    /* font-size: 15px; */
+}
+
+.modalLikes-nombre {
+    text-decoration: none;
+    color: black;
+}
+
+.likes-container {
+    display: flex; 
+    width: 100%; 
+}
+
+.likes-container i {
+    margin-right: 10px;
+}
+
+#imageLikes {
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.comment-form {
+    display: flex; /* Alinea el textarea y el botón en una fila */
+    width: 100%; /* Usa todo el ancho disponible */
+}
+
+.comment-form textarea {
+    flex-grow: 1; /* Permite que el textarea ocupe todo el espacio disponible */
+    margin-right: 10px; /* Espacio entre el textarea y el botón */
+    height: 50px;
+}
+
+.comment-form button {
+    /* white-space: nowrap; */ /* Evita que el texto del botón se envuelva */
+    padding: 8px 16px;
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    height: 45px;
+    /* align-self: self-end; */
+    align-self: center;
+    width: 120px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    /* margin-top: 10px; */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.cabecera-publicacion i {
+    /* width: 40px; */
+    /* height: 40px; */
+    border-radius: 50%;
+    border: 1px solid #00000054;
+    /* zoom: 213%; */
+    font-size: 40px;
+}
+
+.ver-comentarios {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ver-comentarios:hover {
+    color:#ff9900
+}
+
+
+
+textarea {
+    height: 20px;
+    width: 100%;
+    resize: none;
+}
+
+.comment-form button:focus-within {
+    outline: none;
+}
+
+.seguir-modal {
+    background-color: #ffffff;
+    font-size: 16px;
+    float: inline-end;
+    color: orange;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.closeLike {
+    text-align: right;
+}
+
+.comentario-imagen {
+    width: 35px; 
+    height: 35px;
+    border-radius: 50%; /* Hace la imagen circular */
+    margin-right: 10px;
+    /* margin-bottom: 10px; */
+    border: 2px solid #888;
+    font-size: 30px;
+}
+
+
+
 
