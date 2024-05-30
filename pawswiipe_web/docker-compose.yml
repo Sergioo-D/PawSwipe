@@ -27,7 +27,7 @@ services:
       MYSQL_PASSWORD: n!H7Pm9~]w2CCy8?<|yB1apDc4[>BrdkC.#|zG5EQ
       MYSQL_ROOT_PASSWORD: tuContraseñaRoot
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - app-network
 
