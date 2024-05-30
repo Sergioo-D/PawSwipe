@@ -8,15 +8,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.myapplication.ConfigIp;
 import com.example.myapplication.DAL.InsertUser;
 import com.example.myapplication.R;
 import com.example.myapplication.Modelo.Usuario;
-import com.example.myapplication.metodos;
+import com.example.myapplication.Metodos;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,27 +24,20 @@ import org.json.JSONObject;
 
 public class ActivityRegistro extends AppCompatActivity {
 
+    ConfigIp configIp = new ConfigIp();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
         getSupportActionBar().hide();
 
-        ImageButton botonAtras = findViewById(R.id.botonAtras);
         EditText etEmail = findViewById(R.id.editTextTextEmailAddress);
         EditText etFullname = findViewById(R.id.editTextNombreCompleto);
         EditText etUsername = findViewById(R.id.editTextTextNombreUsuario);
         EditText etPassword = findViewById(R.id.editTextTextPassword);
         Button boton = findViewById(R.id.button);
 
-        botonAtras.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ActivityRegistro.this, ActivityLogin.class);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         boton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,14 +51,14 @@ public class ActivityRegistro extends AppCompatActivity {
                     Toast.makeText(ActivityRegistro.this, "Por favor, rellene todos los campos", Toast.LENGTH_SHORT).show();
 
                 }else{
-                    if (!metodos.passwordValidate(password)){
+                    if (!Metodos.passwordValidate(password)){
                         etPassword.setError("La contraseña debe contener almenos una mayuscula, número y caracter especial");
                     }else{
 
                     InsertUser registrarUsuario = new InsertUser();
                     Usuario user = new Usuario(username, password , fullname, email);
 
-                    registrarUsuario.insertarUsuario("http://10.1.105.37:8000/registrar/",
+                    registrarUsuario.insertarUsuario("http://" + configIp.IP + ":8000/api/registrar/",
                             ActivityRegistro.this, user, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
@@ -74,15 +67,18 @@ public class ActivityRegistro extends AppCompatActivity {
                                         JSONObject jsonObject = new JSONObject(response);
                                         String message = jsonObject.getString("message");
                                         if (message.equals("1")) {
-                                        Toast.makeText(ActivityRegistro.this, "Usuario registrado", Toast.LENGTH_SHORT).show();
-                                        Intent intent_registrer = new Intent(ActivityRegistro.this, ActivityLogin.class);
-                                        startActivity(intent_registrer);
-                                        finish();
+                                            Toast.makeText(ActivityRegistro.this, "Usuario registrado", Toast.LENGTH_SHORT).show();
+                                            Intent intent_registrer = new Intent(ActivityRegistro.this, ActivityRegistroMascota.class);
+                                            intent_registrer.putExtra("EMAIL", email);
+                                            startActivity(intent_registrer);
+                                            finish();
+                                        }
+                                        else if (message.equals("0")){
+                                            Toast.makeText(ActivityRegistro.this, "Ya existe un usuario registrado con ese email", Toast.LENGTH_SHORT).show();
                                         }else {
                                             Toast.makeText(ActivityRegistro.this,
                                                     "No se ha podido registrar", Toast.LENGTH_SHORT).show();
                                         }
-
                                     }catch (JSONException e) {
                                         Log.e("JSONException", "Error parsing JSON: " + e.getMessage());
                                     }

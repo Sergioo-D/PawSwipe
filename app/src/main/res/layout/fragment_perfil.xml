@@ -6,236 +6,155 @@
     android:layout_height="match_parent"
     tools:context=".vista.Fragmentos.FragmentoPerfil">
 
-
-    <TextView
-        android:id="@+id/textViewUser1"
-        android:layout_width="150dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="44dp"
-        android:text=""
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="22dp"
-        android:textStyle="bold"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMascotas"
+        android:layout_width="0dp"
+        android:layout_height="104dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="@+id/botonEditarPerfil"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.704"
+        app:layout_constraintTop_toBottomOf="@+id/tvPublicaciones" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageViewPerfilMascota"
+        android:layout_width="97dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/logoapk"
+        app:civ_border_color="@color/gris"
+        app:civ_border_width="1dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textViewName"
-        android:layout_width="154dp"
-        android:layout_height="29dp"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
-        app:layout_constraintStart_toEndOf="@+id/tvName"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUser"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="154dp"
-        android:layout_height="24dp"
-        android:text="Correo electrónico: "
-        android:textColor="@color/black"
-        android:textSize="17dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.202"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvName"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/textViewUser"
-        android:layout_width="150dp"
-        android:layout_height="32dp"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.036"
-        app:layout_constraintStart_toEndOf="@+id/tvUser"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.812" />
-
-    <TextView
-        android:id="@+id/tvUser"
-        android:layout_width="152dp"
-        android:layout_height="26dp"
-        android:text="Nombre de usuario: "
-        android:textColor="@color/black"
-        android:textSize="17dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.208"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.808" />
-
-    <TextView
-
-        android:id="@+id/textViewEmail"
-        android:layout_width="154dp"
-        android:layout_height="25dp"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/tvEmail"
-        app:layout_constraintTop_toBottomOf="@+id/textViewName"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="145dp"
-        android:layout_height="27dp"
-        android:layout_marginTop="4dp"
-        android:text="Nombre completo: "
-        android:textColor="@color/black"
-        android:textSize="17dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.203"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUser" />
-
-    <TextView
-        android:id="@+id/tv_seguidores"
-        android:layout_width="78dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="96dp"
-        android:layout_marginBottom="44dp"
-        android:text="seguidores"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.854" />
-
-    <TextView
-        android:id="@+id/tv_seguidos"
-        android:layout_width="66dp"
-        android:layout_height="23dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="64dp"
-        android:text="seguidos"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/num_publ"
+        android:id="@+id/tvPublicaciones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
-        android:layout_marginTop="16dp"
-        android:text="50"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_publicaciones"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="5dp"
+        android:text="Publicaciones"
+        android:textSize="10dp"
+        app:layout_constraintStart_toEndOf="@+id/botonEditarPerfil"
+        app:layout_constraintBottom_toBottomOf="@+id/botonEditarPerfil" />
 
     <TextView
-        android:id="@+id/tv_publicaciones"
-        android:layout_width="91dp"
-        android:layout_height="24dp"
-        android:layout_marginBottom="64dp"
-        android:text="publicaciones"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
-        app:layout_constraintEnd_toStartOf="@+id/tv_seguidores"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/num_seguidos"
+        android:id="@+id/tvSeguidores"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="60dp"
-        android:text="233"
-        android:textColor="@color/black"
-        android:textStyle="bold"
+        android:text="Seguidores"
+        android:textSize="10dp"
+        app:layout_constraintStart_toEndOf="@+id/tvPublicaciones"
+        app:layout_constraintEnd_toStartOf="@id/tvSeguidos"
+        app:layout_constraintTop_toTopOf="@+id/tvPublicaciones" />
+
+    <TextView
+        android:id="@+id/tvSeguidos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="20dp"
+        android:text="Seguidos"
+        android:textSize="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUser1" />
+        app:layout_constraintTop_toTopOf="@+id/tvSeguidores" />
 
     <TextView
-        android:id="@+id/num_seguidores"
+        android:id="@+id/tvNumPublicaciones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:text="200"
-        android:textColor="@color/black"
+        android:text="1"
+        android:layout_marginBottom="10dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tv_seguidores"
-        app:layout_constraintEnd_toStartOf="@+id/num_seguidos"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/num_publ"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="@+id/tvPublicaciones"
+        app:layout_constraintEnd_toEndOf="@+id/tvPublicaciones"
+        app:layout_constraintBottom_toTopOf="@id/tvPublicaciones"/>
+
+    <TextView
+        android:id="@+id/tvNumSeguidores"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="@+id/tvSeguidores"
+        app:layout_constraintEnd_toEndOf="@+id/tvSeguidores"
+        app:layout_constraintBottom_toTopOf="@id/tvSeguidores" />
+
+    <TextView
+        android:id="@+id/tvNumSeguidos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="@+id/tvSeguidos"
+        app:layout_constraintEnd_toEndOf="@+id/tvSeguidos"
+        app:layout_constraintBottom_toTopOf="@id/tvSeguidos"/>
 
     <Button
-        android:id="@+id/boton_editar"
-        android:layout_width="95dp"
-        android:layout_height="36dp"
-        android:text="Editar"
+        android:id="@+id/botonEditarPerfil"
+        android:layout_width="97dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:text="Editar Perfil"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.098"
+        android:textSize="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.828" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPerfilMascota" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="110dp"
-        android:layout_height="92dp"
+    <TextView
+        android:id="@+id/textViewNombreMascota"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:src="@drawable/logoapk"
-        app:layout_constraintBottom_toTopOf="@+id/boton_editar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.812" />
-
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="400dp"
-        android:layout_height="341dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvUser"
+        android:layout_marginTop="12dp"
+        android:text="Nombre Mascota"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.454"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageViewPerfilMascota"
+        app:layout_constraintTop_toTopOf="@+id/imageViewPerfilMascota" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/textViewDescripcionMascota"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Descripción corta de la mascota"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textViewNombreMascota"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNombreMascota" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPublicaciones"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="75dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/textView2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:spanCount="3" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </TableLayout>
-
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableLeft="@drawable/th_solid"
+        android:drawablePadding="8dp"
+        android:text="PUBLICACIONES"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerViewPublicaciones"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewMascotas"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

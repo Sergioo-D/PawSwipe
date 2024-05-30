@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/fotoPerfilMuro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/textViewNombreMuro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="oiadshfiods"
+        app:layout_constraintStart_toEndOf="@id/fotoPerfilMuro"
+        app:layout_constraintTop_toTopOf="@id/fotoPerfilMuro"
+        app:layout_constraintBottom_toBottomOf="@id/fotoPerfilMuro"/>
+
+    <TextView
+        android:id="@id/textViewFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hace 83 años"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/textViewNombreMuro"
+        app:layout_constraintTop_toTopOf="@id/fotoPerfilMuro"
+        app:layout_constraintBottom_toBottomOf="@id/fotoPerfilMuro"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerImagesMuro"
+        android:layout_width="match_parent"
+        android:layout_height="468dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fotoPerfilMuro" />
+
+    <ImageButton
+        android:id="@+id/botonLikeMuro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/heart_regular"
+        android:background="@null"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewPagerImagesMuro"/>
+
+    <TextView
+        android:id="@+id/textoLikeMuro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="834859 likes"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/botonLikeMuro"
+        app:layout_constraintTop_toTopOf="@id/botonLikeMuro"
+        app:layout_constraintBottom_toBottomOf="@id/botonLikeMuro"/>
+
+    <TextView
+        android:id="@+id/textoVerComentariosMuro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Ver comentarios"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textoLikeMuro"/>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/gris"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textoVerComentariosMuro"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

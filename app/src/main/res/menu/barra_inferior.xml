@@ -10,14 +10,21 @@
 
     <item
         android:id="@+id/navigation_perfil"
-        android:icon="@drawable/login_user"
+        android:icon="@drawable/paw_solid"
         android:title="Perfil"
         android:iconTint="@color/black"/>
 
 
     <item
+        android:id="@+id/publicar"
+        android:title="Publicar"
+        android:icon="@drawable/plus_square_solid"
+        android:iconTint="@color/black"
+
+        />
+    <item
         android:id="@+id/navigation_search"
-        android:icon="@drawable/icono_buscar"
+        android:icon="@drawable/search_solid"
         android:title="Buscar"
         android:iconTint="@color/black"/>
 

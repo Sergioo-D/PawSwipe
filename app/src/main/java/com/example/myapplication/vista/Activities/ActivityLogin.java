@@ -2,7 +2,9 @@ package com.example.myapplication.vista.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.myapplication.ConfigIp;
 import com.example.myapplication.DAL.BloquearCuenta;
 import com.example.myapplication.R;
 import com.example.myapplication.Modelo.Usuario;
@@ -25,14 +28,21 @@ import org.json.JSONObject;
 
 public class ActivityLogin extends AppCompatActivity {
 
+    ConfigIp configIp = new ConfigIp();
     Integer contadorIntentos = 0;
     Boolean isLogin = Boolean.FALSE;
     Boolean bloqueada = false;
 
+    Boolean hasMascotas;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (isLogin){
+        SharedPreferences prefs = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+        isLogin = prefs.getBoolean("isLogin", false);
+        hasMascotas = prefs.getBoolean("hasMascotas", false);
+
+        if (isLogin && hasMascotas) {
             Intent intent = new Intent(ActivityLogin.this, ActivityHome.class);
             startActivity(intent);
             finish();
@@ -40,11 +50,10 @@ public class ActivityLogin extends AppCompatActivity {
             setContentView(R.layout.activity_login);
             getSupportActionBar().hide();
             Button botonInicio = findViewById(R.id.button);
-            ImageView textViewLogo = findViewById(R.id.textViewLogo);
             EditText etEmail = findViewById(R.id.editTextTextEmailAddress);
             EditText etPassword = findViewById(R.id.editTextTextPassword);
             Button OlvPass = findViewById(R.id.olvidoPass);
-            TextView registro = findViewById(R.id.registro);
+            Button register = findViewById(R.id.registro);
 
             OlvPass.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -54,7 +63,7 @@ public class ActivityLogin extends AppCompatActivity {
                     finish();
                 }
             });
-            registro.setOnClickListener(new View.OnClickListener() {
+            register.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent_registrer = new Intent(ActivityLogin.this, ActivityRegistro.class);
@@ -75,8 +84,7 @@ public class ActivityLogin extends AppCompatActivity {
 
                         verificarLogin login = new verificarLogin();
                         Usuario usuario = new Usuario(email, password);
-                       // if (!bloqueada) {
-                            login.login("http://10.1.105.37:8000/logear/",
+                            login.login("http://" + configIp.IP + ":8000/api/logear/",
                                     ActivityLogin.this, usuario, new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
@@ -85,19 +93,24 @@ public class ActivityLogin extends AppCompatActivity {
                                                 JSONObject jsonObject = new JSONObject(response);
                                                 String message = jsonObject.getString("message");
                                                 if (message.equals("1")) {
-                                                    Toast.makeText(ActivityLogin.this, "Logeado", Toast.LENGTH_SHORT).show();
-                                                    isLogin = Boolean.TRUE;
-                                                    Intent intent_registrer = new Intent(ActivityLogin.this, ActivityHome.class);
-                                                    intent_registrer.putExtra("EMAIL", email);
-                                                    intent_registrer.putExtra("CONTRASEÑA", password);
-                                                    startActivity(intent_registrer);
-                                                    finish();
+                                                     hasMascotas = jsonObject.getBoolean("has_mascotas");
+                                                    if (hasMascotas) {
+                                                        Toast.makeText(ActivityLogin.this, "Sesión iniciada", Toast.LENGTH_SHORT).show();
+                                                        Intent intent_registrer = new Intent(ActivityLogin.this, ActivityHome.class);
+                                                        intent_registrer.putExtra("EMAIL", email);
+                                                        startActivity(intent_registrer);
+                                                        finish();
+                                                    } else {
+                                                        Intent intent = new Intent(ActivityLogin.this, ActivityRegistroMascota.class);
+                                                        intent.putExtra("EMAIL", etEmail.getText().toString());
+                                                        startActivity(intent);
+                                                    }
 
                                                 } else if (message.equals("0")) {
                                                     contadorIntentos += 1;
                                                     if (contadorIntentos == 3) {
                                                         BloquearCuenta bloquear = new BloquearCuenta();
-                                                        bloquear.bloquearCuenta("http://10.1.105.37:8000/bloquear_cuenta/",
+                                                        bloquear.bloquearCuenta("http://" + configIp.IP + ":8000/api/bloquear_cuenta/",
                                                                 ActivityLogin.this, usuario, new Response.Listener<String>() {
                                                                     @Override
                                                                     public void onResponse(String response) {
@@ -121,7 +134,7 @@ public class ActivityLogin extends AppCompatActivity {
                                                             Toast.makeText(ActivityLogin.this,
                                                                     "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                                                         }else {Toast.makeText(ActivityLogin.this, "La cuenta está bloqueada por fallar 3 veces", Toast.LENGTH_SHORT).show();}
-                                                    }
+                                                   }
                                                 }
 
                                             } catch (JSONException e) {

@@ -6,57 +6,94 @@
     android:layout_height="match_parent"
     tools:context=".vista.Activities.ActivityModificar">
 
-    <EditText
-        android:id="@+id/etNusername"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/nombre_de_usuario"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.376" />
-
-    <EditText
-        android:hint="@string/nombre_completo"
-        android:id="@+id/etNfullname"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etNusername"
-        app:layout_constraintVertical_bias="0.0"
-         />
-
-    <Button
-        android:id="@+id/bUpdate"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="@string/guardar_cambios"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        app:cornerRadius="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etNfullname"
-        app:layout_constraintVertical_bias="0.144" />
-
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/foto_perfil"
         android:layout_width="177dp"
         android:layout_height="133dp"
-        app:layout_constraintBottom_toTopOf="@+id/etNusername"
+        android:layout_marginTop="44dp"
+        android:clickable="true"
+        app:civ_border_color="@color/gris"
+        app:civ_border_width="1dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.456"
+        app:layout_constraintHorizontal_bias="0.448"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.846"
-        app:srcCompat="@drawable/logoapk1"
-        android:clickable="true"/>
+        app:layout_constraintVertical_bias="0.633"
+        app:srcCompat="@drawable/logoapk" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/foto_perfil"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.656">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilnombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/etnombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:hint="@string/nombre_de_usuario"
+                    android:textColorHint="#7A7575" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tildescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/etdescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="157dp"
+                    android:gravity="top|start"
+                    android:backgroundTint="@color/white"
+                    android:hint="@string/descripcion_mascota"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:scrollbars="vertical"
+                    android:textColorHint="#7A7575" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/bUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/guardar_cambios"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:backgroundTint="@color/naranja"
+                app:cornerRadius="16dp"
+                android:layout_marginTop="16dp"/>
+
+            <Button
+                android:id="@+id/bDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Eliminar mascota"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/naranja"
+                app:cornerRadius="16dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

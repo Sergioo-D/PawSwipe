@@ -1,10 +1,13 @@
 package com.example.myapplication.Modelo;
 
+import android.graphics.Bitmap;
+
 public class Usuario {
     private String userName;
     private String password;
     private String fullName;
     private String email;
+
 
     public Usuario(String userName, String password, String fullName, String email) {
         this.userName = userName;
@@ -13,14 +16,10 @@ public class Usuario {
         this.email = email;
     }
 
+
     public Usuario(String email, String password) {
         this.email = email;
         this.password = password;
-    }
-    public Usuario(String email, String userName, String fullName){
-        this.email = email;
-        this.userName = userName;
-        this.fullName = fullName;
     }
 
     public Usuario(String email){
@@ -42,4 +41,5 @@ public class Usuario {
     public String getEmail() {
         return email;
     }
+
 }

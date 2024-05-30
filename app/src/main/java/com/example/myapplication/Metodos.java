@@ -1,9 +1,12 @@
 package com.example.myapplication;
 
-import android.os.Build;
+import android.content.Context;
 import android.util.Patterns;
 
-import java.math.BigInteger;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -14,7 +17,11 @@ import java.util.regex.Pattern;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class metodos {
+public class Metodos {
+
+    public static String idPerfilMascota;
+    public static String idPerfilVisitado;
+
     public static String hashPassword(String password) {
         try {
             // Generar salt aleatorio
@@ -64,10 +71,18 @@ public class metodos {
         }
     }
 
-    private boolean validarEmail(String email) {
+    private static boolean validarEmail(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
     }
+
+    public static void openFragment(Fragment fragment, Context context) {
+        FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.commit();
+    }
+
+
 
 
 
