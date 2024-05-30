@@ -66,3 +66,7 @@ button:hover {
     width: 100%;
     display: block;
 }
+
+.boton-recuperar {
+    margin-top: 5px;
+}

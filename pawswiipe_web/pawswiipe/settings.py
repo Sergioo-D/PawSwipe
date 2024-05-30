@@ -96,10 +96,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'pawswiipe.wsgi.application'
 ASGI_APPLICATION = 'pawswiipe.asgi.application'
 
-Chanel_LAYERS = {
-    "default":{
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
 }
 
 # Database
@@ -154,9 +154,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
+    #BASE_DIR / 'static',
     # os.path.join(BASE_DIR, 'static'),
     BASE_DIR / 'Aplicaciones' / 'static',
 ]
@@ -165,3 +166,12 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'PawSwipeoficial@outlook.com'  # Tu correo electrónico de Outlook
+EMAIL_HOST_PASSWORD = 'Ana12345*' 
+

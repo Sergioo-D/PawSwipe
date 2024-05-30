@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    {% load static %}
+    {% block contenido %}
+    <style>
+        /* body {
+            font-family: Arial, sans-serif;
+            A modern, sans-serif font
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            A light gray background for the page
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        } */
+
+        /* #chat-log {
+            height: 400px;
+            /* Increased height for more chat visibility 
+            width: 71%;
+            /* Responsive width */
+            /* Maximum width for better appearance on large screens 
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            background: white;
+            /* White background for the chat area 
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            /* Subtle shadow for depth 
+            position: relative;
+            /* Changed to relative for better control in positioning 
+            margin-bottom: 20px;
+            /* Space between chat log and input area 
+            display: flex;
+            flex-direction: column;
+            margin: 40px auto;
+            border-radius: 20px;
+             Espacio para la cabecera 
+            padding-bottom: 60px;
+            /* Espacio para la barra de entrada 
+            height: 80vh;
+            /* O ajusta según sea necesario 
+            box-sizing: border-box;
+             Incluye el padding en la altura total */
+        /* } */
+
+        /* p { */
+            /* padding: 8px;
+            margin: 5px 0; */
+            /* Light gray background for each message */
+            /* border-radius: 5px; */
+            /* Rounded corners for messages */
+        /* } */
+
+        /* #chat-message-input { */
+            /* width: 70%; */
+            /* Responsive width */
+            /* padding: 10px; */
+            /* Padding for better text input appearance */
+            /* border: 1px solid #ccc;
+            border-radius: 5px;
+        } */
+
+        /* #chat-message-submit {
+            width: 19%; */
+            /* Adjusted width to fit beside input */
+            /* padding: 10px; */
+            /* Padding to increase clickable area */
+            /* background-color: #ff9900; */
+            /* Bootstrap primary color for consistency */
+            /* color: white; */
+            /* White text color for the button */
+            /* border: none; */
+            /* Remove border */
+            /* border-radius: 5px; */
+            /* Rounded corners */
+            /* cursor: pointer; */
+            /* Pointer cursor on hover */
+        /* } */
+
+        /* #chat-message-submit:hover {
+            background-color: #fe6803; */
+            /* Darker blue on hover for better user feedback */
+        /* } */
+
+        /* .men-enviado { */
+    /* text-align: right; */
+    /* background-color: #ff9900; */
+    /* border-radius: 10px; Añade bordes redondeados para el efecto de burbuja */
+    /* padding: 10px; Añade espacio alrededor del texto del mensaje */
+    /* display: inline-block; Hace que el elemento ocupe solo el espacio necesario para el contenido */
+    /* max-width: 55%; Limita el ancho máximo del mensaje a un 80% del contenedor */
+    /* word-wrap: break-word; Asegura que el texto se ajuste dentro de la burbuja */
+    /* margin-bottom: 10px; /* Añade espacio entre los mensajes */
+    /* width: fit-content;
+    margin-left: auto;
+} */
+
+        /* .men-recivido {
+            text-align: left;
+            /* Left align for received messages 
+            background-color: #e2dcdc;
+            border-radius: 10px;
+            padding: 10px;
+            display: inline-block;
+            max-width: 55%;
+            word-wrap: break-word;
+            margin-bottom: 10px;
+            width: fit-content;
+            margin-right: auto;
+        } */
+
+        /* .chat-log p {
+
+            border-radius: 42px;
+        } */
+
+
+        /* #messages-container {
+            display: flex;
+            flex-direction: column-reverse;
+            margin-top: 245px;
+            margin-top: 60px; */
+            /* Ajusta según la altura de tu cabecera */
+            /* margin-bottom: 60px; */
+            /* Ajusta según la altura de tu barra de entrada */
+            /* overflow-y: auto; */
+            /* Permite el desplazamiento dentro del contenedor */
+            /* height: calc(100vh - 120px); */
+            /* ... cualquier otro estilo que quieras aplicar a los mensajes ... */
+        /* } */
+
+        /* #input-container {
+            text-align: center;
+            position: fixed;
+            bottom: 30px; */
+            /* Asegura que se quede en la parte inferior de la ventana */
+            /* width: 69%; */
+            /* Asegúrate de ajustar el ancho como necesario */
+            /* background: white; */
+            /* Fondo sólido para la visibilidad */
+            /* border-top: 1px solid #ccc; */
+            /* Opcional, para definir la separación */
+            /* padding: 10px; */
+            /* Añade padding según necesario */
+            /* box-sizing: border-box; */
+            /* Centra los elementos de entrada si lo deseas */
+        /* } */
+
+        /* #cabecera {
+            padding-bottom: 0px;
+            margin-bottom: -87px;
+            position: sticky;
+            top: -11px; */
+            /* Asegura que se quede en la parte superior de la ventana */
+            /* background: white; */
+            /* Para garantizar que el fondo sea sólido y los textos no se mezclen */
+            /* z-index: 1000; */
+            /* Asegura que la cabecera esté sobre otros elementos */
+        /* } */
+
+        /* #cabecera p {
+            font-size: 20px !important;
+            font-weight: bold !important;
+        }  */
+    </style>
+</head>
+
+<body>
+    <div id="chat-log">
+        <div id="cabecera">
+            <p>{{ el_otro.nombreReal }}</p>
+            <!-- O puedes usar una imagen: -->
+            <!-- <img src="ruta/a/tu/imagen.jpg" alt="Bienvenido"> -->
+            <hr>
+        </div>
+        <!-- <input type="hidden" id="csrfToken" value="{% csrf_token %}"> -->
+        <div id="messages-container">
+            {% for mensaje in mensajes %}
+            <p><strong>{{ mensaje.emisor.username }}:</strong> {{ mensaje.mensaje }}</p>
+            {% endfor %}
+        </div>
+        <div id="input-container">
+            <input id="chat-message-input" type="text" size="100">
+            <input id="chat-message-submit" type="button" value="Enviar">
+        </div>
+
+    </div>
+
+    <!-- <link rel="stylesheet" href="/static/css/mensajes.css"> -->
+    <!-- <script src='{% static "js/mensaje.js" %}'> -->
+        
+    </script>
+    {% endblock %}
+</body>
+
+</html>

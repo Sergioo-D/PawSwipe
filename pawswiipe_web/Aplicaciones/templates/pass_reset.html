@@ -1,0 +1,15 @@
+{% load static %}
+
+<link href="{% static 'css/login.css' %}" rel="stylesheet">
+{% block content %}
+<div>
+    <h2>Restablecer contraseña</h2>
+
+    <p>Introduzca su email para obtener su contraseña</p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ mailForm }}
+        <button type="submit" action="{% url 'password_reset_done' %}">Restablecer contraseña</button>
+    </form>
+</div>
+{% endblock %}

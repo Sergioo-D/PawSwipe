@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link href="{% static '/css/mensaje.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+
+
+
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Div para la lista de chat, ocupando 3 columnas -->
+    <div class="col-3 chat-list">
+      {% for sala in salas %}
+      <div class="chat-item">
+
+        <button onclick="cargarChat('{{ sala.slug }}', '{{ sala.emisor.mail }}', '{{ request.user.mail }}')"
+          class="btn btn-primary">
+          {% if sala.emisor.mail == request.user.mail %}
+          {{ sala.receptor.nombreUsuario }} - {{sala.nombre_mascota_receptor}}
+          {% else %}
+          {{ sala.emisor.nombreUsuario }} - {{sala.nombre_mascota_emisor}}
+          {% endif %}
+          
+          
+        </button>
+        <hr>
+      </div>
+      {% empty %}
+      <p>No tienes ninguna sala de chat.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Div para el contenedor del chat, ocupando 9 columnas -->
+    <div class="col-9" id="chat-container" style="display: none;">
+      <!-- Contenido dinámico del chat irá aquí -->
+      <div id="chat-log">
+        <div id="cabecera">
+          <p id="nombreReceptor"></p>
+          <hr>
+        </div>
+        <div id="messages-container">
+          {% for mensaje in mensajes %}
+          </strong> {{ mensaje.mensaje }}</p>
+          {% endfor %}
+        </div>
+        {% csrf_token %}
+        <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+        <div id="input-container">
+          <input id="chat-message-input" type="text" size="100">
+          <input id="chat-message-submit" type="button" value="Enviar">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/mensaje.js' %}"></script>
+{% endblock %}

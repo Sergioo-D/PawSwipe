@@ -15,11 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from Aplicaciones.bbdd.views import *
 from Aplicaciones.API.views import *
 from django.conf.urls.static import static
 from django.conf import settings
+from Aplicaciones.chat.views import *
 
 
 urlpatterns = [
@@ -78,14 +79,27 @@ urlpatterns = [
     path('iniciar_chat/<str:receptor>/', iniciar_chat, name='iniciar_chat'),
     path('chat/<str:slug>/', chat, name='chat'),
     path('enviar_mensaje/<str:slug>/', enviar_mensaje, name='enviar_mensaje'),
-    path('inbox/', inbox, name='inbox'),
+    #path('inbox/', inbox, name='inbox'),
+    path('obtener_datos/',obtener_datos_usuario, name='obtener_datos'),
+    path('borrar_usuario/',borrar_usuario, name='borrar_usuario'),
+    path('modificar_usuario/',modificar_usuario, name='modificar_usuario'),
+    # path('inbox/', inbox, name='inbox'),
     
     
     
     path('cerrar_sesion/',cerrar_sesion, name='cerrar_sesion'),
+    # path('cerrar_sesion/',cerrarSesion, name='cerrar_sesion'),
+    path('crear_sala/', crear_sala, name='crear_sala'),
     
+    path('reset/', include('Aplicaciones.reset.urls')),
+    path('lista_seguidores/<int:mascota_id>', obtener_lista_seguidores, name='lista_seguidores'),
+    path('lista_seguidos/<int:mascota_id>', obtener_lista_seguidos, name='lista_seguidos'),
     path('chattt/', chattt, name='chattt'),
+    path('chatt/',include('Aplicaciones.chat.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 """  ,
     path('search-users/', search_users, name='search_users'),

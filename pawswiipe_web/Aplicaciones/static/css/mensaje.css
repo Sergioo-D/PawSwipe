@@ -1,0 +1,241 @@
+body {
+    margin: 0;
+    background: #f4f4f9;
+    /* Color de fondo */
+}
+
+.chat-list {
+    width: 80%; /* Ancho del contenedor de la lista */
+    max-width: 600px; /* Máximo ancho del contenedor */
+    padding: 20px;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Organiza los elementos en una columna */
+    align-items: center; /* Alinea los elementos al centro horizontalmente */
+    overflow-y: auto;
+    max-height: 660px; /* Altura máxima para el desplazamiento */
+}
+
+.chat-list a {
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    width: 100%; /* Usa todo el ancho disponible */
+    padding-top: 8px; /* Padding más grande para un recuadro más prominente */
+    background-color: white;
+    color: #666;
+    border-radius: 8px; /* Bordes redondeados para los enlaces */
+    text-decoration: none;
+    transition: background-color 0.3s;
+    font-size: 18px; /* Tamaño de fuente más grande */
+}
+
+.chat-list a:hover {
+    background-color: #ff9900;
+}
+
+.chat-list p {
+    margin: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.chat-item {
+    width: 90%;
+
+}
+
+.btn-primary {
+    background-color: #ff9900;
+    color: white;
+    width: 217px;  /* Ancho fijo */
+    height: 50px;
+}
+
+.btn-primary:hover {
+    background-color: #fe6803;
+}
+.btn-primary:focus {
+    background-color: #fe6803; /* Cambia esto al color que prefieras */
+    outline: none; /* Esto quita el borde azul predeterminado en algunos navegadores */
+}
+
+
+/*-----------------------------------------------------------------------------------------------------*/
+
+/* CSS del chat */
+
+body {
+    font-family: Arial, sans-serif;
+    /* A modern, sans-serif font */
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
+    /* A light gray background for the page */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#chat-log {
+    height: 100%;
+    height: 628px;
+    /* Increased height for more chat visibility */
+    /* Responsive width */
+    /* Maximum width for better appearance on large screens */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background: white;
+    /* White background for the chat area */
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    position: relative;
+    /* Changed to relative for better control in positioning */
+    margin-bottom: 20px;
+    /* Space between chat log and input area */
+    display: flex;
+    flex-direction: column;
+    margin: 15px auto;
+    /* Espacio para la cabecera */
+    /* Espacio para la barra de entrada */
+    
+    /* O ajusta según sea necesario */
+    box-sizing: border-box;
+    /* Incluye el padding en la altura total */
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+p {
+    padding: 8px;
+    margin: 5px 0;
+    /* Light gray background for each message */
+    border-radius: 5px;
+    /* Rounded corners for messages */
+}
+
+#chat-message-input {
+    width: 70%;
+    /* Responsive width */
+    padding: 10px;
+    /* Padding for better text input appearance */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#chat-message-submit {
+    width: 19%;
+    /* Adjusted width to fit beside input */
+    padding: 10px;
+    /* Padding to increase clickable area */
+    background-color: #ff9900;
+    /* Bootstrap primary color for consistency */
+    color: white;
+    /* White text color for the button */
+    border: none;
+    /* Remove border */
+    border-radius: 5px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+}
+
+#chat-message-submit:hover {
+    background-color: #fe6803;
+    /* Darker blue on hover for better user feedback */
+}
+
+.men-enviado {
+text-align: right;
+background-color: #ff9900;
+border-radius: 10px; /* Añade bordes redondeados para el efecto de burbuja */
+padding: 10px; /* Añade espacio alrededor del texto del mensaje */
+display: inline-block; /* Hace que el elemento ocupe solo el espacio necesario para el contenido */
+max-width: 55%; /* Limita el ancho máximo del mensaje a un 80% del contenedor */
+word-wrap: break-word; /* Asegura que el texto se ajuste dentro de la burbuja */
+margin-bottom: 10px; /* Añade espacio entre los mensajes */
+width: fit-content;
+margin-left: auto;
+}
+
+.men-recivido {
+    text-align: left;
+    /* Left align for received messages */
+    background-color: #e2dcdc;
+    border-radius: 10px;
+    padding: 10px;
+    display: inline-block;
+    max-width: 55%;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+    width: fit-content;
+    margin-right: auto;
+}
+
+.chat-log p {
+
+    border-radius: 42px;
+}
+
+
+#messages-container {
+    display: flex;
+    flex-direction: column-reverse;
+    margin-top: 245px;
+    margin-top: 60px;
+    /* Ajusta según la altura de tu cabecera */
+    margin-bottom: 60px;
+    /* Ajusta según la altura de tu barra de entrada */
+    overflow-y: auto;
+    /* Permite el desplazamiento dentro del contenedor */
+    height: calc(100vh - 120px);
+    /* ... cualquier otro estilo que quieras aplicar a los mensajes ... */
+    flex-grow: 1;
+}
+
+#input-container {
+    text-align: center;
+    position: sticky;
+    bottom: 0;
+    /* Asegura que se quede en la parte inferior de la ventana */
+    width: 100%;
+    /* Asegúrate de ajustar el ancho como necesario */
+    background: white;
+    /* Fondo sólido para la visibilidad */
+    border-top: 1px solid #ccc;
+    /* Opcional, para definir la separación */
+    padding: 10px;
+    /* Añade padding según necesario */
+    box-sizing: border-box;
+    /* Centra los elementos de entrada si lo deseas */
+    
+}
+
+#cabecera {
+    padding-bottom: 0px;
+    margin-bottom: -59px;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    /* Asegura que se quede en la parte superior de la ventana */
+    background: white;
+    /* Para garantizar que el fondo sea sólido y los textos no se mezclen */
+    z-index: 1000;
+    /* Asegura que la cabecera esté sobre otros elementos */
+}
+
+#cabecera p {
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+#chat-container {
+    position: relative; /* Establece como contenedor relativo para elementos fijos internos */
+    height: 100%; /* Asegúrate de que ocupa todo el espacio vertical disponible */
+    display: flex; /* Usa flexbox para facilitar la organización de los elementos */
+    flex-direction: column; /* Los elementos se organizan en columna */
+}
+

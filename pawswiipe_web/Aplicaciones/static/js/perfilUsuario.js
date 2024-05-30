@@ -389,20 +389,235 @@ function toggleFollow(perfilId, siguiendo, button) {
         },
         body: JSON.stringify({ seguir: !siguiendo })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            button.textContent = siguiendo ? 'Seguir' : 'Dejar de seguir';
-            button.onclick = () => toggleFollow(perfilId, !siguiendo, button);
-            if (data.numSeguidores !== undefined) {
-                document.getElementById('numSeguidores').textContent = data.numSeguidores;
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                button.textContent = siguiendo ? 'Seguir' : 'Dejar de seguir';
+                button.onclick = () => toggleFollow(perfilId, !siguiendo, button);
+                if (data.numSeguidores !== undefined) {
+                    document.getElementById('numSeguidores').textContent = data.numSeguidores;
+                }
+            } else {
+                console.error('Error al cambiar el estado de seguimiento');
             }
-        } else {
-            console.error('Error al cambiar el estado de seguimiento');
-        }
-    })
-    .catch(error => console.error('Error:', error));
+        })
+        .catch(error => console.error('Error:', error));
 }
+
+// ------------------------------------------------------------------------------------------------------------
+
+function crearChat(usuario, user_mascota, mascotaNombre) {
+    const emisor = usuario;
+    const receptor = user_mascota;
+    const mascotaNombree = mascotaNombre;
+    console.log("SOY EMISOR:", emisor);
+    console.log("SOY RECEPTOR:", receptor);
+    console.log("SOY MASCOTA:", mascotaNombree);
+
+    fetch('/crear_sala/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ receptor: receptor, emisor: emisor, mascotaNombre: mascotaNombree })
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();  // Parsea la respuesta JSON
+            } else {
+                throw new Error('Error al crear sala');
+            }
+        })
+        .then(data => {
+            if (data.slug) {
+                window.location.href = `/chatt/iinbox/?slug=${data.slug}`;
+
+            } else {
+                console.error('Respuesta inesperada:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+// function cargarChat(slug) {
+//     fetch(`/chatt/${slug}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+//         .then(response => response.json())
+//         .then(data => {
+//             iniciarWebSocket(slug, data.usuario_actual, data.el_otro);  // Función para iniciar el WebSocket
+
+//             console.log(slug, data);
+//             window.location.href = `/chatt/${slug}/`;
+//         })
+//         .catch(error => console.error('Error al cargar el chat:', error));
+// }
+// let chatSocket = null;
+// function iniciarWebSocket(slug, usuario_actual, el_otro) {
+//     if (chatSocket !== null) {
+//         chatSocket.close();
+//     }
+//     const roomSlug = slug; // Asegúrate de reemplazar esto con el slug de la sala actual.
+//     console.log('este es:', slug);
+//     console.log('este es:', usuario_actual, el_otro);
+//     if (!slug) {
+//         console.error('roomSlug is empty');
+//         return;
+//     }
+//     chatSocket = new WebSocket(
+//         'ws://127.0.0.1:8001/ws/chatt/' + slug
+//     );
+
+//     const usuarioActual = usuario_actual;
+//     const elOtro = el_otro;
+
+//     chatSocket.onopen = function (e) {
+//             const message = messageInputDom.value;
+//             if (message === "") {
+//                 return;
+//             }
+//             // Aquí asumimos que el WebSocket es solo para enviar el mensaje en tiempo real a otros usuarios conectados.
+//             chatSocket.send(JSON.stringify({
+//                 'message': message,
+//                 'emisor': usuarioActual,
+//                 'receptor': elOtro,
+//                 'slug': roomSlug,
+//             }));
+//             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+//             console.log(csrfToken);
+//             fetch(`/chatt/guardar_dm/`, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'X-CSRFToken': csrfToken
+//                 },
+//                 body: JSON.stringify({
+//                     emisor: usuarioActual,
+//                     receptor: elOtro,
+//                     message: message,
+//                     slug: roomSlug
+//                 })
+//             })
+//                 .then(response => {
+//                     if (!response.ok) {
+//                         throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
+//                     }
+//                     return response.json();
+//                 })
+//                 .then(data => {
+//                     if (data.status === 'success') {
+//                         console.log('Mensaje guardado con éxito');
+//                     } else {
+//                         console.error('Error al guardar el mensaje: ' + data.message);
+//                     }
+//                 })
+//                 .catch((error) => {
+//                     console.error('Error AJAX:', error);
+//                 });
+
+//             // Limpiar el campo de entrada
+//             messageInputDom.value = '';
+//         };
+//     };
+
+//     chatSocket.onmessage = function (e) {
+//         const data = JSON.parse(e.data);
+//         const mensaje = data['mensaje'];
+//         const emisor = data['emisor'];
+//         const receptor = data['receptor'];
+//         const sent = data['sent'];
+//         //messageElement.innerHTML = `<strong>${emisor}:</strong> ${mensaje}`;
+
+//         // Si el mensaje fue enviado por el usuario actual, alinearlo a la derecha
+
+
+//         // Agregar el contenido del mensaje al elemento
+//         messageElement.textContent = mensaje;
+
+//         chatLog.appendChild(messageElement);
+//         chatLog.scrollTop = chatLog.scrollHeight;  // Auto-scroll to the latest message
+//         chatLog.scrollTop = chatLog.scrollHeight;
+//     };
+
+//     chatSocket.onclose = function (e) {
+//         console.log('Cerrado el chat de slug:', slug);
+//     };
+
+
+// --------------------------------------------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", function () {
+    var seguidores = document.getElementById("seguidores");
+    var seguidos = document.getElementById("seguidos");
+    seguidores.addEventListener("click", function () {
+        var perfilId = this.getAttribute('data-perfil-id');
+        mostrarSeguidores(perfilId);
+
+    });
+    seguidos.addEventListener("click", function () {
+        var perfilId = this.getAttribute('data-perfil-id');
+        mostrarSeguidos(perfilId);
+    });
+});
+function cerrarModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'none';
+    console.log("Modal cerrado:", modalId);
+}
+function mostrarSeguidores(perfilId) {
+    fetch('/lista_seguidores/' + perfilId)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Mostrando seguidores");
+            const modal = document.getElementById('modalSeguidores');
+            const lista = document.getElementById('listaSeguidores');
+            lista.innerHTML = '';  // Limpia la lista existente
+
+            // Agrega cada seguidor a la lista
+            data.seguidores.forEach(seguidor => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.textContent = seguidor.nombre;
+                a.href = `/perfil-mascota/${seguidor.id}`;
+                a.style.textDecoration = 'none';
+                li.appendChild(a);
+                lista.appendChild(li);
+            });
+
+            // Muestra el modal
+            modal.style.display = 'block';
+        });
+}
+
+
+
+function mostrarSeguidos(perfilId) {
+    fetch('/lista_seguidos/' + perfilId)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Mostrando seguidos");
+            const modal = document.getElementById('modalSeguidos');
+            const lista = document.getElementById('listaSeguidos');
+            lista.innerHTML = '';  // Limpia la lista existente
+
+            // Agrega cada seguidor a la lista
+            data.seguidos.forEach(seguidor => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.textContent = seguidor.nombre;
+                a.href = `/perfil-mascota/${seguidor.id}`;
+                a.style.textDecoration = 'none';
+                li.appendChild(a);
+                lista.appendChild(li);
+            });
+
+            // Muestra el modal
+            modal.style.display = 'block';
+        });
+}
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
     var configIcon = document.querySelector('.iconoConfig');

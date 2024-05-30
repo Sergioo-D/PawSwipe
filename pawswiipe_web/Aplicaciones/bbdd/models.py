@@ -9,6 +9,7 @@ import uuid
 from django.utils.text import slugify
 
 from django.urls import reverse
+from django.db.models import Q
 
 
 
@@ -88,37 +89,57 @@ class RegistroInicioSession(models.Model):
     def __str__(self):
         return f'{self.mail} {self.timestamp} {self.login_exitoso} {self.sistema}'
 
+class Sala(models.Model):
+    nombre = models.CharField(max_length = 50)
+    slug = models.SlugField(null = False , unique = True)
+    emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="sala_emisor")
+    receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="sala_receptor")
+    nombre_mascota_receptor = models.CharField(max_length=50, blank=True)
+    nombre_mascota_emisor = models.CharField(max_length=50, blank=True)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.nombre)
+        super().save(*args, **kwargs)
+
+    def _str_(self):
+        return self.nombre
+    
     
 class MensajeDirecto(models.Model):
+    # user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="user")
     emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="emisor")
     receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="receptor")
     timestamp = models.DateTimeField(auto_now_add=True)
     mensaje = models.TextField()
     is_read = models.BooleanField(default=False)
+    sala = models.ForeignKey(Sala, on_delete=models.CASCADE, related_name='mensajes',null=True)
 
-    def sendMessage(user,emisor,receptor,mensaje):
-        sender_message = MensajeDirecto(user=emisor,emisor=emisor, receptor=receptor, mensaje=mensaje, is_read=True)
-        sender_message.save()
+    # @staticmethod
+    # def sendMessage(emisor, receptor, mensaje):
+    #     sender_message = MensajeDirecto(emisor=emisor, receptor=receptor, mensaje=mensaje, is_read=True)
+    #     sender_message.save()
 
-        receiver_message = MensajeDirecto(user=receptor,emisor=emisor, receptor=receptor, mensaje=mensaje, is_read=False)
-        receiver_message.save()
+    #     receiver_message = MensajeDirecto(emisor=emisor, receptor=receptor, mensaje=mensaje, is_read=False)
+    #     receiver_message.save()
 
-        return receiver_message, sender_message
+    #     return receiver_message, sender_message
+    # ...
 
-    def getMessages(user):
-        users = []
-        msgs = MensajeDirecto.objects.filter(user=user).values('receptor', 'emisor', 'mensaje').annotate(last=Max('timestamp')).order_by('-last')
-        for msg in msgs:
-            print(msg)
-            message = MensajeDirecto.objects.filter(user=user, receptor__pk=msg['receptor']).latest('timestamp')
-            users.append({
-                'user': Usuario.objects.get(pk=msg['receptor']),
-                'last': msg['last'],
-                'unread': MensajeDirecto.objects.filter(user=user, receptor__pk=msg['receptor'], is_read=False).count(),
-                'mensaje': message.mensaje
-            })
-        return users
+    # @staticmethod
+    # def getMessages(user):
+    #         users = []
+    #         msgs = MensajeDirecto.objects.filter(Q(emisor=user) | Q(receptor=user)).values('receptor', 'emisor', 'mensaje').annotate(last=Max('timestamp')).order_by('-last')
+    #         for msg in msgs:
+    #             print(msg)
+    #             message = MensajeDirecto.objects.filter(Q(emisor=user) | Q(receptor=user), receptor__pk=msg['receptor']).latest('timestamp')
+    #             users.append({
+    #                 'user': Usuario.objects.get(pk=msg['receptor']),
+    #                 'last': msg['last'],
+    #                 'unread': MensajeDirecto.objects.filter(emisor=user, receptor__pk=msg['receptor'], is_read=False).count(),
+    #                 'mensaje': message.mensaje
+    #             })
+    #         return users
 
     class Meta:
         db_table = "mensajeDirecto"
@@ -128,19 +149,7 @@ def user_directory_path(instance, filename):
     return 'user_{0}/{1}'.format(instance.user.id, filename)
 
 
-class Sala(models.Model):
-    nombre = models.CharField(max_length = 50)
-    slug = models.SlugField(null = False , unique = True)
-    emisor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="sala_emisor")
-    receptor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="sala_receptor")
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.nombre)
-        super().save(*args, **kwargs)
-
-    def _str_(self):
-        return self.nombre    
+    
 
 """ class Tag(models.Model):
     title = models.CharField(max_length=75, verbose_name="Título")

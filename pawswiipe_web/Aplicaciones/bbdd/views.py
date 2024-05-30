@@ -109,7 +109,7 @@ def registro(request):
                 usuario.save()
                 return redirect(reverse('registro_mascota_initial', args=[usuario.mail, 1]))
         else:
-            return render(request, "formRegistro.html", {"form": formulario})  # Devuelve una respuesta si el formulario no es válido
+            return render(request, "formRegistro.html", {"form": formulario})
     else:
         formulario = UsuarioForm()
         return render(request, "formRegistro.html", {"form": formulario})
@@ -472,9 +472,9 @@ def perfil_mascota(request, mascota_id):
         'publicaciones': mascota_actual.perfil.publicaciones.all(),
         'perfil': mascota_actual.perfil,
         'todas_las_mascotas': todas_las_mascotas,
-        'siguiendo': siguiendo ,
+        'siguiendo': siguiendo,
         'usuario': request.user,
-        'user_mascota': mascota_actual.usuario.mail
+        'user_mascota' : mascota_actual.usuario.mail
     }
     return render(request, 'perfilUsuario.html', context)
 
@@ -650,6 +650,76 @@ def enviar_mensaje(request,slug):
         )
         return redirect('chat', slug=sala.slug)
     
+    return render(request, 'chatprueba3.html')
+
+def crear_sala(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        emisor_email = data.get('emisor')
+        receptor_email = data.get('receptor')
+        slug = str(uuid.uuid4())
+        nombreMascotaReceptor = data.get('mascotaNombre')
+        mascota_emisor_id = request.session.get('mascota_actual_id')
+        nombreMascotaEmisor = Mascota.objects.get(id=mascota_emisor_id).nombre
+        print("el nombre recpt:",nombreMascotaReceptor)
+        print("el nombre emisor:",nombreMascotaEmisor)
+
+        print("emisor es :",emisor_email)
+        print("receptor es :",receptor_email)
+
+        try:
+            receptor = Usuario.objects.get(mail=receptor_email)
+        except Usuario.DoesNotExist:
+            return JsonResponse({'error': 'Usuario receptor no encontrado'}, status=404)
+
+        try:
+            emisor = Usuario.objects.get(mail=emisor_email)
+        except Usuario.DoesNotExist:
+            return JsonResponse({'error': 'Usuario emisor no encontrado'}, status=404)    
+
+        sala, created = Sala.objects.get_or_create(
+            nombre=receptor.nombreUsuario,
+            emisor=emisor,
+            receptor=receptor,
+            nombre_mascota_receptor=nombreMascotaReceptor,
+            nombre_mascota_emisor=nombreMascotaEmisor,
+            defaults={'slug': slug}
+        )
+
+        slug = sala.slug
+        return JsonResponse({'slug': slug})
+
+    else:
+        return HttpResponse("Método no permitido", status=405) 
+
+def obtener_lista_seguidores(request, mascota_id):
+    mascota_actual = get_object_or_404(Mascota, pk=mascota_id)
+    print(request.session.get('mascota_actual_id'))
+    print("la mascota actual es:",mascota_actual)
+    # Comprueba si se ha seleccionado una mascota
+    if mascota_actual is not None:
+        # Obtiene la mascota actual
+
+        # Aquí obtenemos todos los perfiles que están siguiendo a esta mascota
+        seguidores = mascota_actual.perfil.seguidores.all()
+        
+        # Creamos una lista con el nombre de la mascota de cada seguidor
+        lista_seguidores = [{'nombre': seguidor.mascota.nombre, 'id': seguidor.mascota.id} for seguidor in seguidores]
+        
+        return JsonResponse({'seguidores': lista_seguidores})
+    else:
+        # Si no se ha seleccionado una mascota, devuelve un mensaje de error
+        return HttpResponse("Debes seleccionar una mascota para ver sus seguidores", status=400)
+
+def obtener_lista_seguidos(request, mascota_id):
+    mascota_actual = get_object_or_404(Mascota, pk=mascota_id)
+    if mascota_actual is not None:
+        seguidos= mascota_actual.perfil.siguiendo.all()
+        lista_seguidos = [{'nombre':seguido.mascota.nombre,'id':seguido.mascota.id} for seguido in seguidos]
+
+        return JsonResponse({'seguidos': lista_seguidos})
+    else:
+        return HttpResponse("Debes seleccionar una mascota para ver a quién sigue", status=400)         
 def chattt(request):
     return render(request, 'chatprueba3.html')    
 
